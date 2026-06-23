@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>휴먼프리즘 - 7대 사주명가를 품은 대화형 AI 사주상담</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#0c0e1e" />
+    <meta name="description" content="현대 7대 사주명가의 지혜를 AI 알고리즘으로 구현하다. 당신의 다채로움을 듣다." />
+
+    <!-- Open Graph (카카오톡/페이스북 등 공유 카드) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="휴먼프리즘" />
+    <meta property="og:title" content="휴먼프리즘 - 7대 사주명가를 품은 대화형 AI 사주상담" />
+    <meta property="og:description" content="현대 7대 사주명가의 지혜를 AI 알고리즘으로 구현하다." />
+    <meta property="og:url" content="https://human-prism.com" />
+    <meta property="og:image" content="https://human-prism.com/manus-storage/og-card-share-v3_92ae0c89.png?v=4" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ko_KR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="휴먼프리즘 - 7대 사주명가를 품은 대화형 AI 사주상담" />
+    <meta name="twitter:description" content="현대 7대 사주명가의 지혜를 AI 알고리즘으로 구현하다." />
+    <meta name="twitter:image" content="https://human-prism.com/manus-storage/og-card-share-v3_92ae0c89.png?v=4" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="휴먼프리즘" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nanum+Myeongjo:wght@400;700;800&family=Black+Han+Sans&family=Gowun+Batang:wght@400;700&family=Song+Myung&family=Jua&display=swap"
+      rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script
+      src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+      integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
+      crossorigin="anonymous"></script>
+    <script type="module" src="/src/main.tsx"></script>
+    <script
+      defer
+      src="%VITE_ANALYTICS_ENDPOINT%/umami"
+      data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+  </body>
+
+</html>

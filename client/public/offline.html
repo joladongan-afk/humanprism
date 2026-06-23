@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>휴먼프리즘 — 연결 대기 중</title>
+  <style>
+    html, body { margin: 0; height: 100%; }
+    body {
+      background: radial-gradient(circle at 50% 30%, #1a1d3a 0%, #0c0e1e 70%);
+      color: #e8eaf6;
+      font-family: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 24px;
+    }
+    img { width: 96px; height: 96px; border-radius: 22px; margin-bottom: 24px; box-shadow: 0 0 40px rgba(80,180,255,0.35); }
+    h1 { font-size: 1.4rem; margin: 0 0 12px; }
+    p { color: #aab0d8; font-size: 0.95rem; line-height: 1.6; max-width: 320px; }
+    button {
+      margin-top: 28px; padding: 12px 28px; border: none; border-radius: 999px;
+      background: linear-gradient(90deg, #3aa0ff, #38e0a0); color: #06121f; font-weight: 700;
+      font-size: 0.95rem; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <img src="/icon-192.png" alt="휴먼프리즘" />
+  <h1>인터넷 연결을 확인해 주세요</h1>
+  <p>휴먼프리즘은 실시간 사주 상담을 위해 네트워크가 필요합니다. 연결이 복구되면 다시 시도해 주세요.</p>
+  <button onclick="location.reload()">다시 시도</button>
+</body>
+</html>

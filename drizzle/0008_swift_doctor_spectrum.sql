@@ -1,0 +1,1 @@
+ALTER TABLE `consultSessions` ADD `additionalSajus` json;

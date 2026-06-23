@@ -1,0 +1,1 @@
+ALTER TABLE `consultSessions` ADD `allowMasterAccess` boolean DEFAULT false NOT NULL;

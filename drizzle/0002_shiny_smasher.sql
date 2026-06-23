@@ -1,0 +1,2 @@
+ALTER TABLE `consultSessions` MODIFY COLUMN `planType` enum('free','entry','deep','master_chat','master_offline') NOT NULL;--> statement-breakpoint
+ALTER TABLE `payments` MODIFY COLUMN `planType` enum('free','entry','deep','master_chat','master_offline') NOT NULL;

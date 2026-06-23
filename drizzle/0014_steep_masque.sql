@@ -1,0 +1,3 @@
+ALTER TABLE `consultSessions` MODIFY COLUMN `planType` enum('free','taste','event','deep','master_chat','master_offline','compatibility_chat') NOT NULL;--> statement-breakpoint
+ALTER TABLE `payments` MODIFY COLUMN `planType` enum('free','taste','event','deep','master_chat','master_offline','compatibility','compatibility_chat') NOT NULL;--> statement-breakpoint
+ALTER TABLE `consultSessions` ADD `sajuProfileBId` int;

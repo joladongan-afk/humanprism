@@ -1,0 +1,839 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/**
+ * 휴먼 프리즘 (Human Prism) — 동양적 고급 디자인 시스템
+ *
+ * 색상 팔레트
+ * - 먹(墨, mug):    깊고 그윽한 검정. 텍스트와 주요 어두운 면.
+ * - 한지(韓紙):     따뜻한 미색. 배경, 카드, 종이의 결.
+ * - 금(金):         은은한 황금. 강조, 헤딩, 액센트.
+ * - 주사(朱砂):     동양적 붉은 인장 색. 핵심 CTA, 도장 모티프.
+ * - 청자(靑磁):     단아한 청록. 보조, 차분한 강조.
+ *
+ * 폰트
+ * - 본문: Gowun Batang / Noto Serif KR — 부드러운 명조계열.
+ * - 디스플레이: Noto Serif KR 900 + Cinzel — 한자 전각감.
+ * - UI: Noto Sans KR — 인터페이스 컨트롤.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-serif: "Noto Serif KR", "Gowun Batang", "Source Han Serif", serif;
+  --font-sans: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  --font-display: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* 휴먼 프리즘 시그니처 컬러 토큰 */
+  --color-mug: var(--mug);
+  --color-mug-deep: var(--mug-deep);
+  --color-hanji: var(--hanji);
+  --color-hanji-deep: var(--hanji-deep);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-jusa: var(--jusa);
+  --color-jusa-deep: var(--jusa-deep);
+  --color-celadon: var(--celadon);
+  --color-celadon-deep: var(--celadon-deep);
+}
+
+:root {
+  /* 시그니처 색상 (라이트 모드 — 한지 위에 먹) */
+  --mug: oklch(0.18 0.012 60);
+  --mug-deep: oklch(0.10 0.010 60);
+  --hanji: oklch(0.965 0.020 85);          /* 따뜻한 미색 한지 */
+  --hanji-deep: oklch(0.92 0.030 80);
+  --gold: oklch(0.72 0.135 80);             /* 은은한 황금 */
+  --gold-soft: oklch(0.85 0.080 85);
+  --jusa: oklch(0.52 0.180 25);             /* 동양 인장 붉음 */
+  --jusa-deep: oklch(0.42 0.180 27);
+  --celadon: oklch(0.72 0.060 175);
+  --celadon-deep: oklch(0.50 0.060 180);
+
+  /* shadcn 호환 토큰 (한지 베이스 / 먹 텍스트) */
+  --primary: var(--jusa);
+  --primary-foreground: var(--hanji);
+  --background: var(--hanji);
+  --foreground: var(--mug);
+  --card: oklch(0.98 0.012 85);
+  --card-foreground: var(--mug);
+  --popover: oklch(0.98 0.012 85);
+  --popover-foreground: var(--mug);
+  --secondary: oklch(0.92 0.022 80);
+  --secondary-foreground: var(--mug-deep);
+  --muted: oklch(0.93 0.018 80);
+  --muted-foreground: oklch(0.42 0.020 70);
+  --accent: var(--gold-soft);
+  --accent-foreground: var(--mug-deep);
+  --destructive: oklch(0.50 0.190 27);
+  --destructive-foreground: var(--hanji);
+  --border: oklch(0.82 0.030 80);
+  --input: oklch(0.88 0.025 80);
+  --ring: var(--gold);
+  --radius: 0.4rem;
+
+  --chart-1: var(--gold);
+  --chart-2: var(--jusa);
+  --chart-3: var(--celadon);
+  --chart-4: var(--mug);
+  --chart-5: var(--gold-soft);
+
+  --sidebar: oklch(0.95 0.025 85);
+  --sidebar-foreground: var(--mug);
+  --sidebar-primary: var(--jusa);
+  --sidebar-primary-foreground: var(--hanji);
+  --sidebar-accent: oklch(0.90 0.025 80);
+  --sidebar-accent-foreground: var(--mug-deep);
+  --sidebar-border: oklch(0.86 0.025 80);
+  --sidebar-ring: var(--gold);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.dark {
+  --mug: oklch(0.10 0.010 60);
+  --mug-deep: oklch(0.06 0.008 60);
+  --hanji: oklch(0.92 0.022 80);
+  --hanji-deep: oklch(0.85 0.025 78);
+  --gold: oklch(0.78 0.140 82);
+  --gold-soft: oklch(0.65 0.110 80);
+  --jusa: oklch(0.60 0.190 25);
+  --jusa-deep: oklch(0.45 0.180 25);
+  --celadon: oklch(0.75 0.060 175);
+  --celadon-deep: oklch(0.55 0.060 180);
+
+  --primary: var(--gold);
+  --primary-foreground: var(--mug-deep);
+  --background: oklch(0.13 0.012 60);
+  --foreground: oklch(0.92 0.022 80);
+  --card: oklch(0.17 0.014 60);
+  --card-foreground: oklch(0.92 0.022 80);
+  --popover: oklch(0.17 0.014 60);
+  --popover-foreground: oklch(0.92 0.022 80);
+  --secondary: oklch(0.22 0.014 60);
+  --secondary-foreground: oklch(0.85 0.025 80);
+  --muted: oklch(0.20 0.013 60);
+  --muted-foreground: oklch(0.66 0.025 75);
+  --accent: oklch(0.28 0.020 60);
+  --accent-foreground: var(--gold);
+  --destructive: oklch(0.62 0.190 25);
+  --destructive-foreground: oklch(0.95 0.020 85);
+  --border: oklch(0.35 0.025 60);
+  --input: oklch(0.28 0.020 60);
+  --ring: var(--gold);
+
+  --chart-1: var(--gold);
+  --chart-2: var(--jusa);
+  --chart-3: var(--celadon);
+  --chart-4: oklch(0.85 0.025 80);
+  --chart-5: var(--gold-soft);
+
+  --sidebar: oklch(0.13 0.012 60);
+  --sidebar-foreground: oklch(0.92 0.022 80);
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: var(--mug-deep);
+  --sidebar-accent: oklch(0.22 0.014 60);
+  --sidebar-accent-foreground: var(--gold);
+  --sidebar-border: oklch(0.30 0.020 60);
+  --sidebar-ring: var(--gold);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    font-family: var(--font-sans);
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-feature-settings: "palt" 1;
+    background-image:
+      radial-gradient(circle at 18% 22%, oklch(0.96 0.030 85 / 0.9) 0%, transparent 50%),
+      radial-gradient(circle at 82% 78%, oklch(0.94 0.040 78 / 0.85) 0%, transparent 55%),
+      linear-gradient(180deg, oklch(0.965 0.020 85) 0%, oklch(0.94 0.030 80) 100%);
+    background-attachment: fixed;
+    letter-spacing: 0.005em;
+    line-height: 1.75;
+  }
+  .dark body {
+    background-image:
+      radial-gradient(circle at 18% 22%, oklch(0.20 0.020 60 / 0.95) 0%, transparent 55%),
+      radial-gradient(circle at 82% 78%, oklch(0.22 0.030 50 / 0.9) 0%, transparent 55%),
+      linear-gradient(180deg, oklch(0.13 0.012 60) 0%, oklch(0.10 0.010 60) 100%);
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+  ::selection {
+    background: var(--gold-soft);
+    color: var(--mug-deep);
+  }
+}
+
+@layer utilities {
+  /* Force Tailwind to compile these size classes */
+  .h-28 { height: 7rem; }
+  .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+  .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  .pb-3 { padding-bottom: 0.75rem; }
+
+  /* 가독성 상향: 가장 작은 글자 단계의 실제 크기를 키워 전 페이지를 시원하게 */
+  .text-xs { font-size: 0.85rem !important; line-height: 1.3rem !important; }
+  .text-sm { font-size: 0.98rem !important; line-height: 1.55rem !important; }
+  .text-base { font-size: 1.05rem !important; line-height: 1.7rem !important; }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+  @media (min-width: 640px) {
+    .container { padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .container { padding-left: 2rem; padding-right: 2rem; max-width: 1280px; }
+  }
+
+  /* 동양적 인장 도장 모티프 - 작은 한자 한 글자를 주사색으로 */
+  .ink-seal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.25rem;
+    background: var(--jusa);
+    color: var(--hanji);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    box-shadow:
+      inset 0 0 0 2px var(--jusa-deep),
+      0 1px 0 oklch(0 0 0 / 0.05);
+    letter-spacing: 0;
+  }
+
+  /* 한지 카드 - 종이 결의 미세 텍스처 */
+  .hanji-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow:
+      0 1px 0 oklch(1 0 0 / 0.6) inset,
+      0 1px 2px oklch(0 0 0 / 0.04),
+      0 8px 24px oklch(0 0 0 / 0.04);
+    border-radius: var(--radius-lg);
+  }
+  .dark .hanji-card {
+    box-shadow:
+      0 1px 0 oklch(1 0 0 / 0.04) inset,
+      0 1px 2px oklch(0 0 0 / 0.4),
+      0 8px 24px oklch(0 0 0 / 0.3);
+  }
+
+  /* 디스플레이용 한자 - 큰 글씨에 살짝 황금빛 */
+  .hanja-display {
+    font-family: var(--font-sans);
+    color: var(--gold);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  /* 우아한 구분선 — 은은한 금선 */
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--gold) 30%,
+      var(--gold) 70%,
+      transparent 100%
+    );
+  }
+
+  /* 사주 간지 카드 (세로 표기) */
+  .ganji-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    padding: 0.75rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--card);
+    min-width: 4.5rem;
+  }
+  .ganji-cell .stem,
+  .ganji-cell .branch {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .ganji-cell .stem { color: var(--mug); }
+  .ganji-cell .branch { color: var(--celadon-deep); }
+  .dark .ganji-cell .stem { color: var(--hanji); }
+  .dark .ganji-cell .branch { color: var(--celadon); }
+  .ganji-cell .label {
+    font-size: 0.7rem;
+    color: var(--muted-foreground);
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.1em;
+  }
+  .ganji-cell .shinsal {
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  /* 부드러운 등장 애니메이션 */
+  @media (prefers-reduced-motion: no-preference) {
+    .fade-up {
+      animation: fadeUp 600ms var(--ease-out) both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+}
+
+    /* 단계별 단어 등장 애니메이션 */
+    .word-first {
+      animation: slideInLeft 800ms var(--ease-out) both;
+    }
+    .word-mosaic {
+      animation: mosaicReveal 2500ms cubic-bezier(0.34, 1.56, 0.64, 1) 300ms infinite;
+      background: linear-gradient(90deg, 
+        #fbbf24 0%, 
+        #f87171 15%, 
+        #fb923c 30%, 
+        #ec4899 50%, 
+        #8b5cf6 70%, 
+        #3b82f6 100%);
+      background-size: 200% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: url(#mosaic-sand);
+    }
+
+    .word-last {
+      animation: slideInRight 800ms var(--ease-out) 600ms both;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes constellation {
+      0% {
+        opacity: 0.2;
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+      }
+      50% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 12px rgba(200, 200, 255, 0.6));
+      }
+      100% {
+        opacity: 0.3;
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+      }
+    }
+
+    @keyframes mosaicReveal {
+      0% {
+        opacity: 0;
+        background-position: 100% 0;
+        filter: url(#mosaic-sand-0);
+      }
+      25% {
+        opacity: 0.3;
+        background-position: 75% 0;
+        filter: url(#mosaic-sand-1);
+      }
+      50% {
+        opacity: 0.6;
+        background-position: 50% 0;
+        filter: url(#mosaic-sand-2);
+      }
+      75% {
+        opacity: 0.85;
+        background-position: 25% 0;
+        filter: url(#mosaic-sand-3);
+      }
+      100% {
+        opacity: 1;
+        background-position: 0% 0;
+        filter: url(#mosaic-sand-4);
+      }
+    }
+
+    /* 네온사인 글로우 애니메이션 */
+    @keyframes neonGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 10px rgba(0, 150, 255, 0.5),
+          0 0 20px rgba(0, 150, 255, 0.4),
+          0 0 30px rgba(0, 200, 255, 0.3),
+          0 0 40px rgba(0, 100, 200, 0.2);
+      }
+      50% {
+        text-shadow: 
+          0 0 15px rgba(0, 150, 255, 0.8),
+          0 0 30px rgba(0, 150, 255, 0.6),
+          0 0 45px rgba(0, 200, 255, 0.5),
+          0 0 60px rgba(0, 100, 200, 0.3);
+      }
+    }
+
+    /* 한 글자씩 나타나는 애니메이션 */
+    @keyframes charReveal {
+      0% {
+        opacity: 0;
+        clip-path: inset(0 100% 0 0);
+      }
+      100% {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    .neon-char {
+      display: inline-block;
+      animation: charReveal 0.4s ease-out forwards;
+    }
+
+
+/* ───────────────────────────────────────────────
+   로고 "휴먼프리즘" 블링 효과
+   - 글자는 항상 또렷 (날아오기/모래바람 없음)
+   - 청록~블루 영롱한 그라데이션이 천천히 흐름
+   - 은은한 네온 글로우 반짝임
+   ─────────────────────────────────────────────── */
+.logo-bling {
+  background: linear-gradient(
+    100deg,
+    #7dd3fc 0%,
+    #38bdf8 18%,
+    #22d3ee 34%,
+    #60a5fa 50%,
+    #3b82f6 66%,
+    #06b6d4 82%,
+    #7dd3fc 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.55))
+    drop-shadow(0 0 14px rgba(14, 165, 233, 0.35));
+  animation: logo-bling-flow 6s linear infinite,
+    logo-bling-glow 3.2s ease-in-out infinite;
+}
+
+@keyframes logo-bling-flow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 250% center;
+  }
+}
+
+@keyframes logo-bling-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5))
+      drop-shadow(0 0 14px rgba(14, 165, 233, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(125, 211, 252, 0.85))
+      drop-shadow(0 0 24px rgba(34, 211, 238, 0.55));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-bling {
+    animation: none;
+  }
+}
+
+
+/* ───────────────────────────────────────────────
+   고객용 페이지 히어로(제목 영역) 통일 스타일
+   - 헤더(블랙)에서 자연스럽게 이어지는 상단 어두운 톤
+   - 하단은 본문 한지색으로 부드럽게 페이드되어 색 점프 제거
+   - 페이지별 강조 그라데이션(from-/to-)은 그대로 유지
+   ─────────────────────────────────────────────── */
+.page-hero {
+  position: relative;
+}
+/* 상단: 헤더 블랙과 매끄럽게 잇는 어두운 오버레이 */
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    oklch(0 0 0 / 0.55) 0%,
+    oklch(0 0 0 / 0.15) 22%,
+    transparent 45%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+/* 하단: 본문(한지색)으로 부드럽게 녹아드는 페이드 */
+.page-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.965 0.020 85 / 0.35) 55%,
+    oklch(0.965 0.020 85 / 0.85) 82%,
+    var(--background) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+/* 다크 테마에서는 어두운 본문색으로 페이드 */
+.dark .page-hero::after {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.13 0.012 60 / 0.4) 55%,
+    oklch(0.13 0.012 60 / 0.85) 82%,
+    var(--background) 100%
+  );
+}
+
+
+/* ───────────────────────────────────────────────
+   Hero 3줄째 강조: "7대 사주 명가의 비전(秘傳)"
+   - 황홀한 오로라 초록 그라데이션이 은은하게 흐름
+   - 부드러운 초록 네온 글로우 (로고 블링과 같은 결, 색만 초록 계열)
+   ─────────────────────────────────────────────── */
+.aurora-green {
+  background: linear-gradient(
+    100deg,
+    #86efac 0%,
+    #4ade80 16%,
+    #22c55e 32%,
+    #16a34a 48%,
+    #4ade80 64%,
+    #65d96b 82%,
+    #86efac 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.6))
+    drop-shadow(0 0 18px rgba(34, 197, 94, 0.4));
+  animation: aurora-green-flow 7s linear infinite,
+    aurora-green-glow 3.6s ease-in-out infinite;
+}
+
+@keyframes aurora-green-flow {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 250% center;
+  }
+}
+
+@keyframes aurora-green-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.55))
+      drop-shadow(0 0 18px rgba(34, 197, 94, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 13px rgba(134, 239, 172, 0.9))
+      drop-shadow(0 0 30px rgba(34, 197, 94, 0.6));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-green {
+    animation: none;
+  }
+}
+
+
+/* ───────────────────────────────────────────────
+   로고 문체 시안 3종 (휴먼프리즘)
+   ─────────────────────────────────────────────── */
+
+/* 시안 A — 우아한 명조 + 금빛 그라데이션 (전통·품격) */
+.logo-a {
+  font-family: "Nanum Myeongjo", serif;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  background: linear-gradient(
+    100deg,
+    #fde68a 0%,
+    #fbbf24 22%,
+    #f59e0b 42%,
+    #fcd34d 60%,
+    #eab308 80%,
+    #fde68a 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.45))
+    drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  animation: logo-a-flow 7s linear infinite;
+}
+@keyframes logo-a-flow {
+  0% { background-position: 0% center; }
+  100% { background-position: 250% center; }
+}
+
+/* 시안 B — 강렬한 디스플레이 + 파란 bling (현대·임팩트) */
+.logo-b {
+  font-family: "Black Han Sans", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  background: linear-gradient(
+    100deg,
+    #7dd3fc 0%,
+    #38bdf8 18%,
+    #22d3ee 34%,
+    #818cf8 50%,
+    #3b82f6 66%,
+    #06b6d4 82%,
+    #7dd3fc 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.6))
+    drop-shadow(0 0 22px rgba(99, 102, 241, 0.4));
+  animation: logo-bling-flow 6s linear infinite,
+    logo-bling-glow 3.2s ease-in-out infinite;
+}
+
+/* 시안 C — 붓글씨 감성 명조 + 영롱한 초록 (영적·신비) */
+.logo-c {
+  font-family: "Song Myung", "Gowun Batang", serif;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  background: linear-gradient(
+    100deg,
+    #bbf7d0 0%,
+    #86efac 18%,
+    #4ade80 36%,
+    #22c55e 52%,
+    #34d399 70%,
+    #6ee7b7 86%,
+    #bbf7d0 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 9px rgba(74, 222, 128, 0.55))
+    drop-shadow(0 0 20px rgba(16, 185, 129, 0.4));
+  animation: logo-c-flow 8s linear infinite,
+    logo-c-glow 4s ease-in-out infinite;
+}
+@keyframes logo-c-flow {
+  0% { background-position: 0% center; }
+  100% { background-position: 250% center; }
+}
+@keyframes logo-c-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 7px rgba(74, 222, 128, 0.5))
+      drop-shadow(0 0 16px rgba(16, 185, 129, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(134, 239, 172, 0.85))
+      drop-shadow(0 0 28px rgba(16, 185, 129, 0.55));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-a, .logo-b, .logo-c { animation: none; }
+}
+
+
+/* ── 오로라 프리즘 로고 (이미지 + 일렁이는 광채) ───────────────── */
+.hp-aurora-logo {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+.hp-aurora-logo img {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+.hp-aurora-logo__base {
+  position: relative;
+  z-index: 1;
+}
+/* 위에 겹친 같은 로고를 hue-rotate + blur로 천천히 순환시켜 색이 흐르며 일렁이게 */
+.hp-aurora-logo__shimmer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  pointer-events: none;
+  will-change: filter, transform, opacity;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hp-aurora-logo__shimmer {
+    animation: hp-aurora-hue 6s linear infinite,
+      hp-aurora-breathe 3.4s ease-in-out infinite;
+  }
+}
+@keyframes hp-aurora-hue {
+  0% {
+    filter: hue-rotate(0deg) saturate(1.4) blur(0.4px);
+  }
+  100% {
+    filter: hue-rotate(360deg) saturate(1.4) blur(0.4px);
+  }
+}
+@keyframes hp-aurora-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.012) translateY(-0.5px);
+  }
+}
+
+
+/* ── 첫 방문 팝업: 핵심 한 줄 네온 글로우 (새싹 초록) ── */
+.popup-neon-line {
+  color: #f0fff4;
+  text-shadow:
+    0 0 6px rgba(134, 239, 172, 0.95),
+    0 0 14px rgba(34, 197, 94, 0.85),
+    0 0 26px rgba(16, 185, 129, 0.6);
+  animation: popupNeonPulse 2.4s ease-in-out infinite;
+}
+@keyframes popupNeonPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(134, 239, 172, 0.9),
+      0 0 14px rgba(34, 197, 94, 0.8),
+      0 0 24px rgba(16, 185, 129, 0.55);
+  }
+  50% {
+    text-shadow:
+      0 0 10px rgba(190, 242, 100, 1),
+      0 0 22px rgba(34, 197, 94, 0.95),
+      0 0 40px rgba(16, 185, 129, 0.75);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .popup-neon-line { animation: none; }
+}

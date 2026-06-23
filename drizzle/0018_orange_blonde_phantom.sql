@@ -1,0 +1,1 @@
+ALTER TABLE `payments` ADD `depositorPhone` varchar(32);

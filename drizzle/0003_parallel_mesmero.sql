@@ -1,0 +1,1 @@
+ALTER TABLE `appointments` MODIFY COLUMN `status` enum('requested','confirmed','payment_pending','paid','rejected','completed','cancelled') NOT NULL DEFAULT 'requested';

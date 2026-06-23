@@ -1,0 +1,1 @@
+ALTER TABLE `sajuComparisons` MODIFY COLUMN `relationType` enum('couple','parent','child','family','work','friend','other') NOT NULL DEFAULT 'couple';

@@ -1,0 +1,1 @@
+ALTER TABLE `sajuComparisons` ADD `paymentId` int;

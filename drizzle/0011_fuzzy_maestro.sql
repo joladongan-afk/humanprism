@@ -1,0 +1,1 @@
+ALTER TABLE `payments` MODIFY COLUMN `planType` enum('free','taste','event','deep','master_chat','master_offline','compatibility') NOT NULL;
