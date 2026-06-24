@@ -27,7 +27,7 @@ export type ClaudeInvokeResult = {
   };
 };
 
-const GEMINI_MODEL = "gemini-2.0-flash";
+const GEMINI_MODEL = "gemini-1.5-flash";
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
 export async function invokeClaudeAPI(
