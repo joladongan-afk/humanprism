@@ -28,7 +28,7 @@ export type ClaudeInvokeResult = {
   };
 };
 
-const GEMINI_MODEL = "gemini-1.5-flash";
+const GEMINI_MODEL = "gemini-1.5-flash-latest";
 
 export async function invokeClaudeAPI(
   params: ClaudeInvokeParams
@@ -71,7 +71,7 @@ export async function invokeClaudeAPI(
     };
   }
 
-  const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
   try {
     const response = await fetch(apiUrl, {
