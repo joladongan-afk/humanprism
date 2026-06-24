@@ -2,19 +2,14 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/public",
-  "functions": {
-    "dist/index.js": {
-      "runtime": "nodejs@20"
-    }
-  },
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "dist/index.js"
+      "dest": "/api/$1"
     },
     {
       "src": "/trpc/(.*)",
-      "dest": "dist/index.js"
+      "dest": "/trpc/$1"
     },
     {
       "src": "/(.*)",
