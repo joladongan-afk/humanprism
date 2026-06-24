@@ -4,7 +4,7 @@
   "outputDirectory": "dist/public",
   "functions": {
     "dist/index.js": {
-      "runtime": "nodejs20.x"
+      "runtime": "nodejs@20"
     }
   },
   "routes": [
