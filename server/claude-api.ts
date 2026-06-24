@@ -1,4 +1,4 @@
-// Gemini native API v3
+// Gemini native API v4
 import { ENV } from "./_core/env";
 
 export type Role = "user" | "assistant";
@@ -28,7 +28,7 @@ export type ClaudeInvokeResult = {
   };
 };
 
-const GEMINI_MODEL = "gemini-1.5-flash-latest";
+const GEMINI_MODEL = "gemini-1.5-flash";
 
 export async function invokeClaudeAPI(
   params: ClaudeInvokeParams
@@ -50,12 +50,24 @@ export async function invokeClaudeAPI(
   }
 
   // Gemini 네이티브 형식으로 변환
+  // 시스템 프롬프트를 첫 번째 user 메시지 앞에 합침
   const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+  
+  let isFirstUser = true;
   for (const m of params.messages) {
-    contents.push({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    });
+    if (m.role === "user" && isFirstUser && systemText) {
+      contents.push({
+        role: "user",
+        parts: [{ text: systemText + "\n\n" + m.content }],
+      });
+      isFirstUser = false;
+    } else {
+      contents.push({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      });
+      if (m.role === "user") isFirstUser = false;
+    }
   }
 
   const payload: Record<string, unknown> = {
@@ -64,12 +76,6 @@ export async function invokeClaudeAPI(
       maxOutputTokens: params.maxTokens ?? 2048,
     },
   };
-
-  if (systemText) {
-    payload.systemInstruction = {
-      parts: [{ text: systemText }],
-    };
-  }
 
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
