@@ -1,3 +1,4 @@
+// Gemini native API v3
 import { ENV } from "./_core/env";
 
 export type Role = "user" | "assistant";
