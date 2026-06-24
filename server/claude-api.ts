@@ -28,7 +28,6 @@ export type ClaudeInvokeResult = {
 };
 
 const GEMINI_MODEL = "gemini-1.5-flash";
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
 export async function invokeClaudeAPI(
   params: ClaudeInvokeParams
@@ -49,26 +48,35 @@ export async function invokeClaudeAPI(
     systemText = params.systemPrompt;
   }
 
-  const chatMessages: Array<{ role: string; content: string }> = [];
-  if (systemText) {
-    chatMessages.push({ role: "system", content: systemText });
-  }
+  // Gemini 네이티브 형식으로 변환
+  const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
   for (const m of params.messages) {
-    chatMessages.push({ role: m.role, content: m.content });
+    contents.push({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    });
   }
 
-  const payload = {
-    model: GEMINI_MODEL,
-    max_tokens: params.maxTokens ?? 2048,
-    messages: chatMessages,
+  const payload: Record<string, unknown> = {
+    contents,
+    generationConfig: {
+      maxOutputTokens: params.maxTokens ?? 2048,
+    },
   };
 
+  if (systemText) {
+    payload.systemInstruction = {
+      parts: [{ text: systemText }],
+    };
+  }
+
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+
   try {
-    const response = await fetch(GEMINI_API_URL, {
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify(payload),
     });
@@ -82,43 +90,34 @@ export async function invokeClaudeAPI(
     }
 
     const result = (await response.json()) as {
-      choices?: Array<{
-        message?: {
-          content?: string | Array<{ type: string; text?: string }>;
+      candidates?: Array<{
+        content?: {
+          parts?: Array<{ text?: string }>;
         };
-        finish_reason?: string | null;
+        finishReason?: string;
       }>;
-      usage?: {
-        prompt_tokens?: number;
-        completion_tokens?: number;
+      usageMetadata?: {
+        promptTokenCount?: number;
+        candidatesTokenCount?: number;
       };
     };
 
-    const choice = result.choices?.[0];
-    const rawContent = choice?.message?.content;
-
-    let text = "";
-    if (typeof rawContent === "string") {
-      text = rawContent;
-    } else if (Array.isArray(rawContent)) {
-      text = rawContent
-        .filter((c) => c && c.type === "text" && typeof c.text === "string")
-        .map((c) => c.text as string)
-        .join("");
-    }
+    const candidate = result.candidates?.[0];
+    const parts = candidate?.content?.parts ?? [];
+    const text = parts.map((p) => p.text ?? "").join("");
 
     if (!text) {
       throw new Error("No text content in Gemini response");
     }
 
-    const inputTokens = result.usage?.prompt_tokens ?? 0;
-    const outputTokens = result.usage?.completion_tokens ?? 0;
+    const inputTokens = result.usageMetadata?.promptTokenCount ?? 0;
+    const outputTokens = result.usageMetadata?.candidatesTokenCount ?? 0;
 
     console.log(`[Gemini Usage] Input: ${inputTokens} tokens, Output: ${outputTokens} tokens`);
 
     return {
       content: text,
-      stopReason: choice?.finish_reason ?? "stop",
+      stopReason: candidate?.finishReason ?? "stop",
       usage: {
         inputTokens,
         outputTokens,
