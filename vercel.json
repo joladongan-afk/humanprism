@@ -5,11 +5,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/index.ts"
     },
     {
       "src": "/trpc/(.*)",
-      "dest": "/trpc/$1"
+      "dest": "/api/index.ts"
     },
     {
       "src": "/(.*)",
