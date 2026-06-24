@@ -28,7 +28,7 @@ export type ClaudeInvokeResult = {
   };
 };
 
-const GEMINI_MODEL = "gemini-1.5-flash";
+const GEMINI_MODEL = "gemini-2.0-flash";
 
 export async function invokeClaudeAPI(
   params: ClaudeInvokeParams
