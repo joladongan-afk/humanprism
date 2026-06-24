@@ -28,7 +28,7 @@ export type ClaudeInvokeResult = {
   };
 };
 
-const GEMINI_MODEL = "gemini-2.5-flash-lite";
+const GEMINI_MODEL = "models/gemini-2.5-flash";
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
 
