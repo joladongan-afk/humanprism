@@ -1,4 +1,4 @@
-// Gemini native API v4
+// Gemini native API v5 - retry on 503
 import { ENV } from "./_core/env";
 
 export type Role = "user" | "assistant";
@@ -28,7 +28,13 @@ export type ClaudeInvokeResult = {
   };
 };
 
-const GEMINI_MODEL = "gemini-2.0-flash-001";
+const GEMINI_MODEL = "gemini-2.5-flash";
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000;
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export async function invokeClaudeAPI(
   params: ClaudeInvokeParams
@@ -38,7 +44,6 @@ export async function invokeClaudeAPI(
     throw new Error("GEMINI_API_KEY is not configured");
   }
 
-  // 시스템 프롬프트 조합
   let systemText = "";
   if (params.cachedSystemPrompt) {
     systemText = params.cachedSystemPrompt;
@@ -49,10 +54,8 @@ export async function invokeClaudeAPI(
     systemText = params.systemPrompt;
   }
 
-  // Gemini 네이티브 형식으로 변환
-  // 시스템 프롬프트를 첫 번째 user 메시지 앞에 합침
   const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
-  
+
   let isFirstUser = true;
   for (const m of params.messages) {
     if (m.role === "user" && isFirstUser && systemText) {
@@ -79,59 +82,78 @@ export async function invokeClaudeAPI(
 
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+  let lastError: Error | null = null;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("[Gemini API Error]", response.status, errorText);
-      throw new Error(
-        `Gemini API failed: ${response.status} ${response.statusText} – ${errorText}`
-      );
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      console.log(`[Gemini] Retry attempt ${attempt}/${MAX_RETRIES} after ${RETRY_DELAY_MS * attempt}ms...`);
+      await sleep(RETRY_DELAY_MS * attempt);
     }
 
-    const result = (await response.json()) as {
-      candidates?: Array<{
-        content?: {
-          parts?: Array<{ text?: string }>;
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("[Gemini API Error]", response.status, errorText);
+
+        if (response.status === 503) {
+          lastError = new Error(`Gemini API failed: ${response.status} ${response.statusText} – ${errorText}`);
+          continue;
+        }
+
+        throw new Error(`Gemini API failed: ${response.status} ${response.statusText} – ${errorText}`);
+      }
+
+      const result = (await response.json()) as {
+        candidates?: Array<{
+          content?: {
+            parts?: Array<{ text?: string }>;
+          };
+          finishReason?: string;
+        }>;
+        usageMetadata?: {
+          promptTokenCount?: number;
+          candidatesTokenCount?: number;
         };
-        finishReason?: string;
-      }>;
-      usageMetadata?: {
-        promptTokenCount?: number;
-        candidatesTokenCount?: number;
       };
-    };
 
-    const candidate = result.candidates?.[0];
-    const parts = candidate?.content?.parts ?? [];
-    const text = parts.map((p) => p.text ?? "").join("");
+      const candidate = result.candidates?.[0];
+      const parts = candidate?.content?.parts ?? [];
+      const text = parts.map((p) => p.text ?? "").join("");
 
-    if (!text) {
-      throw new Error("No text content in Gemini response");
+      if (!text) {
+        throw new Error("No text content in Gemini response");
+      }
+
+      const inputTokens = result.usageMetadata?.promptTokenCount ?? 0;
+      const outputTokens = result.usageMetadata?.candidatesTokenCount ?? 0;
+
+      console.log(`[Gemini Usage] Input: ${inputTokens} tokens, Output: ${outputTokens} tokens`);
+
+      return {
+        content: text,
+        stopReason: candidate?.finishReason ?? "stop",
+        usage: {
+          inputTokens,
+          outputTokens,
+        },
+      };
+    } catch (err) {
+      if (lastError && err === lastError) {
+        continue;
+      }
+      console.error("[Gemini API Exception]", err);
+      throw err;
     }
-
-    const inputTokens = result.usageMetadata?.promptTokenCount ?? 0;
-    const outputTokens = result.usageMetadata?.candidatesTokenCount ?? 0;
-
-    console.log(`[Gemini Usage] Input: ${inputTokens} tokens, Output: ${outputTokens} tokens`);
-
-    return {
-      content: text,
-      stopReason: candidate?.finishReason ?? "stop",
-      usage: {
-        inputTokens,
-        outputTokens,
-      },
-    };
-  } catch (err) {
-    console.error("[Gemini API Exception]", err);
-    throw err;
   }
+
+  console.error("[Gemini] All retries exhausted");
+  throw lastError ?? new Error("Gemini API unavailable after retries");
 }
