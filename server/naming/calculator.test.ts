@@ -63,7 +63,7 @@ describe("Naming Calculator", () => {
     it("should judge pado ohaeng as negative when ohaeng conflicts", () => {
       // 목 -> 금 (상극)
       const result = judgePadoOhaeng(["木", "金"]);
-      expect(result.result).toContain("보완");
+      expect(result.result).toContain("보완 필요");
       expect(result.detail).toBeTruthy();
     });
   });
@@ -71,7 +71,7 @@ describe("Naming Calculator", () => {
   describe("judgeSuri", () => {
     it("should judge suri 1 as 吉", () => {
       const result = judgeSuri(1);
-      expect(result.gilhyung).toBe("吉");
+      expect(result.gilhyung).toBe("大吉");
     });
 
     it("should judge suri 2 as 凶", () => {
