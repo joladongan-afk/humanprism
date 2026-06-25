@@ -1,37 +1,40 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
 
 export function MasterNamingTab() {
   return (
     <div className="flex justify-center">
-      <Card className="w-full max-w-2xl border-blue-200 bg-blue-50">
+      <Card className="w-full max-w-2xl border-amber-200 bg-amber-50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-blue-600" />
-            마스터 작명 상담
+          <CardTitle className="text-xl font-bold text-amber-900">
+            명의 본질에 가장 부합하는 이름 짓기
           </CardTitle>
-          <CardDescription>
-            30년 경력의 명리 전문가와 함께하는 프리미엄 작명 상담
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="text-sm text-gray-700 space-y-2">
-            <p>
-              마스터 작명은 사주와 성명학을 종합적으로 분석하여 개인의 운명과 조화를 이루는 이름을 지어드리는 서비스입니다.
+          <div className="text-sm text-gray-700 space-y-3">
+            <p className="text-base font-medium text-amber-800">
+              30년 사주쟁이의 안목으로, 당신을 빛내줄 이름을 선물합니다.
             </p>
-            <ul className="list-disc list-inside space-y-1 text-gray-600">
-              <li>사주 분석 기반 필요 오행 파악</li>
-              <li>음양오행의 조화로운 이름 구성</li>
-              <li>수리사격의 길한 수 배치</li>
-              <li>개인 운명과의 시너지 분석</li>
-            </ul>
+            <p>
+              아무나 이름에 오행을 부여할 수 없습니다.<br />
+              사주를 반영하지 않은 작명은 반쪽짜리일 뿐입니다.
+            </p>
+            <p className="text-base font-semibold text-gray-800">
+              사주는 몸이고, 이름이 옷입니다.
+            </p>
+            <p>
+              당신의 삶을 더 빛나게 해줄 이름은 전문가에게 맡기세요.
+            </p>
+            <p className="text-sm text-amber-700 font-medium">
+              사주에 꼭 맞는 자원오행 감정 + 정통 수리사격(원형이정 작명법)
+            </p>
           </div>
-          <Button className="w-full bg-blue-600 hover:bg-blue-700">
-            마스터 작명 상담 신청 (₩100,000)
+          <Button className="w-full bg-amber-700 hover:bg-amber-800 text-white text-base py-6">
+            마스터 작명 상담 신청 (₩300,000)
           </Button>
         </CardContent>
       </Card>
     </div>
   );
 }
+
