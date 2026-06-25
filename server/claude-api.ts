@@ -1,8 +1,12 @@
-// Gemini SDK v6
-import { GoogleGenAI } from "@google/genai";
+import Anthropic from "@anthropic-ai/sdk";
 
 export type Role = "user" | "assistant";
-export type Message = { role: Role; content: string };
+
+export type Message = {
+  role: Role;
+  content: string;
+};
+
 export type ClaudeInvokeParams = {
   messages: Message[];
   maxTokens?: number;
@@ -11,6 +15,7 @@ export type ClaudeInvokeParams = {
   cachedSystemPrompt?: string;
   dynamicSystemPrompt?: string;
 };
+
 export type ClaudeInvokeResult = {
   content: string;
   stopReason: string;
@@ -22,51 +27,88 @@ export type ClaudeInvokeResult = {
   };
 };
 
-const GEMINI_MODEL = "gemini-2.5-flash";
+const MODEL = "claude-sonnet-4-6";
 
 export async function invokeClaudeAPI(
   params: ClaudeInvokeParams
 ): Promise<ClaudeInvokeResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
+  const apiKey = process.env.CLAUDE_API_KEY;
+  if (!apiKey) throw new Error("CLAUDE_API_KEY is not configured");
 
-  const ai = new GoogleGenAI({ apiKey });
+  const client = new Anthropic({ apiKey });
 
-  let systemText = "";
+  type TextBlock = {
+    type: "text";
+    text: string;
+    cache_control?: { type: "ephemeral" };
+  };
+
+  let systemBlocks: TextBlock[] | undefined;
+
   if (params.cachedSystemPrompt) {
-    systemText = params.cachedSystemPrompt;
-    if (params.dynamicSystemPrompt?.trim())
-      systemText += "\n\n" + params.dynamicSystemPrompt;
+    systemBlocks = [
+      {
+        type: "text",
+        text: params.cachedSystemPrompt,
+        cache_control: { type: "ephemeral" },
+      },
+    ];
+    if (params.dynamicSystemPrompt?.trim()) {
+      systemBlocks.push({
+        type: "text",
+        text: params.dynamicSystemPrompt,
+      });
+    }
   } else if (params.systemPrompt) {
-    systemText = params.systemPrompt;
+    systemBlocks = [
+      {
+        type: "text",
+        text: params.systemPrompt,
+        ...(params.enableCaching && { cache_control: { type: "ephemeral" } }),
+      },
+    ];
   }
 
-  const lastMsg = params.messages[params.messages.length - 1];
-  const input = systemText
-    ? systemText + "\n\n" + lastMsg.content
-    : lastMsg.content;
-
   try {
-    const response = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: input,
-      config: { maxOutputTokens: params.maxTokens ?? 2048 },
+    const response = await client.messages.create({
+      model: MODEL,
+      max_tokens: params.maxTokens ?? 2048,
+      ...(systemBlocks && { system: systemBlocks }),
+      messages: params.messages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      })),
     });
 
-    const text = response.text ?? "";
-    if (!text) throw new Error("No text content in Gemini response");
+    const text = response.content
+      .filter((b) => b.type === "text")
+      .map((b) => (b as { type: "text"; text: string }).text)
+      .join("");
 
-    const inputTokens = response.usageMetadata?.promptTokenCount ?? 0;
-    const outputTokens = response.usageMetadata?.candidatesTokenCount ?? 0;
-    console.log(`[Gemini Usage] Input: ${inputTokens}, Output: ${outputTokens}`);
+    if (!text) throw new Error("No text content in Claude response");
+
+    const inputTokens = response.usage.input_tokens;
+    const outputTokens = response.usage.output_tokens;
+    const cacheCreationTokens =
+      (response.usage as Record<string, number>).cache_creation_input_tokens ?? 0;
+    const cacheReadTokens =
+      (response.usage as Record<string, number>).cache_read_input_tokens ?? 0;
+
+    if (cacheCreationTokens || cacheReadTokens) {
+      console.log(
+        `[Claude Caching] Creation: ${cacheCreationTokens}, Read: ${cacheReadTokens}, Input: ${inputTokens}, Output: ${outputTokens}`
+      );
+    } else {
+      console.log(`[Claude Usage] Input: ${inputTokens}, Output: ${outputTokens}`);
+    }
 
     return {
       content: text,
-      stopReason: "stop",
-      usage: { inputTokens, outputTokens },
+      stopReason: response.stop_reason ?? "stop",
+      usage: { inputTokens, outputTokens, cacheCreationTokens, cacheReadTokens },
     };
   } catch (err) {
-    console.error("[Gemini API Exception]", err);
+    console.error("[Claude API Exception]", err);
     throw err;
   }
 }
