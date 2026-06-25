@@ -294,7 +294,7 @@ export const namingServices = mysqlTable("namingServices", {
   // 결과: 수리사격 (획수 기반)
   suriNumber: int("suriNumber"), // 1-81
   suriGilhyung: varchar("suriGilhyung", { length: 10 }), // 吉/凶/半吉半凶
-  suriResult: varchar("suriResult", { length: 20 }),
+  suriResult: text("suriResult"),
 
   // 결과: 불용문자
   bulmyongFlag: boolean("bulmyongFlag").default(false).notNull(),
