@@ -160,13 +160,19 @@ export function judgePadoOhaeng(padoOhaeng: string[]): {
   }
 
   // 상생 관계 확인 (양방향 — 성씨 제외, 이름 두 글자 기준)
-  if (OHAENG_SANGSUNG[first] === second || OHAENG_SANGSUNG[second] === first) {
-    return { result: "양호", detail: `${first}↔${second} (상생)` };
+  if (OHAENG_SANGSUNG[first] === second) {
+    return { result: "양호", detail: `${first}→${second} (상생)` };
+  }
+  if (OHAENG_SANGSUNG[second] === first) {
+    return { result: "양호", detail: `${second}→${first} (상생)` };
   }
 
   // 상극 관계 확인 (양방향)
-  if (OHAENG_SANGGEUK[first] === second || OHAENG_SANGGEUK[second] === first) {
-    return { result: "보완 필요", detail: `${first}↔${second} (상극)` };
+  if (OHAENG_SANGGEUK[first] === second) {
+    return { result: "보완 필요", detail: `${first}剋${second} (상극)` };
+  }
+  if (OHAENG_SANGGEUK[second] === first) {
+    return { result: "보완 필요", detail: `${second}剋${first} (상극)` };
   }
 
   return { result: "중립", detail: `${first}↔${second} (무관)` };
