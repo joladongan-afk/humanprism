@@ -12,8 +12,11 @@
       "dest": "https://humanprism-production.up.railway.app/trpc/$1"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/index.html"
     }
   ]
 }
