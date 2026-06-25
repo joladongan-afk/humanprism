@@ -31,6 +31,20 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  // DB 컬럼 자동 마이그레이션
+  try {
+    const mysql = await import("mysql2/promise");
+    const conn = await mysql.createConnection(process.env.DATABASE_URL as string);
+    await conn.execute("ALTER TABLE namingServices MODIFY COLUMN suriResult TEXT");
+    await conn.execute("ALTER TABLE namingServices MODIFY COLUMN jawonResult TEXT");
+    await conn.end();
+    console.log("[Migration] namingServices columns updated");
+  } catch (e: any) {
+    // 이미 변경됐거나 테이블 없으면 무시
+    if (!e.message?.includes("Duplicate")) {
+      console.log("[Migration] skipped:", e.message);
+    }
+  }
   const app = express();
   const server = createServer(app);
   // Trust proxy: Manus 프록시 환경에서 X-Forwarded-Proto 헤더 신뢰
