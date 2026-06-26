@@ -225,3 +225,23 @@ export function getRandomComment(type: keyof RollingCommentsData): string {
   const comments = rollingComments[type];
   return comments[Math.floor(Math.random() * comments.length)];
 }
+/**
+ * 한글 독음으로 한자 검색 (드롭다운용)
+ * huneum 형식: "- 원" → 뒤의 독음 부분으로 검색
+ */
+export function searchHanjaBySound(sound: string, limit: number = 30): HanjaRecord[] {
+  if (!sound || sound.trim().length === 0) return [];
+  const query = sound.trim();
+  const results: HanjaRecord[] = [];
+  for (const record of hanjaDb.values()) {
+    // huneum 예: "- 원" 또는 "근원 원" 등
+    const parts = record.huneum.split(" ");
+    const lastPart = parts[parts.length - 1];
+    if (lastPart === query) {
+      results.push(record);
+    }
+    if (results.length >= limit) break;
+  }
+  return results;
+}
+
