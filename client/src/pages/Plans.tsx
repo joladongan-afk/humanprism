@@ -327,9 +327,11 @@ export default function Plans() {
           </h1>
           <div className="gold-divider w-40 mx-auto mt-8" />
           <p className="text-white/85 mt-8 leading-relaxed max-w-3xl mx-auto text-xl md:text-2xl">
-            고객님 상황에 맞게 상담 양식을 선택하세요.
+            01~04는 AI 문답식 사주 상담입니다.
             <br />
-            각 플랜은 당신의 내면을 깊이 있게 들여다보기 위해 설계되었습니다.
+            7대 사주명가의 비전을 담은 AI가 24시간 응답합니다.
+            <br />
+            05~06은 마스터와 직접 대화하는 1:1 상담입니다.
           </p>
         </div>
       </div>
