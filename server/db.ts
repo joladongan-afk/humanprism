@@ -95,7 +95,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     if (!values.lastSignedIn) values.lastSignedIn = new Date();
     if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
+    await db.insert(users).values(values).onDuplicateKeyUpdate({ set: { ...updateSet, loginCount: sql`${users.loginCount} + 1` } });
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;
@@ -909,14 +909,16 @@ export async function listAllPayments() {
  * - totalUsers: 누적 총 회원 수
  * - totalSessions: 누적 상담 세션 수
  */
-export async function getPublicStats(): Promise<{ totalUsers: number; totalSessions: number }> {
+export async function getPublicStats(): Promise<{ totalUsers: number; totalSessions: number; totalLogins: number }> {
   const db = await getDb();
-  if (!db) return { totalUsers: 0, totalSessions: 0 };
+  if (!db) return { totalUsers: 0, totalSessions: 0, totalLogins: 0 };
   const [u] = await db.select({ c: count() }).from(users);
   const [s] = await db.select({ c: count() }).from(consultSessions);
+  const [l] = await db.select({ c: sql<number>`sum(${users.loginCount})` }).from(users);
   return {
     totalUsers: Number(u?.c ?? 0),
     totalSessions: Number(s?.c ?? 0),
+    totalLogins: Number(l?.c ?? 0),
   };
 }
 
@@ -994,4 +996,14 @@ export async function getMembershipStats(now = new Date()) {
     totalSessions,
     sessionsToday,
   };
+}
+
+/**
+ * 특정 유저의 무료 이름감정 사용 횟수 조회 (1인 1회 제한용)
+ */
+export async function getUserFreeReadingCount(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const [r] = await db.select({ c: count() }).from(namingServices).where(eq(namingServices.userId, userId));
+  return Number(r?.c ?? 0);
 }
