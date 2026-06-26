@@ -80,8 +80,8 @@ function SuriCard({ grade, meta }: { grade: SuriGrade; meta: { name: string; des
     <div className="border border-gray-100 rounded-xl p-4 space-y-2">
       <div className="flex items-center justify-between">
         <div>
-          <p className="font-bold text-gray-800 text-sm">{meta.name}</p>
-          <p className="text-xs text-gray-500 mt-0.5">{meta.desc}</p>
+          <p className="font-bold text-gray-800 text-base">{meta.name}</p>
+          <p className="text-sm text-gray-500 mt-0.5">{meta.desc}</p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-black text-blue-900">{grade.number}</p>
@@ -93,7 +93,7 @@ function SuriCard({ grade, meta }: { grade: SuriGrade; meta: { name: string; des
           {grade.gilhyung}
         </Badge>
       </div>
-      <p className="text-xs text-gray-600 bg-blue-50 rounded-lg p-3 leading-relaxed border border-blue-100">
+      <p className="text-base text-gray-700 bg-blue-50 rounded-lg p-4 leading-relaxed border border-blue-100">
         {grade.description}
       </p>
     </div>
@@ -124,11 +124,11 @@ export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingR
             {getIcon(jawon.result)}
             자원오행(字源五行) 분석
           </CardTitle>
-          <CardDescription>한자 부수(部首)를 기준으로 분석한 오행 에너지</CardDescription>
+          <CardDescription className="text-sm">한자 부수(部首)를 기준으로 분석한 오행 에너지</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {!jawon.hasHanja ? (
-            <div className="text-sm text-gray-500 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="text-base text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200">
               한자를 입력하시면 자원오행을 분석합니다. 이름의 각 한자가 지닌 오행 기운을 확인하세요.
             </div>
           ) : (
@@ -148,7 +148,7 @@ export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingR
                 </Badge>
               </div>
               {jawon.detail && (
-                <div className="text-sm text-gray-600 p-3 bg-amber-50 rounded-lg border border-amber-100">
+                <div className="text-base text-gray-700 p-4 bg-amber-50 rounded-lg border border-amber-100">
                   {jawon.detail}
                 </div>
               )}
@@ -186,7 +186,7 @@ export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingR
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-red-700 mb-2">이름에 사용을 피해야 할 한자가 포함되어 있습니다.</p>
+            <p className="text-base text-red-700 mb-2">이름에 사용을 피해야 할 한자가 포함되어 있습니다.</p>
             <div className="flex flex-wrap gap-2">
               {bulmyong.chars.map((char, idx) => (
                 <Badge key={idx} variant="destructive">{char}</Badge>
@@ -205,10 +205,10 @@ export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingR
           <Badge className={RESULT_COLOR[overall] || "bg-gray-100 text-gray-600"}>
             {overall}
           </Badge>
-          <div className="text-sm text-gray-700 italic p-3 bg-white rounded-lg border border-emerald-100 leading-relaxed">
+          <div className="text-base text-gray-700 italic p-4 bg-white rounded-lg border border-emerald-100 leading-relaxed">
             &ldquo;{comment}&rdquo;
           </div>
-          <p className="text-xs text-emerald-700 font-medium text-center pt-1">
+          <p className="text-sm text-emerald-700 font-medium text-center pt-1">
             더 깊은 분석은 마스터 작명 상담을 통해 받으실 수 있습니다.
           </p>
         </CardContent>
