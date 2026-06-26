@@ -27,15 +27,14 @@ export default function NamingNew() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader activeOverride="/naming/new" />
 
-      {/* 페이지 헤더 — 개인상담과 동일한 hero 양식 */}
-      <div className="page-hero relative w-full h-[360px] flex items-center bg-gradient-to-br from-slate-950 via-blue-900 to-slate-900 overflow-hidden">
-        {/* 배경 블러 오브 */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-700/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl" />
+      {/* 페이지 헤더 — 에메랄드 계열 */}
+      <div className="page-hero relative w-full h-[360px] flex items-center bg-gradient-to-br from-slate-950 via-emerald-900 to-teal-900 overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-600/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500/25 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-green-600/20 rounded-full blur-3xl" />
 
         <div className="relative z-10 w-full text-center px-6 space-y-4">
-          <span className="text-base md:text-lg tracking-[0.4em] text-cyan-300/80 font-semibold">
+          <span className="text-base md:text-lg tracking-[0.4em] text-emerald-300/80 font-semibold">
             NAME READING & NAMING
           </span>
           <h1 className="hanja-display text-5xl md:text-6xl text-white font-bold mt-2">
