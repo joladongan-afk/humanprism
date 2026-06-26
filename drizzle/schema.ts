@@ -29,6 +29,7 @@ export const users = mysqlTable("users", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+  loginCount: int("loginCount").default(0).notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -307,6 +308,7 @@ export const namingServices = mysqlTable("namingServices", {
   certificateNumber: varchar("certificateNumber", { length: 50 }), // "HPS-20260618-001" 형식
   certificatePdfUrl: varchar("certificatePdfUrl", { length: 500 }),
 
+  namingConsentAt: timestamp("namingConsentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   expiresAt: timestamp("expiresAt"), // 7일 후 자동 삭제 대상
 });
@@ -346,6 +348,7 @@ export const selfNamingHistories = mysqlTable("selfNamingHistories", {
   certificateNumber: varchar("certificateNumber", { length: 50 }),
   certificatePdfUrl: varchar("certificatePdfUrl", { length: 500 }),
 
+  namingConsentAt: timestamp("namingConsentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   expiresAt: timestamp("expiresAt"), // 1개월 후 자동 삭제 대상
 });
