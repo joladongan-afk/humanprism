@@ -4,39 +4,33 @@ import { Button } from "@/components/ui/button";
 const steps = [
   {
     number: "01",
-    title: "사주 분석",
+    title: "마스터 사주 분석",
     desc: "태어난 계절과 일간으로 기운의 지도를 그립니다",
-    icon: "☯",
   },
   {
     number: "02",
-    title: "필요 오행 확정",
-    desc: "30년 안목으로 당신에게 부족한 기운을 찾습니다",
-    icon: "🔥",
+    title: "핵심 오행 도출",
+    desc: "30년 안목으로 당신에게 꼭 필요한 기운을 찾습니다",
   },
   {
     number: "03",
     title: "한자 후보 선별",
     desc: "자원오행이 맞는 한자만 엄격하게 추립니다",
-    icon: "漢",
   },
   {
     number: "04",
-    title: "수리사격 검증",
+    title: "수리사격(四格) 검증",
     desc: "원형이정 4격이 모두 길한 수리인지 확인합니다",
-    icon: "四",
   },
   {
     number: "05",
-    title: "발음오행 검증",
+    title: "소리 오행 검증 (선택)",
     desc: "소리의 흐름이 조화로운지 귀로 확인합니다",
-    icon: "♪",
   },
   {
     number: "06",
     title: "최종 작명",
     desc: "사주와 이름이 하나가 되는 이름을 선물합니다",
-    icon: "✦",
   },
 ];
 
@@ -82,17 +76,14 @@ export function MasterNamingTab() {
                 key={idx}
                 className="relative bg-white border border-amber-100 rounded-xl p-4 flex flex-col gap-2 shadow-sm"
               >
-                {/* 번호 배지 */}
                 <div className="flex items-center gap-2">
                   <span className="w-7 h-7 rounded-full bg-amber-700 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
                     {step.number}
                   </span>
-                  <span className="text-lg">{step.icon}</span>
+                  <p className="text-sm font-bold text-amber-900 leading-tight">{step.title}</p>
                 </div>
-                <p className="text-sm font-bold text-amber-900">{step.title}</p>
-                <p className="text-xs text-gray-500 leading-relaxed">{step.desc}</p>
-                {/* 화살표 (마지막 제외) */}
-                {idx < steps.length - 1 && idx % 2 === 0 && (
+                <p className="text-xs text-gray-500 leading-relaxed pl-9">{step.desc}</p>
+                {idx % 2 === 0 && idx < steps.length - 1 && (
                   <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-amber-300 text-lg z-10">▶</span>
                 )}
               </div>
