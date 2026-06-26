@@ -6,12 +6,6 @@
 
 import { getHanja, getSurisageon, isBulmyong } from "./dataLoader";
 
-const STROKE_CORRECTION_MAP: Record<string, number> = {
-  "氵": 4, "火": 4, "忄": 4,
-  "辶": 3, "廾": 3, "彳": 3, "艹": 3,
-  "亻": 2, "刂": 2, "阝": 3, "广": 3, "门": 3,
-};
-
 const OHAENG_SANGSUNG: Record<string, string> = {
   "木": "火", "火": "土", "土": "金", "金": "水", "水": "木",
 };
@@ -24,10 +18,6 @@ export function calculateStrokes(char: string): number {
   const hanjaRecord = getHanja(char);
   if (!hanjaRecord) return 0;
   let strokes = hanjaRecord.strokes;
-  const radical = hanjaRecord.radical;
-  if (STROKE_CORRECTION_MAP[radical]) {
-    strokes = STROKE_CORRECTION_MAP[radical];
-  }
   return strokes;
 }
 
