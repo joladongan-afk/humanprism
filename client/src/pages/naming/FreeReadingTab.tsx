@@ -33,12 +33,21 @@ interface FreeReadingResultData {
   };
 }
 
+interface InputData {
+  name1Korean: string;
+  name1Hanja?: string;
+  name2Korean: string;
+  name2Hanja?: string;
+}
+
 export function FreeReadingTab() {
   const [result, setResult] = useState<FreeReadingResultData | null>(null);
+  const [inputData, setInputData] = useState<InputData | null>(null);
   const [showResult, setShowResult] = useState(false);
 
-  const handleSuccess = (data: FreeReadingResultData) => {
+  const handleSuccess = (data: FreeReadingResultData, input?: InputData) => {
     setResult(data);
+    setInputData(input || null);
     setShowResult(true);
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -64,6 +73,7 @@ export function FreeReadingTab() {
           <div className="w-full max-w-3xl">
             <FreeReadingResult
               data={result}
+              inputData={inputData || undefined}
               onPdfDownload={handlePdfDownload}
               onShare={handleShare}
             />
