@@ -2,7 +2,6 @@
  * 작명 서비스 계산 엔진
  * 
  * 자원오행·수리사격(4격) 계산을 담당한다.
- * ※ 파동오행/소리오행 관련 기능 완전 제거 (2026.06 상표권 이슈)
  */
 
 import { getHanja, getSurisageon, isBulmyong } from "./dataLoader";
@@ -120,7 +119,7 @@ export function checkBulmyong(nameHanja: string): {
 }
 
 /**
- * 종합 판정 (파동오행 제거 — 자원오행 + 수리사격 기반)
+ * 종합 판정 (자원오행 + 수리사격 기반)
  */
 export function judgeOverall(
   jawonResult: string,
