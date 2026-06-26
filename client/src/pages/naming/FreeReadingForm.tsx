@@ -213,6 +213,10 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
         name1Hanja: data.name1Hanja,
         name2Korean: data.name2Korean,
         name2Hanja: data.name2Hanja,
+        birthYear: data.birthYear ? parseInt(data.birthYear) : undefined,
+        birthMonth: data.birthMonth ? parseInt(data.birthMonth) : undefined,
+        birthDay: data.birthDay ? parseInt(data.birthDay) : undefined,
+        calendarType: data.calendarType,
         namingConsent: data.namingConsent,
       });
     } finally {
