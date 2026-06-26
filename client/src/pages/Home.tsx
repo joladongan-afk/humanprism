@@ -265,8 +265,7 @@ export default function Home() {
               30년 사주 장인이 말해주는
             </p>
             <h1 className="hanja-display text-4xl md:text-6xl lg:text-7xl leading-[1.25] mt-4 mb-4 font-bold">
-              <span className="word-first text-white">당신 인생의</span><br />
-              <MosaicTextReveal text="한 끝" fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44} colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']} />
+              <MosaicTextReveal text="당신 인생의 한 끝" fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44} colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']} />
             </h1>
             <div className="max-w-2xl mb-6">
               <p className="text-3xl md:text-4xl font-bold leading-relaxed mb-2 bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">누구에게나 자신만이 가진</p>
@@ -318,9 +317,8 @@ export default function Home() {
             <p className="hanja-display text-lg sm:text-xl font-bold bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">
               30년 사주 장인이 말해주는
             </p>
-            <h1 className="hanja-display mt-3 text-[2.6rem] leading-[1.18] font-bold">
-              <span className="text-white">당신 인생의</span>{" "}
-              <span className="bg-gradient-to-r from-fuchsia-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">한 끝</span>
+            <h1 className="hanja-display mt-3 text-[2.6rem] leading-[1.18] font-bold bg-gradient-to-r from-fuchsia-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
+              당신 인생의 한 끝
             </h1>
             <div className="mt-4 w-full">
               <p className="text-2xl font-bold mb-1 bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">누구에게나 자신만이 가진</p>
