@@ -37,6 +37,9 @@ async function startServer() {
     const conn = await mysql.createConnection(process.env.DATABASE_URL as string);
     await conn.execute("ALTER TABLE namingServices MODIFY COLUMN suriResult TEXT");
     await conn.execute("ALTER TABLE namingServices MODIFY COLUMN jawonResult TEXT");
+    // loginCount, namingConsentAt 컬럼 추가 (이미 있으면 무시)
+    try { await conn.execute("ALTER TABLE users ADD COLUMN loginCount INT NOT NULL DEFAULT 0"); } catch(e: any) { if (!e.message?.includes("Duplicate")) console.log("[Migration] loginCount:", e.message); }
+    try { await conn.execute("ALTER TABLE namingServices ADD COLUMN namingConsentAt DATETIME"); } catch(e: any) { if (!e.message?.includes("Duplicate")) console.log("[Migration] namingConsentAt:", e.message); }
     await conn.end();
     console.log("[Migration] namingServices columns updated");
   } catch (e: any) {
