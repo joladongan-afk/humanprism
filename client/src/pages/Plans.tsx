@@ -327,11 +327,13 @@ export default function Plans() {
           </h1>
           <div className="gold-divider w-40 mx-auto mt-8" />
           <p className="text-white/85 mt-8 leading-relaxed max-w-3xl mx-auto text-xl md:text-2xl">
-            01~04는 AI 문답식 사주 상담입니다.
+            <span className="font-bold text-amber-300">01–04</span> | AI 문답식 사주 상담
             <br />
-            7대 사주명가의 비전을 담은 AI가 24시간 응답합니다.
+            <span className="text-white/70 text-lg">7대 사주명가의 비전을 담은 AI가 24시간 응답합니다.</span>
+            <br /><br />
+            <span className="font-bold text-amber-300">05–06</span> | 마스터 직접 1:1 상담
             <br />
-            05~06은 마스터와 직접 대화하는 1:1 상담입니다.
+            <span className="text-white/70 text-lg">경청자 님과 직접 대화합니다.</span>
           </p>
         </div>
       </div>
