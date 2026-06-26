@@ -268,10 +268,18 @@ export default function Home() {
               <span className="word-first text-white">당신 인생의</span><br />
               <MosaicTextReveal text="한 끝" fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44} colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']} />
             </h1>
-            <p className="text-2xl md:text-3xl font-bold max-w-2xl leading-[1.6] mb-4 text-white/90">
-              누구에게나 자신만이 가진 한 칼이 있습니다.<br />
-              제가 그 한 칼을 찾아드립니다.
-            </p>
+            <div className="max-w-2xl mb-6">
+              <p className="text-2xl md:text-3xl font-bold text-white/90 leading-relaxed mb-2">누구에게나 자신만이 가진</p>
+              <div className="flex items-baseline gap-2 mb-3">
+                <MosaicTextReveal
+                  text="한 칼이 있습니다."
+                  fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 56 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 44 : 36}
+                  colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']}
+                  startDelay={200}
+                />
+              </div>
+              <p className="text-2xl md:text-3xl font-bold text-white/80">제가 그 한 칼을 찾아드립니다.</p>
+            </div>
             <p className="text-xl md:text-2xl lg:text-[1.7rem] font-semibold text-white max-w-2xl leading-[1.55] mt-1">
               7대 사주명가의 비전을 품은<br />
               <span className="aurora-green font-bold">초 격차 사주 문답</span>
@@ -314,10 +322,11 @@ export default function Home() {
               <span className="text-white">당신 인생의</span>{" "}
               <span className="bg-gradient-to-r from-fuchsia-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">한 끝</span>
             </h1>
-            <p className="mt-4 text-lg font-semibold leading-relaxed text-white/90">
-              누구에게나 자신만이 가진 한 칼이 있습니다.<br />
-              제가 그 한 칼을 찾아드립니다.
-            </p>
+            <div className="mt-4 w-full">
+              <p className="text-xl font-bold text-white/90 mb-1">누구에게나 자신만이 가진</p>
+              <p className="text-2xl font-bold bg-gradient-to-r from-fuchsia-300 via-purple-300 to-pink-300 bg-clip-text text-transparent mb-2">한 칼이 있습니다.</p>
+              <p className="text-xl font-bold text-white/80">제가 그 한 칼을 찾아드립니다.</p>
+            </div>
             <p className="mt-4 text-base sm:text-lg font-semibold text-white/90 leading-relaxed">
               7대 사주명가의 비전을 품은<br />
               <span className="aurora-green font-bold">초 격차 사주 문답</span>
