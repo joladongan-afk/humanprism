@@ -256,7 +256,7 @@ export interface NangangmangRecord {
 
 // 오행 상생 (생하는 오행)
 const OHAENG_SHENG: Record<string, string> = {
-  "木": "火", "火": "土", "土": "金", "金": "水", "水": "木",
+  "木": "水", "火": "木", "土": "火", "金": "土", "水": "金",
 };
 
 // 메모리 캐시
@@ -314,4 +314,5 @@ export function getRequiredOhaeng(ilgan: string, birthMonth: string): { primary:
   const secondary = OHAENG_SHENG[primary] || "";
   return { primary, secondary };
 }
+
 
