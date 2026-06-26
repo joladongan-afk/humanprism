@@ -162,7 +162,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
       {/* 헤더 */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-emerald-900">무료 이름 감정</h2>
-        <p className="text-gray-500 mt-1">성씨와 이름, 생년월일을 입력하면 자원오행·발음오행·수리사격을 분석해드립니다.</p>
+        <p className="text-gray-500 mt-1">성씨와 이름, 생년월일을 입력하면 자원오행과 수리사격을 분석해드립니다.</p>
       </div>
 
       <Form {...form}>
