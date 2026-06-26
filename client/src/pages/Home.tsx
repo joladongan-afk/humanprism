@@ -124,23 +124,23 @@ function StarWhisper() {
 const PHILOSOPHY = [
   {
     no: "01",
-    title: "당신만의 스토리",
-    body: "당신의 고유한 인생 서사를 존중합니다. 그 흐름을 놓치지 않고, 다양한 인문과학에 기반하여 한 편의 짧은 수필처럼 풀어 드립니다.",
+    title: "당신만의 스토리를 듣다",
+    body: "똑같은 사주는 있어도 똑같은 인생은 없습니다. 쌍둥이도 성장하면서 삶의 결이 달라집니다. 사주만으로 알 수 없는 인생의 행간을 읽어냅니다. 당신만의 이야기를 듣겠습니다. 그 안에 답이 있습니다.",
   },
   {
     no: "02",
-    title: "대화형 상담",
-    body: "일방적으로 답을 토해내지 않습니다. 먼저 깊이 듣고, 능동적으로 질문하며, 당신이 할 수 있는 최선의 선택을 돕습니다.",
+    title: "해결책은 당신에게 있다",
+    body: "정해진 답으로 당신의 가능성을 가두지 않습니다. 막힌 것이 있다면, 뚫어낼 방도를 찾습니다. 도저히 방도가 없다면, 견뎌낼 지혜를 궁리합니다. 스스로 한계를 두지 마세요. 제가 돕겠습니다.",
   },
   {
     no: "03",
-    title: "독보적 인생 설계 알고리즘",
-    body: "고금의 사주 명인, 철학자, 심리학자, 경제학자가 한 데 모여 오직 한 사람을 위해 모든 지성을 쏟아내는 듯한 통찰을 보여줍니다.",
+    title: "사주보다 사람이 먼저다",
+    body: "사람에게서 30년간 배운 지혜입니다. 책에서 배운 사주 이론이 아닙니다. 틀리면서 부끄럼도 겪어보고, 맞추면서 어깨도 으쓱해봤습니다. 진정한 승자는 그 삶을 견뎌낸 당신입니다.",
   },
   {
     no: "04",
-    title: "당신의 특장점 발견",
-    body: "당신은 지금보다 나아질 수 있습니다. 저는 당신의 강점을 찾아, 보다 나은 선택과 보다 나은 결과로 나아가도록 전력을 다하겠습니다.",
+    title: "문을 두드리세요. 기회가 열립니다.",
+    body: "스스로 놓지 않으면, 길은 반드시 생깁니다. 스스로 포기하면 그게 진짜 끝인 겁니다. 제가 길을 찾는 당신과 진심으로 함께 가겠습니다. 문을 두드리세요.",
   },
 ];
 
@@ -262,28 +262,19 @@ export default function Home() {
         <div className="hidden lg:block absolute left-[160px] top-[46%] translate-y-[-50%] z-10 max-w-2xl fade-up">
           <div className="flex flex-col justify-between h-full">
             <p className="hanja-display text-2xl md:text-4xl lg:text-[2.6rem] leading-relaxed font-bold bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">
-              AI와 30년 사주 장인의 합작
+              30년 사주 장인이 말해주는
             </p>
             <h1 className="hanja-display text-4xl md:text-6xl lg:text-7xl leading-[1.25] mt-4 mb-4 font-bold">
-              <span className="word-first text-white">당신의</span><br />
-              <MosaicTextReveal text="다채로움" fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44} colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']} />
-              <span className="word-last text-white">을 듣다</span>
+              <span className="word-first text-white">당신 인생의</span><br />
+              <MosaicTextReveal text="한 끝" fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44} colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']} />
             </h1>
-            <p className="text-3xl md:text-4xl font-bold max-w-2xl leading-[1.5] mb-4">
-              <span className="text-white">AI를 초월한 궁극의</span><br />
-              <span className="inline-flex items-center gap-3 flex-wrap mt-2">
-                <MosaicTextReveal
-                  text="문답식"
-                  fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 72 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 56 : 40}
-                  colorPalette={['#38bdf8', '#0ea5e9', '#0284c7', '#22d3ee', '#06b6d4', '#3b82f6', '#60a5fa', '#7dd3fc']}
-                  startDelay={150}
-                />
-                <span className="text-5xl md:text-6xl lg:text-7xl font-bold text-white">사주풀이</span>
-              </span>
+            <p className="text-2xl md:text-3xl font-bold max-w-2xl leading-[1.6] mb-4 text-white/90">
+              누구에게나 자신만이 가진 한 칼이 있습니다.<br />
+              제가 그 한 칼을 찾아드립니다.
             </p>
             <p className="text-xl md:text-2xl lg:text-[1.7rem] font-semibold text-white max-w-2xl leading-[1.55] mt-1">
-              근현대 <span className="aurora-green font-bold">7대 사주 명가의 비전(秘傳)</span>을,<br />
-              30년 장인이 AI 알고리즘으로 <span className="text-white font-extrabold">벼려내다.</span>
+              7대 사주명가의 비전을 품은<br />
+              <span className="aurora-green font-bold">초 격차 사주 문답</span>
             </p>
             <div className="mt-7 flex items-center gap-3 flex-wrap">
               <Link href="/plans">
@@ -317,21 +308,19 @@ export default function Home() {
           {/* 메인 카피 */}
           <div className="fade-up w-full max-w-md">
             <p className="hanja-display text-lg sm:text-xl font-bold bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">
-              AI와 30년 사주 장인의 합작
+              30년 사주 장인이 말해주는
             </p>
             <h1 className="hanja-display mt-3 text-[2.6rem] leading-[1.18] font-bold">
-              <span className="text-white">당신의</span>{" "}
-              <span className="bg-gradient-to-r from-fuchsia-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">다채로움</span>
-              <span className="text-white">을 듣다</span>
+              <span className="text-white">당신 인생의</span>{" "}
+              <span className="bg-gradient-to-r from-fuchsia-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">한 끝</span>
             </h1>
-            <p className="mt-4 text-2xl font-bold leading-snug">
-              <span className="text-white">AI를 초월한 궁극의</span><br />
-              <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-300 bg-clip-text text-transparent">문답식</span>{" "}
-              <span className="text-white">사주풀이</span>
+            <p className="mt-4 text-lg font-semibold leading-relaxed text-white/90">
+              누구에게나 자신만이 가진 한 칼이 있습니다.<br />
+              제가 그 한 칼을 찾아드립니다.
             </p>
             <p className="mt-4 text-base sm:text-lg font-semibold text-white/90 leading-relaxed">
-              근현대 <span className="aurora-green font-bold">7대 사주 명가의 비전(秘傳)</span>을,<br />
-              30년 장인이 AI 알고리즘으로 <span className="text-white font-extrabold">벼려내다.</span>
+              7대 사주명가의 비전을 품은<br />
+              <span className="aurora-green font-bold">초 격차 사주 문답</span>
             </p>
           </div>
 
@@ -369,7 +358,8 @@ export default function Home() {
             마스터의 철학
           </h2>
           <p className="text-center text-lg text-white/70 mb-12 max-w-2xl mx-auto">
-            30년의 경험과 현대 심리학, 경제학이 만난 사주 상담의 새로운 패러다임
+            잘난 사주는 드뭅니다. 하지만 누구나 잘 난 구석 하나는 있습니다.
+            제가 그 한 끝을 찾아드립니다.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {PHILOSOPHY.map((item) => (
