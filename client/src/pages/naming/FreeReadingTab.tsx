@@ -29,6 +29,7 @@ interface FreeReadingResultData {
     };
     overall: string;
     comment: string;
+    requiredOhaeng?: { primary: string; secondary: string } | null;
   };
 }
 
