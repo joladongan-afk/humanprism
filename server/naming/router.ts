@@ -17,6 +17,7 @@ import {
   judgeOverall,
 } from "./calculator";
 import { getRandomComment, initializeNamingData, searchHanjaBySound } from "./dataLoader";
+import { getUserFreeReadingCount } from "../db";
 
 initializeNamingData();
 
@@ -41,14 +42,26 @@ export const namingRouter = router({
         name1Hanja: z.string().optional(),
         name2Korean: z.string().min(1, "끝 글자를 입력해주세요"),
         name2Hanja: z.string().optional(),
+        namingConsent: z.boolean().refine(v => v === true, { message: "개인정보 수집에 동의해주세요" }),
       })
     )
     .mutation(async ({ ctx, input }) => {
       try {
+        // 1인 1회 제한 체크
+        const usedCount = await getUserFreeReadingCount(ctx.user.id);
+        if (usedCount > 0) {
+          throw new Error("무료 이름 감정은 1인 1회만 이용하실 수 있습니다. 더 자세한 분석은 마스터 작명 상담을 이용해 주세요.");
+        }
+
         const name1Hanja = input.name1Hanja || "";
         const name2Hanja = input.name2Hanja || "";
         const surnameHanja = input.surnameHanja || "";
         const nameHanja = name1Hanja + name2Hanja;
+
+        // 한자 미입력 시 차단
+        if (!name1Hanja && !name2Hanja) {
+          throw new Error("한자를 입력해야 이름 감정이 가능합니다. 이름 글자의 한자를 선택해 주세요.");
+        }
 
         // 1. 자원오행 계산 (한자가 있을 때만)
         const hasHanja = name1Hanja.length > 0 || name2Hanja.length > 0;
@@ -119,6 +132,7 @@ export const namingRouter = router({
           overallResult,
           rollingComment,
           certificateNumber,
+          namingConsentAt: new Date(),
           expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         }).$returningId();
 
