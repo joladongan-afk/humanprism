@@ -47,10 +47,12 @@ export const namingRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // 1인 1회 제한 체크
-        const usedCount = await getUserFreeReadingCount(ctx.user.id);
-        if (usedCount > 0) {
-          throw new Error("무료 이름 감정은 1인 1회만 이용하실 수 있습니다. 더 자세한 분석은 마스터 작명 상담을 이용해 주세요.");
+        // 1인 1회 제한 체크 (관리자 계정은 면제)
+        if (ctx.user.role !== "admin") {
+          const usedCount = await getUserFreeReadingCount(ctx.user.id);
+          if (usedCount > 0) {
+            throw new Error("무료 이름 감정은 1인 1회만 이용하실 수 있습니다. 더 자세한 분석은 마스터 작명 상담을 이용해 주세요.");
+          }
         }
 
         const name1Hanja = input.name1Hanja || "";
