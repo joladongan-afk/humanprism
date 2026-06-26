@@ -307,9 +307,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                   </FormItem>
                 </div>
 
-                {/* 이름 미리보기 */}
                 <div className="flex flex-col items-center justify-center bg-emerald-50 rounded-xl border border-emerald-100 p-4">
-                  <p className="text-xs text-emerald-600 font-semibold mb-2">이름 미리보기</p>
                   <p className="text-3xl font-bold text-emerald-900 tracking-widest">
                     {form.watch("surnameKorean") || "○"}
                     {form.watch("name1Korean") || "○"}
@@ -352,7 +350,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                         <FormLabel>년</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <SelectTrigger><SelectValue placeholder="년도" /></SelectTrigger>
-                          <SelectContent className="max-h-48">
+                          <SelectContent className="max-h-80">
                             {YEARS.map((y) => (
                               <SelectItem key={y} value={String(y)}>{y}년</SelectItem>
                             ))}
