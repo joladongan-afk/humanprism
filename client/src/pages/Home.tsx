@@ -557,26 +557,13 @@ function CrystalPillarChart() {
 }
 
 /** 헤더 공개 통계 — 로고 옆, 사회적 증거(실데이터). 큰 글자로 눈에 띄게. */
-function HeaderStats({ stats }: { stats?: { totalUsers: number; totalSessions: number } }) {
-  if (!stats || (stats.totalUsers <= 0 && stats.totalSessions <= 0)) return null;
+function HeaderStats({ stats }: { stats?: { totalUsers: number; totalSessions: number; totalLogins: number } }) {
+  if (!stats || stats.totalLogins <= 0) return null;
   const fmt = (n: number) => n.toLocaleString("ko-KR");
   return (
-    <div className="flex items-center gap-1.5 sm:gap-3 pl-2 sm:pl-4 ml-0.5 sm:ml-1 border-l border-white/15 shrink">
-      {stats.totalUsers > 0 && (
-        <div className="flex items-baseline gap-0.5 sm:gap-1.5">
-          <span className="text-fuchsia-300 font-extrabold tabular-nums text-base sm:text-[1.6rem] leading-none">{fmt(stats.totalUsers)}</span>
-          <span className="text-white/80 font-semibold text-[0.7rem] sm:text-[1.05rem]">명<span className="hidden sm:inline"> 함께</span></span>
-        </div>
-      )}
-      {stats.totalUsers > 0 && stats.totalSessions > 0 && (
-        <span className="text-white/25 text-xs sm:text-[1.2rem]">·</span>
-      )}
-      {stats.totalSessions > 0 && (
-        <div className="flex items-baseline gap-0.5 sm:gap-1.5">
-          <span className="text-cyan-300 font-extrabold tabular-nums text-base sm:text-[1.6rem] leading-none">{fmt(stats.totalSessions)}</span>
-          <span className="text-white/80 font-semibold text-[0.7rem] sm:text-[1.05rem]">건<span className="hidden sm:inline"> 상담</span></span>
-        </div>
-      )}
+    <div className="flex items-center gap-2 sm:gap-3">
+      <span className="text-fuchsia-300 font-extrabold tabular-nums text-base sm:text-[1.6rem] leading-none">{fmt(stats.totalLogins)}</span>
+      <span className="text-white/80 font-semibold text-[0.7rem] sm:text-[1.05rem]">번<span className="hidden sm:inline"> 방문</span></span>
     </div>
   );
 }
