@@ -271,7 +271,7 @@ export type InsertSajuComparison = typeof sajuComparisons.$inferInsert;
 
 /**
  * 무료 이름감정 결과 저장 (7일 보관).
- * 사용자가 입력한 이름을 분석하여 자원오행·파동오행·수리사격·불용문자를 판정한다.
+ * 사용자가 입력한 이름을 분석하여 자원오행·수리사격·불용문자를 판정한다.
  */
 export const namingServices = mysqlTable("namingServices", {
   id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
@@ -287,7 +287,6 @@ export const namingServices = mysqlTable("namingServices", {
   jawonOhaeng: varchar("jawonOhaeng", { length: 5 }), // 木/火/土/金/水
   jawonResult: varchar("jawonResult", { length: 20 }), // "양호" / "보완 필요" 등
 
-  // 결과: 파동오행 (초성 기반)
   padoOhaeng: varchar("padoOhaeng", { length: 50 }), // "木→火" 등
   padoResult: varchar("padoResult", { length: 20 }),
 
