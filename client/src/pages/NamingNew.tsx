@@ -1,21 +1,11 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SiteHeader from "@/components/SiteHeader";
 import { useAuth } from "@/_core/hooks/useAuth";
 import LoginDialog from "@/components/LoginDialog";
 import { FreeReadingTab } from "./naming/FreeReadingTab";
 import { SelfNamingTab } from "./naming/SelfNamingTab";
 import { MasterNamingTab } from "./naming/MasterNamingTab";
-
-/**
- * 작명 서비스 메인 페이지
- * 
- * 3가지 하위 탭:
- * 1. 무료 이름 감정
- * 2. 셀프작명
- * 3. 마스터 작명
- */
 
 export default function NamingNew() {
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -37,15 +27,29 @@ export default function NamingNew() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader activeOverride="/naming/new" />
 
-      <div className="container py-12 max-w-4xl">
-        {/* 페이지 헤더 */}
-        <div className="mb-10 fade-up">
-          <span className="text-xs tracking-[0.4em] text-muted-foreground">NAME READING & NAMING</span>
-          <h1 className="hanja-display text-4xl mt-3">작명</h1>
-          <div className="gold-divider w-32 mt-6" />
-        </div>
+      {/* 페이지 헤더 — 개인상담과 동일한 hero 양식 */}
+      <div className="page-hero relative w-full h-[360px] flex items-center bg-gradient-to-br from-slate-950 via-blue-900 to-slate-900 overflow-hidden">
+        {/* 배경 블러 오브 */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-700/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl" />
 
-        {/* 탭 구조 */}
+        <div className="relative z-10 w-full text-center px-6 space-y-4">
+          <span className="text-base md:text-lg tracking-[0.4em] text-cyan-300/80 font-semibold">
+            NAME READING & NAMING
+          </span>
+          <h1 className="hanja-display text-5xl md:text-6xl text-white font-bold mt-2">
+            작명
+          </h1>
+          <p className="text-white/70 text-base md:text-lg mt-3 max-w-xl mx-auto leading-relaxed">
+            이름은 평생 불리는 기운입니다.<br />
+            사주에 맞는 이름으로 삶의 흐름을 바꾸세요.
+          </p>
+        </div>
+      </div>
+
+      {/* 탭 구조 */}
+      <div className="container py-12 max-w-4xl">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="free-reading">무료 이름 감정</TabsTrigger>
@@ -53,24 +57,20 @@ export default function NamingNew() {
             <TabsTrigger value="master-naming">마스터 작명</TabsTrigger>
           </TabsList>
 
-          {/* 탭 1: 무료 이름 감정 */}
           <TabsContent value="free-reading" className="mt-6">
             <FreeReadingTab />
           </TabsContent>
 
-          {/* 탭 2: 셀프작명 */}
           <TabsContent value="self-naming" className="mt-6">
             <SelfNamingTab />
           </TabsContent>
 
-          {/* 탭 3: 마스터 작명 */}
           <TabsContent value="master-naming" className="mt-6">
             <MasterNamingTab />
           </TabsContent>
         </Tabs>
       </div>
 
-      {/* 로그인 다이얼로그 */}
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
     </div>
   );
