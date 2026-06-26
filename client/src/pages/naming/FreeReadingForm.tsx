@@ -65,6 +65,7 @@ const freeReadingSchema = z.object({
   birthDay: z.string().min(1, "일을 입력해주세요"),
   calendarType: z.enum(["solar", "lunar"]),
   gender: z.enum(["male", "female"]),
+  namingConsent: z.boolean().refine(v => v === true, { message: "개인정보 수집에 동의해주세요" }),
 });
 
 type FreeReadingFormData = z.infer<typeof freeReadingSchema>;
@@ -181,7 +182,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
       name1Korean: "", name1Hanja: "",
       name2Korean: "", name2Hanja: "",
       birthYear: "", birthMonth: "", birthDay: "",
-      calendarType: "solar", gender: "male",
+      calendarType: "solar", gender: "male", namingConsent: false,
     },
   });
 
@@ -212,6 +213,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
         name1Hanja: data.name1Hanja,
         name2Korean: data.name2Korean,
         name2Hanja: data.name2Hanja,
+        namingConsent: data.namingConsent,
       });
     } finally {
       setIsLoading(false);
@@ -450,6 +452,38 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                 </Select>
               </div>
             </div>
+          </div>
+
+          {/* 개인정보 수집 동의 */}
+          <div className="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm">
+            <p className="text-xs font-bold text-emerald-700 uppercase tracking-widest mb-3">개인정보 수집 동의</p>
+            <div className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4 mb-4 leading-relaxed border border-gray-100">
+              <p className="font-semibold text-gray-700 mb-2">수집 항목</p>
+              <p className="mb-1">이름(한글·한자), 생년월일, 성별</p>
+              <p className="font-semibold text-gray-700 mb-2 mt-3">수집 목적</p>
+              <p className="mb-1">이름 감정 서비스 제공</p>
+              <p className="font-semibold text-gray-700 mb-2 mt-3">보유 기간</p>
+              <p>서비스 이용 후 1년</p>
+            </div>
+            <FormField control={form.control} name="namingConsent"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="namingConsent"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      className="w-5 h-5 accent-emerald-700 cursor-pointer"
+                    />
+                    <label htmlFor="namingConsent" className="text-sm font-semibold text-gray-700 cursor-pointer">
+                      위 개인정보 수집·이용에 동의합니다 <span className="text-red-500">(필수)</span>
+                    </label>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* 제출 */}
