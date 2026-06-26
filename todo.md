@@ -2903,7 +2903,7 @@
 ## Phase 43: 작명 서비스 기초 구축 (라이트 모드, 2026-06-22)
 - [x] 메뉴 탭 구조 ("작명" 탭 추가, 준비 중 표시)
 - [x] DB 테이블 3개 생성 (namingServices, selfNamingHistories, popularNames)
-- [x] 계산 엔진 (calculator.ts) — 원획법 보정, 자원오행, 파동오행, 수리사격
+- [x] 계산 엔진 (calculator.ts) — 원획법 보정, 자원오행, 수리사격
 - [x] 데이터 로더 (dataLoader.ts) — CSV 메모리 로드
 - [x] tRPC 프로시저 (router.ts) — freeReading, selfNaming, masterNaming
 - [x] 프론트엔드 UI 컴포넌트 (FreeReadingForm, FreeReadingResult, 3가지 탭)
