@@ -126,10 +126,10 @@ export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingR
               <CheckCircle className="w-5 h-5 text-purple-600" />
               사주 기반 필요오행
             </CardTitle>
-            <CardDescription className="text-sm">생년월일로 분석한 이름에 담아야 할 오행 기운</CardDescription>
+            <CardDescription className="text-sm">이름을 지을 분의 사주를 기준으로 볼 때, 이름에 필요한 자원오행</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-6">
               <div className="text-center">
                 <p className="text-xs text-purple-600 font-semibold mb-1">1순위</p>
                 <span className={`px-4 py-2 rounded-lg text-lg font-bold ${OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.bg || "bg-gray-100"} ${OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.text || "text-gray-700"}`}>
@@ -138,7 +138,7 @@ export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingR
               </div>
               <div className="text-purple-400 text-xl">→</div>
               <div className="text-center">
-                <p className="text-xs text-purple-600 font-semibold mb-1">2순위 (생하는 오행)</p>
+                <p className="text-xs text-purple-600 font-semibold mb-1">2순위</p>
                 <span className={`px-4 py-2 rounded-lg text-lg font-bold ${OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.bg || "bg-gray-100"} ${OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.text || "text-gray-700"}`}>
                   {OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.label || data.analysis.requiredOhaeng.secondary}
                 </span>
