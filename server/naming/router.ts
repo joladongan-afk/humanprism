@@ -11,7 +11,7 @@ import { eq } from "drizzle-orm";
 import {
   calculateJawonOhaeng,
   judgeJawonOhaeng,
-  calculateSuri,
+  calculateSuri4,
   judgeSuri,
   checkBulmyong,
   judgeOverall,
@@ -30,47 +30,67 @@ function generateCertificateNumber(): string {
 export const namingRouter = router({
   /**
    * 무료 이름감정
-   * 자원오행 + 수리사격 + 불용문자 분석
+   * 자원오행 + 수리사격(4격) + 불용문자 분석
    */
   freeReading: protectedProcedure
     .input(
       z.object({
         surnameKorean: z.string().min(1, "성씨를 입력해주세요"),
         surnameHanja: z.string().optional(),
-        nameKorean: z.string().min(1, "이름을 입력해주세요"),
-        nameHanja: z.string().min(1, "한자 이름을 입력해주세요"),
+        name1Korean: z.string().min(1, "가운데 글자를 입력해주세요"),
+        name1Hanja: z.string().optional(),
+        name2Korean: z.string().min(1, "끝 글자를 입력해주세요"),
+        name2Hanja: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        // 1. 자원오행 계산 및 판정
-        const jawonOhaeng = calculateJawonOhaeng(input.nameHanja);
+        const name1Hanja = input.name1Hanja || "";
+        const name2Hanja = input.name2Hanja || "";
+        const surnameHanja = input.surnameHanja || "";
+        const nameHanja = name1Hanja + name2Hanja;
+
+        // 1. 자원오행 계산 (한자가 있을 때만)
+        const hasHanja = name1Hanja.length > 0 || name2Hanja.length > 0;
+        const jawonOhaeng = hasHanja ? calculateJawonOhaeng(nameHanja) : [];
         const jawonOhaengStr = jawonOhaeng.join("");
-        const jawonJudgment = judgeJawonOhaeng(jawonOhaeng);
+        const jawonJudgment = hasHanja
+          ? judgeJawonOhaeng(jawonOhaeng)
+          : { result: "한자 미입력", detail: "한자를 입력하면 자원오행을 분석합니다" };
 
-        // 2. 수리사격 계산 및 판정
-        const suri = calculateSuri(input.nameKorean, input.nameHanja);
-        const suriJudgment = judgeSuri(suri);
+        // 2. 수리사격 4격 계산
+        // 성씨 한자가 없으면 성씨 한글로 대체 (획수 0으로 처리됨)
+        const suri4 = calculateSuri4(
+          surnameHanja || input.surnameKorean,
+          name1Hanja || input.name1Korean,
+          name2Hanja || input.name2Korean
+        );
+        const wonJudgment = judgeSuri(suri4.won);
+        const hyeongJudgment = judgeSuri(suri4.hyeong);
+        const iJudgment = judgeSuri(suri4.i);
+        const jeongJudgment = judgeSuri(suri4.jeong);
 
-        // 3. 불용문자 검사
-        const bulmyongCheck = checkBulmyong(input.nameHanja);
+        // 3. 불용문자 검사 (한자 있을 때만)
+        const bulmyongCheck = hasHanja
+          ? checkBulmyong(nameHanja)
+          : { hasBulmyong: false, bulmyongChars: [] };
 
         // 4. 종합 판정
         const overallResult = judgeOverall(
           jawonJudgment.result,
-          suriJudgment.gilhyung,
+          jeongJudgment.gilhyung, // 정격(총격)으로 종합 판정
           bulmyongCheck.hasBulmyong
         );
 
         // 5. 롤링 코멘트
-        let commentType: "all_pass" | "pado_fail" | "jawon_fail" | "suri_fail" | "bulmyong" | "all_fail" = "all_pass";
+        let commentType: "all_pass" | "jawon_fail" | "suri_fail" | "bulmyong" | "all_fail" = "all_pass";
         if (bulmyongCheck.hasBulmyong) {
           commentType = "bulmyong";
-        } else if (jawonJudgment.result === "보완 필요" && suriJudgment.gilhyung === "凶") {
+        } else if (jawonJudgment.result === "보완 필요" && jeongJudgment.gilhyung === "凶") {
           commentType = "all_fail";
         } else if (jawonJudgment.result === "보완 필요") {
           commentType = "jawon_fail";
-        } else if (suriJudgment.gilhyung === "凶") {
+        } else if (jeongJudgment.gilhyung === "凶") {
           commentType = "suri_fail";
         }
 
@@ -83,17 +103,17 @@ export const namingRouter = router({
 
         const [res] = await database.insert(namingServices).values({
           userId: ctx.user.id,
-          nameKorean: input.nameKorean,
-          nameHanja: input.nameHanja,
+          nameKorean: input.name1Korean + input.name2Korean,
+          nameHanja: nameHanja,
           surnameKorean: input.surnameKorean,
-          surnameHanja: input.surnameHanja,
+          surnameHanja: surnameHanja || undefined,
           jawonOhaeng: jawonOhaengStr,
           jawonResult: jawonJudgment.result,
           padoOhaeng: "",
           padoResult: "",
-          suriNumber: suri,
-          suriGilhyung: suriJudgment.gilhyung,
-          suriResult: suriJudgment.description,
+          suriNumber: suri4.jeong,
+          suriGilhyung: jeongJudgment.gilhyung,
+          suriResult: jeongJudgment.description,
           bulmyongFlag: bulmyongCheck.hasBulmyong,
           bulmyongList: bulmyongCheck.bulmyongChars.join(","),
           overallResult,
@@ -111,11 +131,13 @@ export const namingRouter = router({
               ohaeng: jawonOhaengStr,
               result: jawonJudgment.result,
               detail: jawonJudgment.detail,
+              hasHanja,
             },
-            suri: {
-              number: suri,
-              gilhyung: suriJudgment.gilhyung,
-              description: suriJudgment.description,
+            suri4: {
+              won: { number: suri4.won, gilhyung: wonJudgment.gilhyung, description: wonJudgment.description },
+              hyeong: { number: suri4.hyeong, gilhyung: hyeongJudgment.gilhyung, description: hyeongJudgment.description },
+              i: { number: suri4.i, gilhyung: iJudgment.gilhyung, description: iJudgment.description },
+              jeong: { number: suri4.jeong, gilhyung: jeongJudgment.gilhyung, description: jeongJudgment.description },
             },
             bulmyong: {
               hasBulmyong: bulmyongCheck.hasBulmyong,
