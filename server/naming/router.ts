@@ -1,7 +1,6 @@
 /**
  * 작명 서비스 tRPC 라우터
  * 무료 이름감정, 셀프작명, 마스터 작명 API를 제공한다.
- * ※ 파동오행/소리오행 완전 제거 (2026.06 상표권 이슈) — 수리사격 + 자원오행만 사용
  */
 
 import { z } from "zod";
@@ -31,7 +30,7 @@ function generateCertificateNumber(): string {
 export const namingRouter = router({
   /**
    * 무료 이름감정
-   * 자원오행 + 수리사격 + 불용문자 분석 (파동오행 제거)
+   * 자원오행 + 수리사격 + 불용문자 분석
    */
   freeReading: protectedProcedure
     .input(
