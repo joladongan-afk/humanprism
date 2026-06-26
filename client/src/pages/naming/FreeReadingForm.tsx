@@ -167,7 +167,7 @@ function HanjaInput({ value, onChange, koreanChar, placeholder }: HanjaInputProp
 }
 
 interface FreeReadingFormProps {
-  onSuccess?: (result: any) => void;
+  onSuccess?: (result: any, inputData?: { name1Korean: string; name1Hanja?: string; name2Korean: string; name2Hanja?: string }) => void;
 }
 
 export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
@@ -195,7 +195,13 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
   const freeReadingMutation = trpc.naming.freeReading.useMutation({
     onSuccess: (data) => {
       toast.success(`이름 감정 완료 — 인증번호: ${data.certificateNumber}`);
-      onSuccess?.(data);
+      const vals = form.getValues();
+      onSuccess?.(data, {
+        name1Korean: vals.name1Korean,
+        name1Hanja: vals.name1Hanja,
+        name2Korean: vals.name2Korean,
+        name2Hanja: vals.name2Hanja,
+      });
       form.reset();
     },
     onError: (error) => {
