@@ -242,7 +242,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>한글</FormLabel>
-                      <FormControl><Input placeholder="전" maxLength={1} {...field} /></FormControl>
+                      <FormControl><Input placeholder="성씨" maxLength={1} {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -253,7 +253,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                     value={form.watch("surnameHanja") || ""}
                     onChange={(v) => form.setValue("surnameHanja", v)}
                     koreanChar={surnameKorean}
-                    placeholder="全"
+                    placeholder="한자"
                   />
                 </FormItem>
               </div>
@@ -266,7 +266,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>한글</FormLabel>
-                        <FormControl><Input placeholder="원" maxLength={1} {...field} /></FormControl>
+                        <FormControl><Input placeholder="가운데" maxLength={1} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -277,7 +277,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                       value={form.watch("name1Hanja") || ""}
                       onChange={(v) => form.setValue("name1Hanja", v)}
                       koreanChar={name1Korean}
-                      placeholder="源"
+                      placeholder="한자"
                     />
                   </FormItem>
                 </div>
@@ -289,7 +289,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>한글</FormLabel>
-                        <FormControl><Input placeholder="석" maxLength={1} {...field} /></FormControl>
+                        <FormControl><Input placeholder="끝글자" maxLength={1} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -300,7 +300,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                       value={form.watch("name2Hanja") || ""}
                       onChange={(v) => form.setValue("name2Hanja", v)}
                       koreanChar={name2Korean}
-                      placeholder="錫"
+                      placeholder="한자"
                     />
                   </FormItem>
                 </div>
