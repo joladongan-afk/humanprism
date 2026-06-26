@@ -24,12 +24,12 @@ const steps = [
   },
   {
     number: "05",
-    title: "소리 오행 검증 (선택)",
-    desc: "소리의 흐름이 조화로운지 귀로 확인합니다",
+    title: "의뢰인 전달 및 확인",
+    desc: "마음에 드는 이름이 나올 때까지 1회차 3~5개 제안",
   },
   {
     number: "06",
-    title: "최종 작명",
+    title: "최종 작명 완성",
     desc: "사주와 이름이 하나가 되는 이름을 선물합니다",
   },
 ];
@@ -37,7 +37,6 @@ const steps = [
 export function MasterNamingTab() {
   return (
     <div className="flex justify-center">
-      {/* 색상 3개: amber-900(진한 갈색), amber-600(중간 황금), stone-100(배경 아이보리) */}
       <Card className="w-full max-w-2xl border-amber-300 bg-stone-50">
         <CardHeader className="pb-2">
           <CardTitle className="text-2xl font-bold text-amber-900">
@@ -46,7 +45,6 @@ export function MasterNamingTab() {
         </CardHeader>
         <CardContent className="space-y-6">
 
-          {/* 문구 */}
           <div className="text-gray-700 space-y-3">
             <p className="text-lg font-semibold text-amber-800">
               30년 사주쟁이의 안목으로, 당신을 빛내줄 이름을 선물합니다.
@@ -63,14 +61,12 @@ export function MasterNamingTab() {
             </p>
           </div>
 
-          {/* 구분선 */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-amber-300" />
             <span className="text-sm text-amber-600 font-bold tracking-widest">작명 6단계</span>
             <div className="flex-1 h-px bg-amber-300" />
           </div>
 
-          {/* 6단계 */}
           <div className="grid grid-cols-2 gap-4">
             {steps.map((step, idx) => (
               <div
@@ -91,12 +87,10 @@ export function MasterNamingTab() {
             ))}
           </div>
 
-          {/* 하단 문구 */}
           <p className="text-sm text-center text-amber-700 font-semibold">
             사주에 꼭 맞는 자원오행 감정 + 정통 수리사격(원형이정 작명법)
           </p>
 
-          {/* CTA */}
           <Button className="w-full bg-amber-700 hover:bg-amber-800 text-white text-lg font-bold py-7">
             마스터 작명 상담 신청 (₩300,000)
           </Button>
