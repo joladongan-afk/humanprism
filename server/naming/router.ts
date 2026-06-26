@@ -16,7 +16,8 @@ import {
   checkBulmyong,
   judgeOverall,
 } from "./calculator";
-import { getRandomComment, initializeNamingData, searchHanjaBySound } from "./dataLoader";
+import { getRandomComment, initializeNamingData, searchHanjaBySound, getRequiredOhaeng, loadNangangmangDb } from "./dataLoader";
+import { calculateSaju, lunarToSolar } from "../saju";
 import { getUserFreeReadingCount } from "../db";
 
 
@@ -75,6 +76,7 @@ function generateOverallCopy(
 }
 
 initializeNamingData();
+loadNangangmangDb();
 
 function generateCertificateNumber(): string {
   const now = new Date();
@@ -97,6 +99,10 @@ export const namingRouter = router({
         name1Hanja: z.string().optional(),
         name2Korean: z.string().min(1, "끝 글자를 입력해주세요"),
         name2Hanja: z.string().optional(),
+        birthYear: z.number().optional(),
+        birthMonth: z.number().optional(),
+        birthDay: z.number().optional(),
+        calendarType: z.enum(["solar", "lunar"]).optional(),
         namingConsent: z.boolean().refine(v => v === true, { message: "개인정보 수집에 동의해주세요" }),
       })
     )
@@ -144,6 +150,26 @@ export const namingRouter = router({
         const bulmyongCheck = hasHanja
           ? checkBulmyong(nameHanja)
           : { hasBulmyong: false, bulmyongChars: [] };
+
+        // 3-1. 필요오행 계산 (생년월일 있을 때)
+        let requiredOhaeng: { primary: string; secondary: string } | null = null;
+        if (input.birthYear && input.birthMonth && input.birthDay) {
+          try {
+            let year = input.birthYear;
+            let month = input.birthMonth;
+            let day = input.birthDay;
+            if (input.calendarType === "lunar") {
+              const solar = lunarToSolar(year, month, day, false);
+              year = solar.year; month = solar.month; day = solar.day;
+            }
+            const saju = calculateSaju({ year, month, day, gender: "male" });
+            const ilgan = saju.pillars.day.stem;
+            const birthMonthBranch = saju.pillars.month.branch;
+            requiredOhaeng = getRequiredOhaeng(ilgan, birthMonthBranch);
+          } catch (e) {
+            console.warn("[Naming] 필요오행 계산 실패:", e);
+          }
+        }
 
         // 4. 종합 판정
         const overallResult = judgeOverall(
@@ -210,6 +236,7 @@ export const namingRouter = router({
             },
             overall: overallResult,
             comment: rollingComment,
+            requiredOhaeng,
           },
         };
       } catch (error) {
