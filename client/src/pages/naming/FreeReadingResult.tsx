@@ -1,7 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle, AlertTriangle, HelpCircle } from "lucide-react";
 
 interface SuriGrade {
   number: number;
@@ -38,225 +36,213 @@ interface FreeReadingResultProps {
   onShare?: () => void;
 }
 
-const GILHYUNG_COLOR: Record<string, string> = {
-  "吉": "bg-green-100 text-green-800 border-green-300",
-  "凶": "bg-red-100 text-red-800 border-red-300",
-  "半吉半凶": "bg-yellow-100 text-yellow-800 border-yellow-300",
+const OHAENG_COLOR: Record<string, { dot: string; text: string; label: string }> = {
+  木: { dot: "#3B6D11", text: "#3B6D11", label: "목(木)" },
+  火: { dot: "#A32D2D", text: "#A32D2D", label: "화(火)" },
+  土: { dot: "#854F0B", text: "#854F0B", label: "토(土)" },
+  金: { dot: "#5F5E5A", text: "#5F5E5A", label: "금(金)" },
+  水: { dot: "#185FA5", text: "#185FA5", label: "수(水)" },
 };
 
-const RESULT_COLOR: Record<string, string> = {
-  "양호": "bg-green-100 text-green-800",
-  "우수": "bg-emerald-100 text-emerald-800",
-  "중립": "bg-yellow-100 text-yellow-800",
-  "보완 필요": "bg-red-100 text-red-800",
-  "재검토 필요": "bg-red-100 text-red-800",
-  "한자 미입력": "bg-gray-100 text-gray-600",
+const GILHYUNG_STYLE: Record<string, { bg: string; color: string }> = {
+  "吉":     { bg: "#EAF3DE", color: "#3B6D11" },
+  "凶":     { bg: "#FCEBEB", color: "#A32D2D" },
+  "半吉半凶": { bg: "#FAEEDA", color: "#854F0B" },
 };
 
-function getIcon(result: string) {
-  if (result === "吉" || result === "양호" || result === "우수") return <CheckCircle className="w-5 h-5 text-green-600" />;
-  if (result === "凶" || result === "보완 필요" || result === "재검토 필요") return <AlertCircle className="w-5 h-5 text-red-600" />;
-  if (result === "한자 미입력") return <HelpCircle className="w-5 h-5 text-gray-400" />;
-  return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
+const RESULT_STYLE: Record<string, { bg: string; color: string }> = {
+  "양호":     { bg: "#E1F5EE", color: "#0F6E56" },
+  "우수":     { bg: "#E1F5EE", color: "#0F6E56" },
+  "상생":     { bg: "#E1F5EE", color: "#0F6E56" },
+  "중립":     { bg: "#FAEEDA", color: "#854F0B" },
+  "보완 필요": { bg: "#FCEBEB", color: "#A32D2D" },
+  "재검토 필요":{ bg: "#FCEBEB", color: "#A32D2D" },
+  "한자 미입력":{ bg: "#F1EFE8", color: "#5F5E5A" },
+};
+
+const OVERALL_STYLE: Record<string, { bg: string; color: string }> = {
+  "최상": { bg: "#EAF3DE", color: "#3B6D11" },
+  "양호": { bg: "#E1F5EE", color: "#0F6E56" },
+  "보통": { bg: "#FAEEDA", color: "#854F0B" },
+  "보완필요": { bg: "#FCEBEB", color: "#A32D2D" },
+};
+
+const SURI4_META = {
+  won:    { name: "원격(元格)", sub: "가운데 글자 · 어린 시절·내면" },
+  hyeong: { name: "형격(亨格)", sub: "끝 글자 · 청장년·사회활동" },
+  i:      { name: "이격(利格)", sub: "성+가운데 · 가정·대인관계" },
+  jeong:  { name: "정격(貞格)", sub: "전체 이름 · 평생 총괄 운세" },
+};
+
+const card: React.CSSProperties = {
+  background: "var(--surface-2)",
+  border: "0.5px solid var(--border)",
+  borderRadius: 12,
+  padding: "14px 16px",
+  marginBottom: 10,
+};
+
+const cardTitle: React.CSSProperties = {
+  fontSize: 12,
+  fontWeight: 500,
+  color: "var(--text-muted)",
+  letterSpacing: "0.04em",
+  textTransform: "uppercase",
+  marginBottom: 10,
+};
+
+function SmallBadge({ label, style }: { label: string; style?: { bg: string; color: string } }) {
+  const s = style || { bg: "#F1EFE8", color: "#5F5E5A" };
+  return (
+    <span style={{
+      fontSize: 11, fontWeight: 500, padding: "2px 8px",
+      borderRadius: 99, background: s.bg, color: s.color,
+      whiteSpace: "nowrap",
+    }}>{label}</span>
+  );
 }
 
-const OHAENG_STYLE: Record<string, { bg: string; text: string; label: string }> = {
-  木: { bg: "bg-green-100", text: "text-green-700", label: "목(木)" },
-  火: { bg: "bg-red-100", text: "text-red-700", label: "화(火)" },
-  土: { bg: "bg-yellow-100", text: "text-yellow-700", label: "토(土)" },
-  金: { bg: "bg-gray-100", text: "text-gray-700", label: "금(金)" },
-  水: { bg: "bg-blue-100", text: "text-blue-700", label: "수(水)" },
-};
-
-// 수리사격 4격 이름과 설명
-const SURI4_META = {
-  won:    { name: "원격(元格)", desc: "가운데 글자의 기운 — 어린 시절과 내면의 성품" },
-  hyeong: { name: "형격(亨格)", desc: "끝 글자의 기운 — 청장년기와 사회활동 운세" },
-  i:      { name: "이격(利格)", desc: "성씨+가운데 글자의 기운 — 가정운과 대인관계" },
-  jeong:  { name: "정격(貞格)", desc: "전체 이름의 기운 — 총괄적인 평생 운세" },
-};
-
-function SuriCard({ grade, meta }: { grade: SuriGrade; meta: { name: string; desc: string } }) {
+function OhaengChip({ oh }: { oh: string }) {
+  const c = OHAENG_COLOR[oh];
+  if (!c) return <span style={{ fontSize: 14, color: "var(--text-secondary)" }}>{oh}</span>;
   return (
-    <div className="border border-gray-100 rounded-xl p-4 space-y-2">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-bold text-gray-800 text-base">{meta.name}</p>
-          <p className="text-sm text-gray-500 mt-0.5">{meta.desc}</p>
-        </div>
-        <div className="text-right">
-          <p className="text-2xl font-black text-blue-900">{grade.number}</p>
-          <p className="text-xs text-gray-400">획수 합계</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Badge className={`border ${GILHYUNG_COLOR[grade.gilhyung] || "bg-gray-100 text-gray-600"}`}>
-          {grade.gilhyung}
-        </Badge>
-      </div>
-      <p className="text-base text-gray-700 bg-blue-50 rounded-lg p-4 leading-relaxed border border-blue-100">
-        {grade.description}
-      </p>
-    </div>
+    <span style={{ display: "flex", alignItems: "center", gap: 6,
+      background: "var(--surface-1)", border: "0.5px solid var(--border)",
+      borderRadius: 8, padding: "7px 12px" }}>
+      <span style={{ width: 9, height: 9, borderRadius: "50%", background: c.dot, flexShrink: 0 }} />
+      <span style={{ fontSize: 14, fontWeight: 500, color: "var(--text-primary)" }}>{c.label}</span>
+    </span>
   );
 }
 
 export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingResultProps) {
   const { jawon, suri4, bulmyong, overall, comment } = data.analysis;
   const ohaengChars = jawon.ohaeng ? jawon.ohaeng.split("") : [];
+  const overallStyle = OVERALL_STYLE[overall] || RESULT_STYLE[overall] || { bg: "#F1EFE8", color: "#5F5E5A" };
 
   return (
-    <div className="w-full space-y-5">
+    <div style={{ width: "100%" }}>
 
-      {/* 인증 정보 */}
-      <Card className="border-emerald-200 bg-emerald-50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg text-emerald-900">이름 감정 완료</CardTitle>
-          <CardDescription className="text-emerald-700">
-            인증번호: <span className="font-mono font-bold">{data.certificateNumber}</span>
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      {/* 종합 판정 */}
+      <div style={card}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <span style={cardTitle}>종합 판정</span>
+          <SmallBadge label={overall} style={overallStyle} />
+        </div>
+        <div style={{
+          borderLeft: "3px solid #1D9E75", borderRadius: "0 8px 8px 0",
+          padding: "11px 13px", fontSize: 14, color: "var(--text-primary)",
+          lineHeight: 1.75, background: "var(--surface-1)",
+        }}>
+          {comment}
+        </div>
+      </div>
 
-      {/* 필요오행 — 사주 기반 */}
+      {/* 사주 기반 필요오행 */}
       {data.analysis.requiredOhaeng && (
-        <Card className="border-purple-100 bg-purple-50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-purple-600" />
-              사주 기반 필요오행
-            </CardTitle>
-            <CardDescription className="text-sm">이름을 지을 분의 사주를 기준으로 볼 때, 이름에 필요한 자원오행</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="text-center">
-                <p className="text-xs text-purple-600 font-semibold mb-1">1순위</p>
-                <span className={`px-4 py-2 rounded-lg text-lg font-bold ${OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.bg || "bg-gray-100"} ${OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.text || "text-gray-700"}`}>
-                  {OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.label || data.analysis.requiredOhaeng.primary}
-                </span>
-              </div>
-              <div className="text-purple-400 text-xl">→</div>
-              <div className="text-center">
-                <p className="text-xs text-purple-600 font-semibold mb-1">2순위</p>
-                <span className={`px-4 py-2 rounded-lg text-lg font-bold ${OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.bg || "bg-gray-100"} ${OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.text || "text-gray-700"}`}>
-                  {OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.label || data.analysis.requiredOhaeng.secondary}
-                </span>
+        <div style={card}>
+          <div style={cardTitle}>사주 기반 필요오행</div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{ flex: 1, background: "var(--surface-1)", border: "0.5px solid var(--border)", borderRadius: 8, padding: "9px 12px", textAlign: "center" }}>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>1순위</div>
+              <div style={{ fontSize: 17, fontWeight: 500, color: OHAENG_COLOR[data.analysis.requiredOhaeng.primary]?.text || "var(--text-primary)" }}>
+                {OHAENG_COLOR[data.analysis.requiredOhaeng.primary]?.label || data.analysis.requiredOhaeng.primary}
               </div>
             </div>
-            <p className="text-sm text-purple-700 mt-3 bg-white rounded-lg p-3 border border-purple-100 leading-relaxed">
-              이름의 자원오행이 위 기운을 담고 있을 때 사주와 가장 잘 어울립니다.
-            </p>
-          </CardContent>
-        </Card>
+            <span style={{ color: "var(--text-muted)", fontSize: 16 }}>→</span>
+            <div style={{ flex: 1, background: "var(--surface-1)", border: "0.5px solid var(--border)", borderRadius: 8, padding: "9px 12px", textAlign: "center" }}>
+              <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>2순위</div>
+              <div style={{ fontSize: 17, fontWeight: 500, color: OHAENG_COLOR[data.analysis.requiredOhaeng.secondary]?.text || "var(--text-primary)" }}>
+                {OHAENG_COLOR[data.analysis.requiredOhaeng.secondary]?.label || data.analysis.requiredOhaeng.secondary}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* 자원오행 분석 */}
-      <Card className="border-amber-100">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            {getIcon(jawon.result)}
-            자원오행(字源五行) 분석
-          </CardTitle>
-          <CardDescription className="text-sm">한자 부수(部首)를 기준으로 분석한 오행 에너지</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {!jawon.hasHanja ? (
-            <div className="text-base text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              한자를 입력하시면 자원오행을 분석합니다. 이름의 각 한자가 지닌 오행 기운을 확인하세요.
+      {/* 자원오행 */}
+      <div style={card}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <span style={cardTitle}>자원오행(字源五行)</span>
+          {jawon.hasHanja && <SmallBadge label={jawon.result} style={RESULT_STYLE[jawon.result]} />}
+        </div>
+        {!jawon.hasHanja ? (
+          <div style={{ fontSize: 13, color: "var(--text-muted)", background: "var(--surface-1)", borderRadius: 8, padding: "10px 12px" }}>
+            한자를 입력하시면 자원오행을 분석합니다.
+          </div>
+        ) : (
+          <>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              {ohaengChars.map((oh, idx) => (
+                <OhaengChip key={idx} oh={oh} />
+              ))}
             </div>
-          ) : (
-            <>
-              <div className="flex items-center gap-3">
-                {ohaengChars.map((oh, idx) => {
-                  const style = OHAENG_STYLE[oh] || { bg: "bg-gray-100", text: "text-gray-600", label: oh };
-                  return (
-                    <span key={idx} className={`px-3 py-1.5 rounded-lg text-sm font-bold ${style.bg} ${style.text}`}>
-                      {style.label}
-                    </span>
-                  );
-                })}
-                <span className="text-gray-400 text-sm mx-1">→</span>
-                <Badge className={RESULT_COLOR[jawon.result] || "bg-gray-100 text-gray-600"}>
-                  {jawon.result}
-                </Badge>
+            {jawon.detail && (
+              <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 8, padding: "9px 12px", background: "var(--surface-1)", borderRadius: 8, lineHeight: 1.6 }}>
+                {jawon.detail}
               </div>
-              {jawon.detail && (
-                <div className="text-base text-gray-700 p-4 bg-amber-50 rounded-lg border border-amber-100">
-                  {jawon.detail}
-                </div>
-              )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </>
+        )}
+      </div>
 
-      {/* 수리사격 4격 분석 */}
-      <Card className="border-blue-100">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-blue-600" />
-            수리사격(數理四格) 분석
-          </CardTitle>
-          <CardDescription>
-            이름 획수의 조합으로 보는 네 가지 운세 — 숫자는 획수 합계(1~81)이며, 각 구간마다 고유한 운세 풀이가 있습니다
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <SuriCard grade={suri4.won} meta={SURI4_META.won} />
-          <SuriCard grade={suri4.hyeong} meta={SURI4_META.hyeong} />
-          <SuriCard grade={suri4.i} meta={SURI4_META.i} />
-          <SuriCard grade={suri4.jeong} meta={SURI4_META.jeong} />
-        </CardContent>
-      </Card>
+      {/* 수리사격 4격 */}
+      <div style={card}>
+        <div style={cardTitle}>수리사격(數理四格)</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          {(["won", "hyeong", "i", "jeong"] as const).map((key) => {
+            const grade = suri4[key];
+            const meta = SURI4_META[key];
+            const gs = GILHYUNG_STYLE[grade.gilhyung] || { bg: "#F1EFE8", color: "#5F5E5A" };
+            return (
+              <div key={key} style={{
+                background: "var(--surface-1)", border: "0.5px solid var(--border)",
+                borderRadius: 8, padding: "10px 12px",
+              }}>
+                <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 3 }}>{meta.name}</div>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 6 }}>{meta.sub}</div>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 6 }}>
+                  <span style={{ fontSize: 22, fontWeight: 500, color: "var(--text-primary)" }}>{grade.number}</span>
+                  <SmallBadge label={grade.gilhyung} style={gs} />
+                </div>
+                <div style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.55 }}>{grade.description}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       {/* 불용문자 */}
       {bulmyong.hasBulmyong && (
-        <Card className="border-red-200 bg-red-50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-              불용문자(不用文字) 포함
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-base text-red-700 mb-2">이름에 사용을 피해야 할 한자가 포함되어 있습니다.</p>
-            <div className="flex flex-wrap gap-2">
-              {bulmyong.chars.map((char, idx) => (
-                <Badge key={idx} variant="destructive">{char}</Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div style={{ ...card, borderLeft: "3px solid #A32D2D", borderRadius: "0 12px 12px 0" }}>
+          <div style={{ ...cardTitle, color: "#A32D2D" }}>불용문자(不用文字) 포함</div>
+          <div style={{ fontSize: 13, color: "#A32D2D", marginBottom: 8 }}>이름에 사용을 피해야 할 한자가 포함되어 있습니다.</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {bulmyong.chars.map((char, idx) => (
+              <SmallBadge key={idx} label={char} style={{ bg: "#FCEBEB", color: "#A32D2D" }} />
+            ))}
+          </div>
+        </div>
       )}
 
-      {/* 종합 판정 */}
-      <Card className="border-emerald-200 bg-emerald-50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base text-emerald-900">종합 판정</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Badge className={RESULT_COLOR[overall] || "bg-gray-100 text-gray-600"}>
-            {overall}
-          </Badge>
-          <div className="text-base text-gray-700 italic p-4 bg-white rounded-lg border border-emerald-100 leading-relaxed">
-            &ldquo;{comment}&rdquo;
-          </div>
-          <p className="text-sm text-emerald-700 font-medium text-center pt-1">
-            더 깊은 분석은 마스터 작명 상담을 통해 받으실 수 있습니다.
-          </p>
-        </CardContent>
-      </Card>
+      {/* 인증번호 */}
+      <div style={{ ...card, padding: "9px 16px", marginBottom: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>이름감정 인증번호</span>
+          <span style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>{data.certificateNumber}</span>
+        </div>
+      </div>
 
       {/* 액션 버튼 */}
-      <div className="flex gap-3">
-        <Button onClick={onPdfDownload} className="flex-1 bg-emerald-700 hover:bg-emerald-800">
+      <div style={{ display: "flex", gap: 10 }}>
+        <Button onClick={onPdfDownload} style={{ flex: 1, background: "#0F6E56", color: "#fff", border: "none" }}>
           PDF 저장
         </Button>
-        <Button onClick={onShare} variant="outline" className="flex-1 border-emerald-300 text-emerald-700">
+        <Button onClick={onShare} variant="outline" style={{ flex: 1 }}>
           공유하기
         </Button>
       </div>
+
     </div>
   );
 }
