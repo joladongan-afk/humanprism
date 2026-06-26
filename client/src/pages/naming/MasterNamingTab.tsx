@@ -37,66 +37,67 @@ const steps = [
 export function MasterNamingTab() {
   return (
     <div className="flex justify-center">
-      <Card className="w-full max-w-2xl border-amber-200 bg-amber-50">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-amber-900">
+      {/* 색상 3개: amber-900(진한 갈색), amber-600(중간 황금), stone-100(배경 아이보리) */}
+      <Card className="w-full max-w-2xl border-amber-300 bg-stone-50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-2xl font-bold text-amber-900">
             명의 본질에 가장 부합하는 이름 짓기
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
 
           {/* 문구 */}
-          <div className="text-sm text-gray-700 space-y-3">
-            <p className="text-base font-medium text-amber-800">
+          <div className="text-gray-700 space-y-3">
+            <p className="text-lg font-semibold text-amber-800">
               30년 사주쟁이의 안목으로, 당신을 빛내줄 이름을 선물합니다.
             </p>
-            <p>
+            <p className="text-base leading-relaxed">
               아무나 이름에 오행을 부여할 수 없습니다.<br />
               사주를 반영하지 않은 작명은 반쪽짜리일 뿐입니다.
             </p>
-            <p className="text-base font-semibold text-gray-800">
+            <p className="text-lg font-bold text-amber-900">
               사주는 몸이고, 이름이 옷입니다.
             </p>
-            <p>
+            <p className="text-base leading-relaxed">
               당신의 삶을 더 빛나게 해줄 이름은 전문가에게 맡기세요.
             </p>
           </div>
 
           {/* 구분선 */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-amber-200" />
-            <span className="text-xs text-amber-600 font-semibold tracking-widest">작명 6단계</span>
-            <div className="flex-1 h-px bg-amber-200" />
+            <div className="flex-1 h-px bg-amber-300" />
+            <span className="text-sm text-amber-600 font-bold tracking-widest">작명 6단계</span>
+            <div className="flex-1 h-px bg-amber-300" />
           </div>
 
           {/* 6단계 */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {steps.map((step, idx) => (
               <div
                 key={idx}
-                className="relative bg-white border border-amber-100 rounded-xl p-4 flex flex-col gap-2 shadow-sm"
+                className="relative bg-white border border-amber-200 rounded-xl p-5 flex flex-col gap-3 shadow-sm"
               >
-                <div className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-amber-700 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <span className="w-9 h-9 rounded-full bg-amber-700 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">
                     {step.number}
                   </span>
-                  <p className="text-sm font-bold text-amber-900 leading-tight">{step.title}</p>
+                  <p className="text-base font-bold text-amber-900 leading-tight">{step.title}</p>
                 </div>
-                <p className="text-xs text-gray-500 leading-relaxed pl-9">{step.desc}</p>
+                <p className="text-sm text-gray-600 leading-relaxed pl-12">{step.desc}</p>
                 {idx % 2 === 0 && idx < steps.length - 1 && (
-                  <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-amber-300 text-lg z-10">▶</span>
+                  <span className="absolute -right-3 top-1/2 -translate-y-1/2 text-amber-400 text-xl z-10">▶</span>
                 )}
               </div>
             ))}
           </div>
 
           {/* 하단 문구 */}
-          <p className="text-xs text-center text-amber-700 font-medium">
+          <p className="text-sm text-center text-amber-700 font-semibold">
             사주에 꼭 맞는 자원오행 감정 + 정통 수리사격(원형이정 작명법)
           </p>
 
           {/* CTA */}
-          <Button className="w-full bg-amber-700 hover:bg-amber-800 text-white text-base py-6">
+          <Button className="w-full bg-amber-700 hover:bg-amber-800 text-white text-lg font-bold py-7">
             마스터 작명 상담 신청 (₩300,000)
           </Button>
 
