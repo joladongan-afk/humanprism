@@ -281,7 +281,7 @@ export default function Home() {
               <MosaicTextReveal
                 text="초 격차 사주 문답"
                 fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44}
-                colorPalette={['#00c896', '#00b377', '#00a86b', '#00915c', '#00d4aa', '#00e5b0', '#00f5c0', '#00c87a']}
+                colorPalette={['#ff2d55', '#e11d48', '#fb7185', '#ff6b9d', '#dc2626', '#ef4444', '#fca5a5', '#ff1744']}
                 startDelay={0}
               />
             </div>
