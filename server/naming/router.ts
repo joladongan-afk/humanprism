@@ -18,7 +18,7 @@ import {
   checkBulmyong,
   judgeOverall,
 } from "./calculator";
-import { getRandomComment, initializeNamingData } from "./dataLoader";
+import { getRandomComment, initializeNamingData, searchHanjaBySound } from "./dataLoader";
 
 // 서버 시작 시 데이터 초기화
 initializeNamingData();
@@ -226,5 +226,22 @@ export const namingRouter = router({
         success: true,
         message: "마스터 작명 상담은 준비 중입니다",
       };
+    }),
+
+  /**
+   * 한자 독음 검색 (드롭다운 자동완성용)
+   * 입력: sound (한글 독음, 예: "원")
+   * 출력: 해당 독음의 한자 목록 (최대 30개)
+   */
+  searchHanja: publicProcedure
+    .input(z.object({ sound: z.string().min(1) }))
+    .query(({ input }) => {
+      const results = searchHanjaBySound(input.sound, 30);
+      return results.map((r) => ({
+        char: r.char,
+        huneum: r.huneum,
+        ohaeng: r.ohaeng,
+        strokes: r.strokes,
+      }));
     }),
 });
