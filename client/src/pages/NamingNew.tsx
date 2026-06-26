@@ -49,7 +49,7 @@ export default function NamingNew() {
       </div>
 
       {/* 탭 구조 */}
-      <div className="container py-12 max-w-4xl">
+      <div className="container py-12 max-w-6xl">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="free-reading">무료 이름 감정</TabsTrigger>
