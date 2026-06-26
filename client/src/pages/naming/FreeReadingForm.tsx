@@ -5,7 +5,6 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -42,7 +41,6 @@ interface HanjaInputProps {
 
 function HanjaInput({ value, onChange, koreanChar, placeholder }: HanjaInputProps) {
   const [open, setOpen] = useState(false);
-  const [candidates, setCandidates] = useState<HanjaCandidate[]>([]);
   const ref = useRef<HTMLDivElement>(null);
 
   const searchQuery = trpc.naming.searchHanja.useQuery(
@@ -50,11 +48,7 @@ function HanjaInput({ value, onChange, koreanChar, placeholder }: HanjaInputProp
     { enabled: !!koreanChar && koreanChar.length === 1 }
   );
 
-  useEffect(() => {
-    if (searchQuery.data) {
-      setCandidates(searchQuery.data);
-    }
-  }, [searchQuery.data]);
+  const candidates: HanjaCandidate[] = searchQuery.data || [];
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -67,11 +61,8 @@ function HanjaInput({ value, onChange, koreanChar, placeholder }: HanjaInputProp
   }, []);
 
   const ohaengColor: Record<string, string> = {
-    木: "text-green-600",
-    火: "text-red-500",
-    土: "text-yellow-600",
-    金: "text-gray-500",
-    水: "text-blue-500",
+    木: "text-green-600", 火: "text-red-500",
+    土: "text-yellow-600", 金: "text-gray-500", 水: "text-blue-500",
   };
 
   return (
@@ -85,34 +76,21 @@ function HanjaInput({ value, onChange, koreanChar, placeholder }: HanjaInputProp
           onFocus={() => koreanChar && setOpen(true)}
         />
         {koreanChar && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="shrink-0 text-xs px-2 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-            onClick={() => setOpen((v) => !v)}
-          >
-            후보 보기
+          <Button type="button" variant="outline" size="sm"
+            className="shrink-0 text-xs px-3 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+            onClick={() => setOpen((v) => !v)}>
+            후보
           </Button>
         )}
       </div>
-
       {open && candidates.length > 0 && (
         <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-emerald-200 rounded-xl shadow-xl max-h-52 overflow-y-auto">
-          <div className="p-2 text-xs text-gray-400 border-b border-gray-100">
-            "{koreanChar}" 독음 한자 {candidates.length}개
-          </div>
-          <div className="grid grid-cols-3 gap-1 p-2">
+          <div className="p-2 text-xs text-gray-400 border-b">&quot;{koreanChar}&quot; 독음 한자 {candidates.length}개</div>
+          <div className="grid grid-cols-4 gap-1 p-2">
             {candidates.map((c) => (
-              <button
-                key={c.char}
-                type="button"
-                onClick={() => {
-                  onChange(c.char);
-                  setOpen(false);
-                }}
-                className="flex flex-col items-center p-2 rounded-lg hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-all"
-              >
+              <button key={c.char} type="button"
+                onClick={() => { onChange(c.char); setOpen(false); }}
+                className="flex flex-col items-center p-2 rounded-lg hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-all">
                 <span className="text-2xl font-bold text-gray-800">{c.char}</span>
                 <span className="text-xs text-gray-500 truncate w-full text-center">{c.huneum}</span>
                 <span className={`text-xs font-semibold ${ohaengColor[c.ohaeng] || ""}`}>{c.ohaeng}</span>
@@ -135,23 +113,19 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
   const form = useForm<FreeReadingFormData>({
     resolver: zodResolver(freeReadingSchema),
     defaultValues: {
-      surnameKorean: "",
-      surnameHanja: "",
-      name1Korean: "",
-      name1Hanja: "",
-      name2Korean: "",
-      name2Hanja: "",
-      birthYear: "",
-      birthMonth: "",
-      birthDay: "",
-      calendarType: "solar",
-      gender: "male",
+      surnameKorean: "", surnameHanja: "",
+      name1Korean: "", name1Hanja: "",
+      name2Korean: "", name2Hanja: "",
+      birthYear: "", birthMonth: "", birthDay: "",
+      calendarType: "solar", gender: "male",
     },
   });
 
   const name1Korean = form.watch("name1Korean");
   const name2Korean = form.watch("name2Korean");
   const surnameKorean = form.watch("surnameKorean");
+  const calendarType = form.watch("calendarType");
+  const gender = form.watch("gender");
 
   const freeReadingMutation = trpc.naming.freeReading.useMutation({
     onSuccess: (data) => {
@@ -180,32 +154,32 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
     }
   };
 
-  const calendarType = form.watch("calendarType");
-  const gender = form.watch("gender");
+  const sectionClass = "bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm";
+  const labelClass = "text-xs font-bold text-emerald-700 uppercase tracking-widest mb-3 block";
 
   return (
-    <Card className="w-full max-w-3xl border-emerald-100 shadow-md">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl text-emerald-900">무료 이름 감정</CardTitle>
-        <CardDescription className="text-base">
-          성씨와 이름, 생년월일을 입력하면 자원오행·발음오행·수리사격을 분석해드립니다.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <div className="w-full max-w-5xl mx-auto">
+      {/* 헤더 */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-emerald-900">무료 이름 감정</h2>
+        <p className="text-gray-500 mt-1">성씨와 이름, 생년월일을 입력하면 자원오행·발음오행·수리사격을 분석해드립니다.</p>
+      </div>
 
-            {/* 성씨 */}
-            <div>
-              <p className="text-sm font-semibold text-gray-700 mb-3">성씨</p>
-              <div className="grid grid-cols-2 gap-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+          {/* 성명 입력 — 전체 좌→우 4칸 */}
+          <div className={sectionClass}>
+            <span className={labelClass}>성명 입력</span>
+            <div className="grid grid-cols-4 gap-4">
+              {/* 성씨 */}
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-gray-600 border-b border-emerald-100 pb-1">성씨</p>
                 <FormField control={form.control} name="surnameKorean"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>한글</FormLabel>
-                      <FormControl>
-                        <Input placeholder="예: 전" maxLength={1} {...field} />
-                      </FormControl>
+                      <FormControl><Input placeholder="전" maxLength={1} {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -216,26 +190,21 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                     value={form.watch("surnameHanja") || ""}
                     onChange={(v) => form.setValue("surnameHanja", v)}
                     koreanChar={surnameKorean}
-                    placeholder="예: 全"
+                    placeholder="全"
                   />
                 </FormItem>
               </div>
-            </div>
 
-            {/* 이름 — 글자 분리 */}
-            <div>
-              <p className="text-sm font-semibold text-gray-700 mb-3">이름</p>
-              <div className="grid grid-cols-2 gap-6">
-                {/* 가운데 글자 */}
+              {/* 구분선 */}
+              <div className="col-span-3 grid grid-cols-3 gap-4 border-l border-emerald-100 pl-4">
+                {/* 이름 가운데 */}
                 <div className="space-y-3">
-                  <p className="text-xs text-gray-500 font-medium">가운데 글자</p>
+                  <p className="text-sm font-semibold text-gray-600 border-b border-emerald-100 pb-1">가운데 글자</p>
                   <FormField control={form.control} name="name1Korean"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>한글</FormLabel>
-                        <FormControl>
-                          <Input placeholder="예: 원" maxLength={1} {...field} />
-                        </FormControl>
+                        <FormControl><Input placeholder="원" maxLength={1} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -246,21 +215,19 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                       value={form.watch("name1Hanja") || ""}
                       onChange={(v) => form.setValue("name1Hanja", v)}
                       koreanChar={name1Korean}
-                      placeholder="예: 源"
+                      placeholder="源"
                     />
                   </FormItem>
                 </div>
 
-                {/* 끝 글자 */}
+                {/* 이름 끝 */}
                 <div className="space-y-3">
-                  <p className="text-xs text-gray-500 font-medium">끝 글자</p>
+                  <p className="text-sm font-semibold text-gray-600 border-b border-emerald-100 pb-1">끝 글자</p>
                   <FormField control={form.control} name="name2Korean"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>한글</FormLabel>
-                        <FormControl>
-                          <Input placeholder="예: 석" maxLength={1} {...field} />
-                        </FormControl>
+                        <FormControl><Input placeholder="석" maxLength={1} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -271,111 +238,111 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                       value={form.watch("name2Hanja") || ""}
                       onChange={(v) => form.setValue("name2Hanja", v)}
                       koreanChar={name2Korean}
-                      placeholder="예: 錫"
+                      placeholder="錫"
                     />
                   </FormItem>
                 </div>
+
+                {/* 완성된 이름 미리보기 */}
+                <div className="flex flex-col items-center justify-center bg-emerald-50 rounded-xl border border-emerald-100 p-4">
+                  <p className="text-xs text-emerald-600 font-semibold mb-2">이름 미리보기</p>
+                  <p className="text-3xl font-bold text-emerald-900 tracking-widest">
+                    {form.watch("surnameKorean") || "○"}
+                    {form.watch("name1Korean") || "○"}
+                    {form.watch("name2Korean") || "○"}
+                  </p>
+                  <p className="text-lg text-gray-500 mt-1 tracking-widest">
+                    {form.watch("surnameHanja") || ""}
+                    {form.watch("name1Hanja") || ""}
+                    {form.watch("name2Hanja") || ""}
+                  </p>
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* 생년월일 */}
-            <div>
-              <p className="text-sm font-semibold text-gray-700 mb-3">생년월일</p>
-
-              {/* 양력/음력 선택 */}
-              <div className="flex gap-2 mb-4">
-                {(["solar", "lunar"] as const).map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => form.setValue("calendarType", type)}
-                    className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-                      calendarType === type
-                        ? "bg-emerald-700 text-white shadow"
-                        : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                    }`}
-                  >
-                    {type === "solar" ? "양력" : "음력"}
-                  </button>
-                ))}
+          {/* 생년월일 + 성별 — 한 줄 */}
+          <div className={sectionClass}>
+            <div className="grid grid-cols-2 gap-8">
+              {/* 생년월일 */}
+              <div>
+                <span className={labelClass}>생년월일</span>
+                <div className="flex gap-2 mb-4">
+                  {(["solar", "lunar"] as const).map((type) => (
+                    <button key={type} type="button"
+                      onClick={() => form.setValue("calendarType", type)}
+                      className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                        calendarType === type
+                          ? "bg-emerald-700 text-white shadow"
+                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      }`}>
+                      {type === "solar" ? "양력" : "음력"}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <FormField control={form.control} name="birthYear"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>년</FormLabel>
+                        <FormControl><Input placeholder="1977" maxLength={4} {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField control={form.control} name="birthMonth"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>월</FormLabel>
+                        <FormControl><Input placeholder="5" maxLength={2} {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField control={form.control} name="birthDay"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>일</FormLabel>
+                        <FormControl><Input placeholder="17" maxLength={2} {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <FormField control={form.control} name="birthYear"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>년</FormLabel>
-                      <FormControl>
-                        <Input placeholder="예: 1977" maxLength={4} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField control={form.control} name="birthMonth"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>월</FormLabel>
-                      <FormControl>
-                        <Input placeholder="예: 5" maxLength={2} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField control={form.control} name="birthDay"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>일</FormLabel>
-                      <FormControl>
-                        <Input placeholder="예: 17" maxLength={2} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* 성별 */}
-            <div>
-              <p className="text-sm font-semibold text-gray-700 mb-3">성별</p>
-              <div className="flex gap-2">
-                {(["male", "female"] as const).map((g) => (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => form.setValue("gender", g)}
-                    className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-                      gender === g
-                        ? "bg-emerald-700 text-white shadow"
-                        : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                    }`}
-                  >
-                    {g === "male" ? "남성" : "여성"}
-                  </button>
-                ))}
+              {/* 성별 */}
+              <div>
+                <span className={labelClass}>성별</span>
+                <div className="flex gap-3 mt-1">
+                  {(["male", "female"] as const).map((g) => (
+                    <button key={g} type="button"
+                      onClick={() => form.setValue("gender", g)}
+                      className={`px-6 py-3 rounded-xl text-sm font-bold transition-all border-2 ${
+                        gender === g
+                          ? "bg-emerald-700 text-white border-emerald-700 shadow"
+                          : "bg-white text-gray-500 border-gray-200 hover:border-emerald-300"
+                      }`}>
+                      {g === "male" ? "남성" : "여성"}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* 제출 버튼 */}
-            <Button
-              type="submit"
-              disabled={isLoading || freeReadingMutation.isPending}
-              className="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-base py-6 rounded-xl font-bold"
-            >
-              {isLoading || freeReadingMutation.isPending ? (
-                <>
-                  <Spinner className="mr-2 h-4 w-4" />
-                  분석 중...
-                </>
-              ) : (
-                "이름 감정하기"
-              )}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          {/* 제출 */}
+          <Button
+            type="submit"
+            disabled={isLoading || freeReadingMutation.isPending}
+            className="w-full bg-emerald-700 hover:bg-emerald-800 text-white text-lg py-7 rounded-xl font-bold shadow-lg"
+          >
+            {isLoading || freeReadingMutation.isPending ? (
+              <><Spinner className="mr-2 h-4 w-4" />분석 중...</>
+            ) : "이름 감정하기"}
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 }
