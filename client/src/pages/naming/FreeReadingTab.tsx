@@ -2,6 +2,12 @@ import { useState } from "react";
 import { FreeReadingForm } from "./FreeReadingForm";
 import { FreeReadingResult } from "./FreeReadingResult";
 
+interface SuriGrade {
+  number: number;
+  gilhyung: string;
+  description: string;
+}
+
 interface FreeReadingResultData {
   certificateNumber: string;
   analysis: {
@@ -9,11 +15,13 @@ interface FreeReadingResultData {
       ohaeng: string;
       result: string;
       detail?: string;
+      hasHanja?: boolean;
     };
-    suri: {
-      number: number;
-      gilhyung: string;
-      description: string;
+    suri4: {
+      won: SuriGrade;
+      hyeong: SuriGrade;
+      i: SuriGrade;
+      jeong: SuriGrade;
     };
     bulmyong: {
       hasBulmyong: boolean;
