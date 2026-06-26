@@ -31,6 +31,7 @@ interface FreeReadingResultProps {
       };
       overall: string;
       comment: string;
+      requiredOhaeng?: { primary: string; secondary: string } | null;
     };
   };
   onPdfDownload?: () => void;
@@ -116,6 +117,39 @@ export function FreeReadingResult({ data, onPdfDownload, onShare }: FreeReadingR
           </CardDescription>
         </CardHeader>
       </Card>
+
+      {/* 필요오행 — 사주 기반 */}
+      {data.analysis.requiredOhaeng && (
+        <Card className="border-purple-100 bg-purple-50">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-purple-600" />
+              사주 기반 필요오행
+            </CardTitle>
+            <CardDescription className="text-sm">생년월일로 분석한 이름에 담아야 할 오행 기운</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <div className="text-center">
+                <p className="text-xs text-purple-600 font-semibold mb-1">1순위</p>
+                <span className={`px-4 py-2 rounded-lg text-lg font-bold ${OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.bg || "bg-gray-100"} ${OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.text || "text-gray-700"}`}>
+                  {OHAENG_STYLE[data.analysis.requiredOhaeng.primary]?.label || data.analysis.requiredOhaeng.primary}
+                </span>
+              </div>
+              <div className="text-purple-400 text-xl">→</div>
+              <div className="text-center">
+                <p className="text-xs text-purple-600 font-semibold mb-1">2순위 (생하는 오행)</p>
+                <span className={`px-4 py-2 rounded-lg text-lg font-bold ${OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.bg || "bg-gray-100"} ${OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.text || "text-gray-700"}`}>
+                  {OHAENG_STYLE[data.analysis.requiredOhaeng.secondary]?.label || data.analysis.requiredOhaeng.secondary}
+                </span>
+              </div>
+            </div>
+            <p className="text-sm text-purple-700 mt-3 bg-white rounded-lg p-3 border border-purple-100 leading-relaxed">
+              이름의 자원오행이 위 기운을 담고 있을 때 사주와 가장 잘 어울립니다.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* 자원오행 분석 */}
       <Card className="border-amber-100">
