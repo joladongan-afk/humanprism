@@ -563,7 +563,7 @@ function HeaderStats({ stats }: { stats?: { totalUsers: number; totalSessions: n
   return (
     <div className="flex items-center gap-2 sm:gap-3">
       <span className="text-fuchsia-300 font-extrabold tabular-nums text-base sm:text-[1.6rem] leading-none">{fmt(stats.totalLogins)}</span>
-      <span className="text-white/80 font-semibold text-[0.7rem] sm:text-[1.05rem]">번<span className="hidden sm:inline"> 방문</span></span>
+      <span className="text-white/80 font-semibold text-[0.7rem] sm:text-[1.05rem]">명<span className="hidden sm:inline">이 함께합니다</span></span>
     </div>
   );
 }
