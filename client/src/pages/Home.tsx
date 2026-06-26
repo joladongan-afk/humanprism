@@ -268,7 +268,7 @@ export default function Home() {
               <MosaicTextReveal text="당신 인생의 한 끝" fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44} colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']} startDelay={0} />
             </h1>
             <div className="max-w-2xl mb-6">
-              <p className="text-3xl md:text-4xl font-bold leading-relaxed mb-2 bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">누구에게나 자신만이 가진</p>
+              <p className="hanja-display text-2xl md:text-4xl lg:text-[2.6rem] leading-relaxed font-bold bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">누구에게나 자신만이 가진</p>
               <div className="mb-4">
                 <MosaicTextReveal
                   text="한 칼이 있습니다."
@@ -277,7 +277,7 @@ export default function Home() {
                   startDelay={0}
                 />
               </div>
-              <p className="text-2xl md:text-3xl font-bold mb-1" style={{background: 'linear-gradient(to right, #f59e0b, #fbbf24, #fcd34d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>7대 사주명가의 비전을 품은</p>
+              <p className="hanja-display text-2xl md:text-4xl lg:text-[2.6rem] leading-relaxed font-bold bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">7대 사주명가의 비전을 품은</p>
               <MosaicTextReveal
                 text="초 격차 사주 문답"
                 fontSize={typeof window !== 'undefined' && window.innerWidth >= 1024 ? 80 : typeof window !== 'undefined' && window.innerWidth >= 768 ? 60 : 44}
