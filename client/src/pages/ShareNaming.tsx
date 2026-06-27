@@ -1,5 +1,5 @@
 import { useParams } from "wouter";
-import { trpc } from "@/_core/trpc";
+import { trpc } from "@/lib/trpc";
 
 const OHAENG_COLOR: Record<string, { bg: string; text: string; border: string; label: string }> = {
   木: { bg: "#dceeff", text: "#0d3d6e", border: "#8ec5f7", label: "목(木)" },
