@@ -319,14 +319,16 @@ export default function Home() {
             <p className="hanja-display text-lg sm:text-xl font-bold bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">
               30년 사주 장인이 말해주는
             </p>
-            <h1 className="hanja-display mt-3 text-[2.6rem] leading-[1.18] font-bold bg-gradient-to-r from-fuchsia-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-              당신 인생의 한 끝
+            <h1 className="hanja-display mt-3 leading-[1.18] font-bold">
+              <MosaicTextReveal text="당신 인생의 한 끝" fontSize={42} colorPalette={['#f0abfc', '#e879f9', '#d946ef', '#c084fc', '#a855f7', '#f472b6', '#ec4899', '#d8b4fe']} startDelay={0} />
             </h1>
             <div className="mt-4 w-full">
               <p className="text-xl font-bold mb-1 bg-gradient-to-r from-yellow-200 via-pink-200 to-blue-200 bg-clip-text text-transparent">누구에게나 자신만이 가진</p>
-              <p className="text-2xl font-bold bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-300 bg-clip-text text-transparent mb-3">한 칼이 있습니다.</p>
+              <div className="mb-3">
+                <MosaicTextReveal text="한 칼이 있습니다." fontSize={36} colorPalette={['#38bdf8', '#0ea5e9', '#22d3ee', '#67e8f9', '#7dd3fc', '#bae6fd', '#0284c7', '#06b6d4']} startDelay={0} />
+              </div>
               <p className="text-lg font-bold mb-1" style={{background: 'linear-gradient(to right, #f59e0b, #fbbf24, #fcd34d)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>7대 사주명가의 비전을 품은</p>
-              <p className="text-2xl font-bold bg-gradient-to-r from-emerald-300 via-green-300 to-teal-300 bg-clip-text text-transparent">초 격차 사주 문답</p>
+              <MosaicTextReveal text="초 격차 사주 문답" fontSize={36} colorPalette={['#ff2d55', '#e11d48', '#fb7185', '#ff6b9d', '#dc2626', '#ef4444', '#fca5a5', '#ff1744']} startDelay={0} />
             </div>
           </div>
 
