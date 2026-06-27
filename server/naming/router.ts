@@ -204,6 +204,12 @@ export const namingRouter = router({
           suriNumber: suri4.jeong,
           suriGilhyung: jeongJudgment.gilhyung,
           suriResult: jeongJudgment.description,
+          suri4Json: JSON.stringify({
+            won: { number: suri4.won, gilhyung: wonJudgment.gilhyung, description: wonJudgment.description },
+            hyeong: { number: suri4.hyeong, gilhyung: hyeongJudgment.gilhyung, description: hyeongJudgment.description },
+            i: { number: suri4.i, gilhyung: iJudgment.gilhyung, description: iJudgment.description },
+            jeong: { number: suri4.jeong, gilhyung: jeongJudgment.gilhyung, description: jeongJudgment.description },
+          }),
           bulmyongFlag: bulmyongCheck.hasBulmyong,
           bulmyongList: bulmyongCheck.bulmyongChars.join(","),
           overallResult,
@@ -331,7 +337,7 @@ export const namingRouter = router({
             hasHanja: !!(r.nameHanja),
           },
           suri4: (() => {
-            try { return r.padoOhaeng ? JSON.parse(r.padoOhaeng) : null; } catch { return null; }
+            try { return r.suri4Json ? JSON.parse(r.suri4Json) : null; } catch { return null; }
           })(),
           bulmyong: {
             hasBulmyong: r.bulmyongFlag || false,
