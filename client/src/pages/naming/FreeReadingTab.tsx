@@ -59,7 +59,14 @@ export function FreeReadingTab() {
   };
 
   const handleShare = () => {
-    alert("공유 기능은 준비 중입니다");
+    if (!data?.analysis) return;
+    const certNum = data.certificateNumber;
+    const url = `${window.location.origin}/share/${certNum}`;
+    navigator.clipboard.writeText(url).then(() => {
+      alert("공유 링크가 복사됐습니다!\n카카오톡에 붙여넣기 하세요.");
+    }).catch(() => {
+      prompt("아래 링크를 복사하세요:", url);
+    });
   };
 
   return (
