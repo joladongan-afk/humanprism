@@ -76,6 +76,38 @@ export function serveStatic(app: Express) {
   // 정적 에셋(js/css/img 등)은 그대로, 단 index.html 직접 요청은 후처리본으로 응답
   app.use(express.static(distPath, { index: false }));
 
+  // /share/:token — 이름감정 공유 페이지 동적 OG 태그 주입
+  app.get("/share/:token", async (req, res) => {
+    const certNum = req.params.token;
+    let html = getKoreanIndex() || fs.readFileSync(indexPath, "utf-8");
+    try {
+      const { getDb } = await import("../db.js");
+      const { eq } = await import("drizzle-orm");
+      const { namingServices } = await import("../../drizzle/schema.js");
+      const db = await getDb();
+      if (db) {
+        const rows = await db.select().from(namingServices)
+          .where(eq(namingServices.certificateNumber, certNum)).limit(1);
+        if (rows[0]) {
+          const r = rows[0];
+          const fullName = `${r.surnameKorean || ""}${r.nameKorean || ""}`;
+          const fullHanja = r.surnameHanja || r.nameHanja ? `${r.surnameHanja || ""}${r.nameHanja || ""}` : "";
+          const title = `${fullName}${fullHanja ? ` (${fullHanja})` : ""} 이름감정 결과 — 휴먼프리즘`;
+          const desc = `자원오행 ${r.jawonResult || ""} · ${r.overallResult || ""} | 30년 명리학 전문가의 AI 이름감정`;
+          html = html
+            .replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`)
+            .replace(/<meta property="og:title"[^>]*>/i, `<meta property="og:title" content="${title}" />`)
+            .replace(/<meta property="og:description"[^>]*>/i, `<meta property="og:description" content="${desc}" />`)
+            .replace(/<meta name="twitter:title"[^>]*>/i, `<meta name="twitter:title" content="${title}" />`)
+            .replace(/<meta name="twitter:description"[^>]*>/i, `<meta name="twitter:description" content="${desc}" />`);
+        }
+      }
+    } catch (e) {
+      // OG 주입 실패해도 기본 HTML 전송
+    }
+    res.status(200).set({ "Content-Type": "text/html" }).end(html);
+  });
+
   // fall through to index.html (SPA) — 항상 한글 OG 주입본을 전송
   app.use("*", (_req, res) => {
     const html = getKoreanIndex();
