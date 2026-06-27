@@ -275,7 +275,7 @@ export default function Plans() {
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
       {/* 히어로 배경 섹션 */}
-        <div className="page-hero relative w-full h-[360px] flex items-center bg-gradient-to-br from-slate-950 via-blue-900 to-slate-900 overflow-hidden">
+        <div className="page-hero relative w-full min-h-[360px] md:h-[360px] flex items-center bg-gradient-to-br from-slate-950 via-blue-900 to-slate-900 overflow-visible py-10 md:py-0">
         {/* 우주 배경 그라디언트 - 네이비 톤 */}
         <div className="absolute inset-0 opacity-50">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-700/30 rounded-full blur-3xl" />
