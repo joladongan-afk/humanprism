@@ -210,7 +210,7 @@ export const namingRouter = router({
           rollingComment,
           certificateNumber,
           namingConsentAt: new Date(),
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         }).$returningId();
 
         return {
@@ -301,6 +301,8 @@ export const namingRouter = router({
   getShareResult: publicProcedure
     .input(z.object({ certificateNumber: z.string() }))
     .query(async ({ input }) => {
+      const database = await getDb();
+      if (!database) throw new Error("Database connection failed");
       const results = await database
         .select()
         .from(namingServices)
