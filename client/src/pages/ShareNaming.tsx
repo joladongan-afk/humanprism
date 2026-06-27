@@ -71,7 +71,7 @@ export default function SharePage() {
       </div>
 
       {/* 결과 본문 */}
-      <div style={{ maxWidth: 600, margin: "0 auto", padding: "20px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "20px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
 
         {/* 종합 판정 */}
         <div style={{ background: "#fff", border: "0.5px solid #e0ddd6", borderTop: "3px solid #1D9E75", borderRadius: 12, padding: "14px 16px" }}>
