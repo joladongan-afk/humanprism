@@ -73,10 +73,7 @@ export function serveStatic(app: Express) {
     return cachedKoreanIndex;
   };
 
-  // 정적 에셋(js/css/img 등)은 그대로, 단 index.html 직접 요청은 후처리본으로 응답
-  app.use(express.static(distPath, { index: false }));
-
-  // /share/:token — 이름감정 공유 페이지 동적 OG 태그 주입
+  // /share/:token — 이름감정 공유 페이지 동적 OG 태그 주입 (static보다 먼저 처리)
   app.get("/share/:token", async (req, res) => {
     const certNum = req.params.token;
     let html = getKoreanIndex() || fs.readFileSync(indexPath, "utf-8");
