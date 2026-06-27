@@ -93,7 +93,7 @@ const card = (accentColor: string): React.CSSProperties => ({
 
 function SectionTitle({ label }: { label: string }) {
   return (
-    <div style={{ fontSize: 13, fontWeight: 500, color: "#444441", marginBottom: 12, letterSpacing: "0.02em" }}>
+    <div style={{ fontSize: 16, fontWeight: 700, color: "#0d6b4a", marginBottom: 12, letterSpacing: "0.01em" }}>
       {label}
     </div>
   );
@@ -270,13 +270,13 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
       <div style={{ display: "flex", gap: 10 }}>
         <button
           onClick={onPdfDownload}
-          style={{ flex: 1, background: "#0F6E56", color: "#ffffff", border: "none", borderRadius: 8, padding: "10px 0", fontSize: 14, fontWeight: 500, cursor: "pointer" }}
+          style={{ flex: 1, background: "#0F6E56", color: "#ffffff", border: "none", borderRadius: 8, padding: "14px 0", fontSize: 17, fontWeight: 700, cursor: "pointer" }}
         >
           PDF 저장
         </button>
         <button
           onClick={onShare}
-          style={{ flex: 1, background: "#FEE500", color: "#3A1D1D", border: "none", borderRadius: 8, padding: "10px 0", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
+          style={{ flex: 1, background: "#FEE500", color: "#3A1D1D", border: "none", borderRadius: 8, padding: "14px 0", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <ellipse cx="12" cy="11" rx="10" ry="8.5" fill="#3A1D1D" opacity="0.85"/>
