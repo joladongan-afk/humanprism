@@ -45,8 +45,8 @@ const OHAENG_COLOR: Record<string, { dot: string; text: string; bg: string; bord
   木: { dot: "#1a5fa8", text: "#0d3d6e", bg: "#dceeff", border: "#8ec5f7", label: "목(木)" },
   火: { dot: "#A32D2D", text: "#791F1F", bg: "#FCEBEB", border: "#F7C1C1", label: "화(火)" },
   土: { dot: "#8a6200", text: "#5a4000", bg: "#fff3c0", border: "#f0c93a", label: "토(土)" },
-  金: { dot: "#555550", text: "#222220", bg: "#f5f5f0", border: "#ccccbb", label: "금(金)" },
-  水: { dot: "#e8e8e8", text: "#f0f0f0", bg: "#1a1a2e", border: "#444466", label: "수(水)" },
+  金: { dot: "#555550", text: "#333330", bg: "#e8e8e0", border: "#aaaaaa", label: "금(金)" },
+  水: { dot: "#aaccff", text: "#e0eeff", bg: "#0d0d1f", border: "#2a2a55", label: "수(水)" },
 };
 
 const GILHYUNG_STYLE: Record<string, { bg: string; color: string }> = {
