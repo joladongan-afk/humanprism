@@ -276,8 +276,15 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
         </button>
         <button
           onClick={onShare}
-          style={{ flex: 1, background: "#EEEDFE", color: "#3C3489", border: "1px solid #AFA9EC", borderRadius: 8, padding: "10px 0", fontSize: 14, fontWeight: 500, cursor: "pointer" }}
+          style={{ flex: 1, background: "#FEE500", color: "#3A1D1D", border: "none", borderRadius: 8, padding: "10px 0", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
         >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="12" cy="11" rx="10" ry="8.5" fill="#3A1D1D" opacity="0.85"/>
+            <path d="M8 10.5C8 9.67 8.67 9 9.5 9S11 9.67 11 10.5 10.33 12 9.5 12 8 11.33 8 10.5z" fill="#FEE500"/>
+            <path d="M13 10.5C13 9.67 13.67 9 14.5 9S16 9.67 16 10.5 15.33 12 14.5 12 13 11.33 13 10.5z" fill="#FEE500"/>
+            <path d="M9 14c.8.8 2 1.2 3 1.2s2.2-.4 3-1.2" stroke="#FEE500" strokeWidth="1.2" strokeLinecap="round"/>
+            <path d="M7 17.5c-.5 1.5-1.2 2.5-1.2 2.5l3.5-1.5" stroke="#3A1D1D" strokeWidth="0.8" strokeLinecap="round" opacity="0.5"/>
+          </svg>
           공유하기
         </button>
       </div>
