@@ -341,88 +341,80 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
             </div>
           </div>
 
-          {/* 생년월일 + 성별 */}
+          {/* 생년월일 + 성별 — 2줄 압축 */}
           <div className={sectionClass}>
-            <div className="grid grid-cols-2 gap-8">
-              {/* 생년월일 */}
-              <div>
-                <span className={labelClass}>생년월일</span>
-                <div className="flex gap-2 mb-2">
-                  {(["solar", "lunar"] as const).map((type) => (
-                    <button key={type} type="button"
-                      onClick={() => form.setValue("calendarType", type)}
-                      className={`px-3 py-1 rounded-full text-sm font-semibold transition-all ${
-                        calendarType === type
-                          ? "bg-emerald-700 text-white shadow"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                      }`}>
-                      {type === "solar" ? "양력" : "음력"}
-                    </button>
-                  ))}
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {/* 년 드롭다운 */}
-                  <FormField control={form.control} name="birthYear"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>년</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger><SelectValue placeholder="년도" /></SelectTrigger>
-                          <SelectContent className="max-h-80">
-                            {YEARS.map((y) => (
-                              <SelectItem key={y} value={String(y)}>{y}년</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* 월 드롭다운 */}
-                  <FormField control={form.control} name="birthMonth"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>월</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger><SelectValue placeholder="월" /></SelectTrigger>
-                          <SelectContent>
-                            {MONTHS.map((m) => (
-                              <SelectItem key={m} value={String(m)}>{m}월</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* 일 드롭다운 */}
-                  <FormField control={form.control} name="birthDay"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>일</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger><SelectValue placeholder="일" /></SelectTrigger>
-                          <SelectContent>
-                            {DAYS.map((d) => (
-                              <SelectItem key={d} value={String(d)}>{d}일</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* 성별 */}
-              <div>
-                <span className={labelClass}>성별</span>
-                <div className="flex gap-3 mt-1">
+            {/* 줄1: 생년월일 라벨 + 양력/음력 */}
+            <div className="flex items-center gap-3 mb-3">
+              <span className={labelClass} style={{marginBottom:0}}>생년월일</span>
+              {(["solar", "lunar"] as const).map((type) => (
+                <button key={type} type="button"
+                  onClick={() => form.setValue("calendarType", type)}
+                  className={`px-3 py-1 rounded-full text-sm font-semibold transition-all ${
+                    calendarType === type
+                      ? "bg-emerald-700 text-white shadow"
+                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  }`}>
+                  {type === "solar" ? "양력" : "음력"}
+                </button>
+              ))}
+            </div>
+            {/* 줄2: 년/월/일 드롭다운 + 성별 버튼 */}
+            <div className="flex items-end gap-2 flex-wrap">
+              <FormField control={form.control} name="birthYear"
+                render={({ field }) => (
+                  <FormItem className="flex-1 min-w-[90px]">
+                    <FormLabel>년</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger><SelectValue placeholder="년도" /></SelectTrigger>
+                      <SelectContent className="max-h-80">
+                        {YEARS.map((y) => (
+                          <SelectItem key={y} value={String(y)}>{y}년</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField control={form.control} name="birthMonth"
+                render={({ field }) => (
+                  <FormItem className="flex-1 min-w-[70px]">
+                    <FormLabel>월</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger><SelectValue placeholder="월" /></SelectTrigger>
+                      <SelectContent>
+                        {MONTHS.map((m) => (
+                          <SelectItem key={m} value={String(m)}>{m}월</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField control={form.control} name="birthDay"
+                render={({ field }) => (
+                  <FormItem className="flex-1 min-w-[70px]">
+                    <FormLabel>일</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger><SelectValue placeholder="일" /></SelectTrigger>
+                      <SelectContent>
+                        {DAYS.map((d) => (
+                          <SelectItem key={d} value={String(d)}>{d}일</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-gray-700">성별</span>
+                <div className="flex gap-2">
                   {(["male", "female"] as const).map((g) => (
                     <button key={g} type="button"
                       onClick={() => form.setValue("gender", g)}
-                      className={`px-5 py-2 rounded-xl text-sm font-bold transition-all border-2 ${
+                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all border-2 ${
                         gender === g
                           ? "bg-emerald-700 text-white border-emerald-700 shadow"
                           : "bg-white text-gray-500 border-gray-200 hover:border-emerald-300"
@@ -435,13 +427,15 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
             </div>
           </div>
 
-          {/* 출생 시간 + 도시 */}
+          {/* 출생 시간 + 도시 — 한 줄 */}
           <div className={sectionClass}>
-            <span className={labelClass}>출생 시간 및 지역 <span className="text-gray-400 font-normal normal-case text-xs ml-1">(만세력 정확도 향상)</span></span>
-            <div className="grid grid-cols-2 gap-6">
-              {/* 시진 */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">출생 시진(時辰)</label>
+            <div className="flex items-center gap-2 mb-3">
+              <span className={labelClass} style={{marginBottom:0}}>출생 시간 및 지역</span>
+              <span className="text-gray-400 text-xs">(만세력 정확도 향상)</span>
+            </div>
+            <div className="flex gap-4 flex-wrap items-end">
+              <div className="flex-1 min-w-[180px]">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">출생 시진(時辰)</label>
                 <Select value={hourBranch} onValueChange={setHourBranch}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="시진 선택" />
@@ -453,9 +447,8 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                   </SelectContent>
                 </Select>
               </div>
-              {/* 도시 */}
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">출생 도시</label>
+              <div className="flex-1 min-w-[140px]">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">출생 도시</label>
                 <Select value={city} onValueChange={setCity}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="도시 선택" />
@@ -470,16 +463,13 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
             </div>
           </div>
 
-          {/* 개인정보 수집 동의 */}
-          <div className="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm">
-            <p className="text-xs font-bold text-emerald-700 uppercase tracking-widest mb-3">개인정보 수집 동의</p>
-            <div className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4 mb-4 leading-relaxed border border-gray-100">
-              <p className="font-semibold text-gray-700 mb-2">수집 항목</p>
-              <p className="mb-1">이름(한글·한자), 생년월일, 성별</p>
-              <p className="font-semibold text-gray-700 mb-2 mt-3">수집 목적</p>
-              <p className="mb-1">이름 감정 서비스 제공</p>
-              <p className="font-semibold text-gray-700 mb-2 mt-3">보유 기간</p>
-              <p>서비스 이용 후 1년</p>
+          {/* 개인정보 수집 동의 — 가로 압축 */}
+          <div className="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm">
+            <p className="text-sm font-bold text-emerald-700 mb-2">개인정보 수집 동의</p>
+            <div className="flex gap-4 flex-wrap text-sm text-gray-600 bg-gray-50 rounded-lg px-4 py-3 mb-3 border border-gray-100">
+              <span><span className="font-semibold text-gray-700">수집 항목</span> · 이름(한글·한자), 생년월일, 성별</span>
+              <span><span className="font-semibold text-gray-700">수집 목적</span> · 이름 감정 서비스 제공</span>
+              <span><span className="font-semibold text-gray-700">보유 기간</span> · 서비스 이용 후 1년</span>
             </div>
             <FormField control={form.control} name="namingConsent"
               render={({ field }) => (
