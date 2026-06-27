@@ -304,6 +304,9 @@ export const namingServices = mysqlTable("namingServices", {
   overallResult: varchar("overallResult", { length: 20 }), // 최종 판정
   rollingComment: text("rollingComment"), // 랜덤 코멘트
 
+  // 수리사격 4격 전체 (공유 페이지용)
+  suri4Json: text("suri4Json"), // JSON: {won,hyeong,i,jeong} 각 {number,gilhyung,description}
+
   // 증서
   certificateNumber: varchar("certificateNumber", { length: 50 }), // "HPS-20260618-001" 형식
   certificatePdfUrl: varchar("certificatePdfUrl", { length: 500 }),
