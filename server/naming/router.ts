@@ -308,26 +308,34 @@ export const namingRouter = router({
         .limit(1);
       const r = results[0];
       if (!r) throw new Error("결과를 찾을 수 없습니다");
+
+      // nameKorean = "원석" (이름 두 글자), surnameKorean 별도
+      const nameChars = (r.nameKorean || "").split("");
+      const hanjaChars = (r.nameHanja || "").split("");
+
       return {
         certificateNumber: r.certificateNumber,
-        surnameKorean: r.surnameKorean,
-        surnameHanja: r.surnameHanja,
-        name1Korean: r.name1Korean,
-        name1Hanja: r.name1Hanja,
-        name2Korean: r.name2Korean,
-        name2Hanja: r.name2Hanja,
+        surnameKorean: r.surnameKorean || "",
+        surnameHanja: r.surnameHanja || "",
+        name1Korean: nameChars[0] || "",
+        name1Hanja: hanjaChars[0] || "",
+        name2Korean: nameChars[1] || "",
+        name2Hanja: hanjaChars[1] || "",
         analysis: {
           jawon: {
             ohaeng: r.jawonOhaeng || "",
             result: r.jawonResult || "",
-            detail: r.jawonDetail || "",
-            hasHanja: !!(r.name1Hanja || r.name2Hanja),
+            detail: "",
+            hasHanja: !!(r.nameHanja),
           },
-          suri4: r.suri4 as any,
-          bulmyong: r.bulmyong as any || { hasBulmyong: false, chars: [] },
+          suri4: null, // 수리사격 4격 데이터 없음 (저장 안 됨)
+          bulmyong: {
+            hasBulmyong: r.bulmyongFlag || false,
+            chars: r.bulmyongList ? r.bulmyongList.split(",") : [],
+          },
           overall: r.overallResult || "",
-          comment: r.suriResult || "",
-          requiredOhaeng: r.requiredOhaeng ? { primary: r.requiredOhaeng, secondary: "" } : null,
+          comment: r.suriResult || r.rollingComment || "",
+          requiredOhaeng: null,
         },
         createdAt: r.createdAt,
       };
