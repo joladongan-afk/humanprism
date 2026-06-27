@@ -93,7 +93,7 @@ export function serveStatic(app: Express) {
           const fullName = `${r.surnameKorean || ""}${r.nameKorean || ""}`;
           const fullHanja = r.surnameHanja || r.nameHanja ? `${r.surnameHanja || ""}${r.nameHanja || ""}` : "";
           const title = `${fullName}${fullHanja ? ` (${fullHanja})` : ""} 이름감정 결과 — 휴먼프리즘`;
-          const desc = `자원오행 ${r.jawonResult || ""} · ${r.overallResult || ""} | 30년 명리학 전문가의 AI 이름감정`;
+          const desc = `📋 이름 감정결과 보고서 | 자원오행 ${r.jawonResult || ""} · ${r.overallResult || ""} | 30년 명리학 전문가의 AI 이름감정`;
           html = html
             .replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`)
             .replace(/<meta property="og:title"[^>]*>/i, `<meta property="og:title" content="${title}" />`)
