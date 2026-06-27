@@ -19,6 +19,7 @@ import Compatibility from "./pages/Compatibility";
 import Legal from "./pages/Legal";
 import LogoPreview from "./pages/LogoPreview";
 import NamingNew from "./pages/NamingNew";
+import ShareNaming from "./pages/ShareNaming";
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/me" component={MyRoom} />
       <Route path="/compatibility" component={Compatibility} />
       <Route path="/naming/new" component={NamingNew} />
+      <Route path="/share/:token" component={ShareNaming} />
       <Route path="/appointments/new" component={AppointmentNew} />
       <Route path="/payment/redirect" component={PaymentRedirect} />
       <Route path="/legal" component={Legal} />
