@@ -275,7 +275,14 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
           PDF 저장
         </button>
         <button
-          onClick={onShare}
+          onClick={() => {
+            const url = `${window.location.origin}/share/${data.certificateNumber}`;
+            navigator.clipboard.writeText(url).then(() => {
+              alert("공유 링크가 복사됐습니다!\n카카오톡에 붙여넣기 하세요.");
+            }).catch(() => {
+              prompt("아래 링크를 복사하세요:", url);
+            });
+          }}
           style={{ flex: 1, background: "#FEE500", color: "#3A1D1D", border: "none", borderRadius: 8, padding: "14px 0", fontSize: 17, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
