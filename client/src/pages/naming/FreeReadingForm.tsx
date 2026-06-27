@@ -317,13 +317,19 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                   </FormItem>
                 </div>
 
-                <div className="flex flex-col items-center justify-center bg-emerald-50 rounded-xl border border-emerald-100 p-4">
-                  <p className="text-3xl font-bold text-emerald-900 tracking-widest">
+                <div style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                  background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+                  borderRadius: 16, border: "2px solid #c9a84c",
+                  boxShadow: "0 0 0 1px #1a1a2e, 0 0 0 3px #c9a84c, 0 4px 20px rgba(201,168,76,0.3)",
+                  padding: "20px 24px", gap: 8, minHeight: 100,
+                }}>
+                  <p style={{ fontSize: 32, fontWeight: 700, color: "#f0d080", letterSpacing: "0.2em", margin: 0, textShadow: "0 0 12px rgba(240,208,128,0.5)" }}>
                     {form.watch("surnameKorean") || "○"}
                     {form.watch("name1Korean") || "○"}
                     {form.watch("name2Korean") || "○"}
                   </p>
-                  <p className="text-lg text-gray-500 mt-1 tracking-widest">
+                  <p style={{ fontSize: 16, color: "#c9a84c", letterSpacing: "0.25em", margin: 0, opacity: 0.85 }}>
                     {form.watch("surnameHanja") || ""}
                     {form.watch("name1Hanja") || ""}
                     {form.watch("name2Hanja") || ""}
