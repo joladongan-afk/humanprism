@@ -233,16 +233,16 @@ export default function Home() {
               transformOrigin: "center",
             }}
           />
-          {/* 모바일 배경: 프리즘·여신이 상단에 보이도록 상단 중앙 기준, 살짝 확대 */}
+          {/* 모바일 배경: 여자 얼굴 전체 보이도록 위치 조정 */}
           <img
             src={HERO_BG}
             alt=""
             aria-hidden
             className="lg:hidden w-full h-full object-cover"
             style={{
-              objectPosition: "72% 30%",
-              transform: "scale(1.15)",
-              transformOrigin: "center",
+              objectPosition: "68% 15%",
+              transform: "scale(1.05)",
+              transformOrigin: "top center",
             }}
           />
           {/* 왼쪽 가독성 확보용 그라데이션 오버레이 (데스크탑) */}
