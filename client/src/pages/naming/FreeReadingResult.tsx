@@ -153,9 +153,9 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
               return (
                 <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
                   {idx === 1 && <span style={{ color: "#AFA9EC", fontSize: 18, flex: "0 0 auto" }}>→</span>}
-                  <div style={{ flex: 1, background: "#EEEDFE", border: "0.5px solid #AFA9EC", borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
-                    <div style={{ fontSize: 12, color: "#534AB7", marginBottom: 5, fontWeight: 500 }}>{item.rank}</div>
-                    <div style={{ fontSize: 20, fontWeight: 500, color: c?.text || "#2C2C2A" }}>
+                  <div style={{ flex: 1, background: c?.bg || "#EEEDFE", border: `1px solid ${c?.border || "#AFA9EC"}`, borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
+                    <div style={{ fontSize: 12, color: c?.text || "#534AB7", marginBottom: 5, fontWeight: 500, opacity: 0.7 }}>{item.rank}</div>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: c?.text || "#2C2C2A" }}>
                       {c?.label || item.oh}
                     </div>
                   </div>
