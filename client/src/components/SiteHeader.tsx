@@ -58,17 +58,14 @@ export default function SiteHeader({ activeOverride }: { activeOverride?: string
     <header className="sticky top-0 z-50">
       {/* ── 1단: 로고 바 ── */}
       <div className="bg-black/90 backdrop-blur-md border-b border-white/[0.07]">
-        <div
-          className="container flex items-center justify-between px-4 md:px-0"
-          style={{ height: "4.5rem" }}
-        >
-          {/* 모바일 뒤로가기 + 로고 */}
-          <div className="flex items-center gap-2">
-            {/* 모바일 뒤로가기 버튼 */}
+        {/* 모바일: 2줄 구조 */}
+        <div className="md:hidden">
+          {/* 모바일 1줄: 뒤로가기 + 로고 */}
+          <div className="flex items-center justify-center px-4 relative" style={{ height: "3rem" }}>
             {showBack && (
               <button
                 onClick={() => window.history.back()}
-                className="md:hidden text-white/80 hover:text-white transition-colors p-1"
+                className="absolute left-4 text-white/80 hover:text-white transition-colors p-1"
                 aria-label="뒤로가기"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,20 +75,66 @@ export default function SiteHeader({ activeOverride }: { activeOverride?: string
             )}
             <Link href="/">
               <div className="flex items-center cursor-pointer leading-none">
-                <AuroraLogo height={40} />
+                <AuroraLogo height={32} />
               </div>
             </Link>
           </div>
+          {/* 모바일 2줄: 방문자수 + 로그인 + 메뉴 */}
+          <div className="flex items-center justify-between px-4 pb-2 gap-2">
+            <div className="flex items-center gap-1 text-white/60 text-sm">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+              </svg>
+              <span id="mobile-visitor-count" className="text-sm font-medium text-white/70"></span>
+            </div>
+            <div className="flex items-center gap-2">
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="text-sm font-semibold text-pink-400 hover:text-pink-300 transition-colors px-2 py-1"
+                >
+                  로그아웃
+                </button>
+              ) : (
+                <button
+                  onClick={() => setLoginOpen(true)}
+                  className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full px-3 py-1"
+                >
+                  로그인
+                </button>
+              )}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="text-white/80 hover:text-white transition-colors flex items-center gap-1"
+                aria-label="메뉴 열기"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+                </svg>
+                <span className="text-sm font-semibold">메뉴</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
-          {/* 우측: 데스크탑 로그인/로그아웃 + 모바일 햄버거만 */}
+        {/* 데스크탑: 기존 1줄 구조 */}
+        <div
+          className="hidden md:flex container items-center justify-between px-4 md:px-0"
+          style={{ height: "4.5rem" }}
+        >
+          <Link href="/">
+            <div className="flex items-center cursor-pointer leading-none">
+              <AuroraLogo height={40} />
+            </div>
+          </Link>
           <div className="flex items-center gap-2">
-            {/* 데스크탑 전용: 관리자/로그인/로그아웃 */}
             {user?.role === "admin" && (
               <Link href="/admin">
                 <Button
                   variant="outline"
                   size="sm"
-                  className={`hidden md:inline-flex text-white border-white/30 hover:bg-white/10 rounded-full px-4 whitespace-nowrap ${
+                  className={`text-white border-white/30 hover:bg-white/10 rounded-full px-4 whitespace-nowrap ${
                     isActive("/admin") ? "bg-white/15 border-white/50" : ""
                   }`}
                   style={{ fontSize: "1.1rem" }}
@@ -104,7 +147,7 @@ export default function SiteHeader({ activeOverride }: { activeOverride?: string
               <Button
                 onClick={handleLogout}
                 size="sm"
-                className="hidden md:inline-flex bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-full px-5 transition-transform active:scale-[0.97] whitespace-nowrap"
+                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-full px-5 transition-transform active:scale-[0.97] whitespace-nowrap"
                 style={{ fontSize: "1.1rem" }}
               >
                 로그아웃
@@ -113,23 +156,12 @@ export default function SiteHeader({ activeOverride }: { activeOverride?: string
               <Button
                 onClick={() => setLoginOpen(true)}
                 size="sm"
-                className="hidden md:inline-flex bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-full px-5 transition-transform active:scale-[0.97] whitespace-nowrap"
+                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-full px-5 transition-transform active:scale-[0.97] whitespace-nowrap"
                 style={{ fontSize: "1.1rem" }}
               >
                 로그인 / 회원가입
               </Button>
             )}
-            {/* 모바일 햄버거 */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-white/80 hover:text-white transition-colors ml-1"
-              aria-label="메뉴 열기"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-              </svg>
-            </button>
           </div>
         </div>
       </div>
