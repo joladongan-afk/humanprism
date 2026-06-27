@@ -53,6 +53,10 @@ export default function SiteHeader({ activeOverride }: { activeOverride?: string
 
   // 모바일 뒤로가기: 홈이 아닌 경우 표시
   const showBack = location !== "/";
+  const [visitorCount, setVisitorCount] = useState<number | null>(null);
+  useEffect(() => {
+    fetch("/api/visitor-count").then(r => r.json()).then(d => setVisitorCount(d.count)).catch(() => {});
+  }, []);
 
   return (
     <header className="sticky top-0 z-50">
@@ -81,11 +85,10 @@ export default function SiteHeader({ activeOverride }: { activeOverride?: string
           </div>
           {/* 모바일 2줄: 방문자수 + 로그인 + 메뉴 */}
           <div className="flex items-center justify-between px-4 pb-2 gap-2">
-            <div className="flex items-center gap-1 text-white/60 text-sm">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
-              </svg>
-              <span id="mobile-visitor-count" className="text-sm font-medium text-white/70"></span>
+            <div className="flex items-center gap-1">
+              {visitorCount !== null && (
+                <span className="text-sm font-medium text-white/70">{visitorCount.toLocaleString()}명</span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               {user ? (
