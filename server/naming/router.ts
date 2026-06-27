@@ -296,4 +296,40 @@ export const namingRouter = router({
         strokes: r.strokes,
       }));
     }),
+
+  // 공유 페이지용: 인증번호로 이름감정 결과 조회 (비로그인 가능)
+  getShareResult: publicProcedure
+    .input(z.object({ certificateNumber: z.string() }))
+    .query(async ({ input }) => {
+      const results = await database
+        .select()
+        .from(namingServices)
+        .where(eq(namingServices.certificateNumber, input.certificateNumber))
+        .limit(1);
+      const r = results[0];
+      if (!r) throw new Error("결과를 찾을 수 없습니다");
+      return {
+        certificateNumber: r.certificateNumber,
+        surnameKorean: r.surnameKorean,
+        surnameHanja: r.surnameHanja,
+        name1Korean: r.name1Korean,
+        name1Hanja: r.name1Hanja,
+        name2Korean: r.name2Korean,
+        name2Hanja: r.name2Hanja,
+        analysis: {
+          jawon: {
+            ohaeng: r.jawonOhaeng || "",
+            result: r.jawonResult || "",
+            detail: r.jawonDetail || "",
+            hasHanja: !!(r.name1Hanja || r.name2Hanja),
+          },
+          suri4: r.suri4 as any,
+          bulmyong: r.bulmyong as any || { hasBulmyong: false, chars: [] },
+          overall: r.overallResult || "",
+          comment: r.suriResult || "",
+          requiredOhaeng: r.requiredOhaeng ? { primary: r.requiredOhaeng, secondary: "" } : null,
+        },
+        createdAt: r.createdAt,
+      };
+    }),
 });
