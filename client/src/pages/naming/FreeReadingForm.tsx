@@ -230,7 +230,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
     }
   };
 
-  const sectionClass = "bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm";
+  const sectionClass = "bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm";
   const labelClass = "text-xs font-bold text-emerald-700 uppercase tracking-widest mb-3 block";
 
   return (
@@ -325,9 +325,9 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                   padding: "20px 24px", gap: 8, minHeight: 100,
                 }}>
                   <p style={{ fontSize: 32, fontWeight: 700, color: "#f0d080", letterSpacing: "0.2em", margin: 0, textShadow: "0 0 12px rgba(240,208,128,0.5)" }}>
-                    {form.watch("surnameKorean") || "○"}
-                    {form.watch("name1Korean") || "○"}
-                    {form.watch("name2Korean") || "○"}
+                    {form.watch("surnameKorean") || "□"}
+                    {form.watch("name1Korean") || "□"}
+                    {form.watch("name2Korean") || "□"}
                   </p>
                   <p style={{ fontSize: 16, color: "#c9a84c", letterSpacing: "0.25em", margin: 0, opacity: 0.85 }}>
                     {form.watch("surnameHanja") || ""}
@@ -345,11 +345,11 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
               {/* 생년월일 */}
               <div>
                 <span className={labelClass}>생년월일</span>
-                <div className="flex gap-2 mb-4">
+                <div className="flex gap-2 mb-2">
                   {(["solar", "lunar"] as const).map((type) => (
                     <button key={type} type="button"
                       onClick={() => form.setValue("calendarType", type)}
-                      className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all ${
+                      className={`px-3 py-1 rounded-full text-sm font-semibold transition-all ${
                         calendarType === type
                           ? "bg-emerald-700 text-white shadow"
                           : "bg-gray-100 text-gray-500 hover:bg-gray-200"
@@ -420,7 +420,7 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
                   {(["male", "female"] as const).map((g) => (
                     <button key={g} type="button"
                       onClick={() => form.setValue("gender", g)}
-                      className={`px-6 py-3 rounded-xl text-sm font-bold transition-all border-2 ${
+                      className={`px-5 py-2 rounded-xl text-sm font-bold transition-all border-2 ${
                         gender === g
                           ? "bg-emerald-700 text-white border-emerald-700 shadow"
                           : "bg-white text-gray-500 border-gray-200 hover:border-emerald-300"
