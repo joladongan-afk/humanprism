@@ -65,11 +65,12 @@ const RESULT_STYLE: Record<string, { bg: string; color: string }> = {
   "한자 미입력":{ bg: "#F1EFE8", color: "#444441" },
 };
 
+// 에메랄드 그라데이션: 원격(연) → 형격 → 이격 → 정격(짙)
 const SURI4_META = {
-  won:    { name: "원격(元格)", sub: "가운데 글자 · 어린 시절·내면", accent: "#0C447C", bg: "#E6F1FB", border: "#B5D4F4" },
-  hyeong: { name: "형격(亨格)", sub: "끝 글자 · 청장년·사회활동",   accent: "#085041", bg: "#E1F5EE", border: "#9FE1CB" },
-  i:      { name: "이격(利格)", sub: "성+가운데 · 가정·대인관계",   accent: "#633806", bg: "#FAEEDA", border: "#FAC775" },
-  jeong:  { name: "정격(貞格)", sub: "전체 이름 · 평생 총괄 운세",  accent: "#3C3489", bg: "#EEEDFE", border: "#AFA9EC" },
+  won:    { name: "원격(元格)", sub: "가운데 글자 · 어린 시절·내면",  accent: "#1a7a5e", bg: "#e8faf5", border: "#b2e8d6" },
+  hyeong: { name: "형격(亨格)", sub: "끝 글자 · 청장년·사회활동",    accent: "#159070", bg: "#c8f0e0", border: "#7dd4b4" },
+  i:      { name: "이격(利格)", sub: "성+가운데 · 가정·대인관계",    accent: "#0d7a5a", bg: "#8edec0", border: "#4db896" },
+  jeong:  { name: "정격(貞格)", sub: "전체 이름 · 평생 총괄 운세",   accent: "#ffffff", bg: "#0d6b4a", border: "#0a5038" },
 };
 
 function Badge({ label, style }: { label: string; style?: { bg: string; color: string } }) {
@@ -107,7 +108,6 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
   const n2Kor = inputData?.name2Korean || "";
   const n2Han = inputData?.name2Hanja || "";
 
-  // 자원오행 설명 텍스트 생성
   const buildJawonDesc = () => {
     if (!jawon.hasHanja || ohaengChars.length < 2) return null;
     const c0 = OHAENG_COLOR[ohaengChars[0]];
@@ -151,8 +151,8 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
             ].map((item, idx) => {
               const c = OHAENG_COLOR[item.oh];
               return (
-                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, flex: idx === 1 ? "0 0 auto" : "1" }}>
-                  {idx === 1 && <span style={{ color: "#AFA9EC", fontSize: 18 }}>→</span>}
+                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
+                  {idx === 1 && <span style={{ color: "#AFA9EC", fontSize: 18, flex: "0 0 auto" }}>→</span>}
                   <div style={{ flex: 1, background: "#EEEDFE", border: "0.5px solid #AFA9EC", borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
                     <div style={{ fontSize: 12, color: "#534AB7", marginBottom: 5, fontWeight: 500 }}>{item.rank}</div>
                     <div style={{ fontSize: 20, fontWeight: 500, color: c?.text || "#2C2C2A" }}>
@@ -178,7 +178,6 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
           </div>
         ) : jawonDesc ? (
           <>
-            {/* 글자별 오행 카드 */}
             <div style={{ display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
               {[
                 { char: jawonDesc.char0, oh: ohaengChars[0] },
@@ -199,7 +198,6 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
                 );
               })}
             </div>
-            {/* 상생/상극 설명 */}
             <div style={{
               fontSize: 14, color: "#2C2C2A", background: "#fdfcf8",
               border: "0.5px solid #e0ddd6", borderRadius: 8, padding: "10px 14px", lineHeight: 1.7,
@@ -214,7 +212,7 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
         )}
       </div>
 
-      {/* 수리사격 4격 */}
+      {/* 수리사격 4격 — 에메랄드 그라데이션 */}
       <div style={card("#185FA5")}>
         <SectionTitle label="수리사격(數理四格)" />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -222,18 +220,19 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
             const grade = suri4[key];
             const meta = SURI4_META[key];
             const gs = GILHYUNG_STYLE[grade.gilhyung] || { bg: "#F1EFE8", color: "#444441" };
+            const isDeep = key === "jeong";
             return (
               <div key={key} style={{
                 background: meta.bg, border: `1px solid ${meta.border}`,
                 borderRadius: 8, padding: "11px 13px",
               }}>
                 <div style={{ fontSize: 12, fontWeight: 500, color: meta.accent, marginBottom: 1 }}>{meta.name}</div>
-                <div style={{ fontSize: 11, color: "#888780", marginBottom: 8 }}>{meta.sub}</div>
+                <div style={{ fontSize: 11, color: isDeep ? "#a8e8d0" : "#888780", marginBottom: 8 }}>{meta.sub}</div>
                 <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
                   <span style={{ fontSize: 26, fontWeight: 500, color: meta.accent }}>{grade.number}</span>
                   <Badge label={grade.gilhyung} style={gs} />
                 </div>
-                <div style={{ fontSize: 13, color: "#2C2C2A", lineHeight: 1.65 }}>{grade.description}</div>
+                <div style={{ fontSize: 13, color: isDeep ? "#e0f5ec" : "#2C2C2A", lineHeight: 1.65 }}>{grade.description}</div>
               </div>
             );
           })}
