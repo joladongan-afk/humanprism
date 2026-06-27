@@ -12,10 +12,6 @@
       "dest": "https://humanprism-production.up.railway.app/trpc/$1"
     },
     {
-      "src": "/share/(.*)",
-      "dest": "https://humanprism-production.up.railway.app/share/$1"
-    },
-    {
       "handle": "filesystem"
     },
     {
