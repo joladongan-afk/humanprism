@@ -42,11 +42,11 @@ interface FreeReadingResultProps {
 }
 
 const OHAENG_COLOR: Record<string, { dot: string; text: string; bg: string; border: string; label: string }> = {
-  木: { dot: "#3B6D11", text: "#27500A", bg: "#EAF3DE", border: "#C0DD97", label: "목(木)" },
+  木: { dot: "#1a5fa8", text: "#0d3d6e", bg: "#dceeff", border: "#8ec5f7", label: "목(木)" },
   火: { dot: "#A32D2D", text: "#791F1F", bg: "#FCEBEB", border: "#F7C1C1", label: "화(火)" },
-  土: { dot: "#854F0B", text: "#633806", bg: "#FAEEDA", border: "#FAC775", label: "토(土)" },
-  金: { dot: "#444441", text: "#2C2C2A", bg: "#F1EFE8", border: "#D3D1C7", label: "금(金)" },
-  水: { dot: "#0C447C", text: "#042C53", bg: "#E6F1FB", border: "#B5D4F4", label: "수(水)" },
+  土: { dot: "#8a6200", text: "#5a4000", bg: "#fff3c0", border: "#f0c93a", label: "토(土)" },
+  金: { dot: "#555550", text: "#222220", bg: "#f5f5f0", border: "#ccccbb", label: "금(金)" },
+  水: { dot: "#e8e8e8", text: "#f0f0f0", bg: "#1a1a2e", border: "#444466", label: "수(水)" },
 };
 
 const GILHYUNG_STYLE: Record<string, { bg: string; color: string }> = {
