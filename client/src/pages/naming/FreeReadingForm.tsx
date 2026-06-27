@@ -319,21 +319,23 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
 
                 <div style={{
                   display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-                  borderRadius: 16, border: "2px solid #c9a84c",
-                  boxShadow: "0 0 0 1px #1a1a2e, 0 0 0 3px #c9a84c, 0 4px 20px rgba(201,168,76,0.3)",
-                  padding: "20px 24px", gap: 8, minHeight: 100,
+                  background: "linear-gradient(135deg, #0d0d1f 0%, #131330 50%, #0f2550 100%)",
+                  borderRadius: 20, border: "2px solid #c9a84c",
+                  boxShadow: "0 0 0 1px #0d0d1f, 0 0 0 4px #c9a84c, 0 8px 32px rgba(201,168,76,0.35)",
+                  padding: "28px 20px 20px", gap: 10, minHeight: 160, width: "100%",
                 }}>
-                  <p style={{ fontSize: 32, fontWeight: 700, color: "#f0d080", letterSpacing: "0.2em", margin: 0, textShadow: "0 0 12px rgba(240,208,128,0.5)" }}>
+                  <p style={{ fontSize: 11, color: "#c9a84c", letterSpacing: "0.3em", margin: 0, opacity: 0.7, textTransform: "uppercase" }}>Your Name</p>
+                  <p style={{ fontSize: 44, fontWeight: 700, color: "#f0d080", letterSpacing: "0.25em", margin: 0, textShadow: "0 0 16px rgba(240,208,128,0.6)", lineHeight: 1.1 }}>
                     {form.watch("surnameKorean") || "□"}
                     {form.watch("name1Korean") || "□"}
                     {form.watch("name2Korean") || "□"}
                   </p>
-                  <p style={{ fontSize: 16, color: "#c9a84c", letterSpacing: "0.25em", margin: 0, opacity: 0.85 }}>
-                    {form.watch("surnameHanja") || ""}
+                  <p style={{ fontSize: 18, color: "#c9a84c", letterSpacing: "0.3em", margin: 0, opacity: 0.9, minHeight: 24 }}>
+                    {form.watch("surnameHanja") || " "}
                     {form.watch("name1Hanja") || ""}
                     {form.watch("name2Hanja") || ""}
                   </p>
+                  <p style={{ fontSize: 11, color: "#8899bb", letterSpacing: "0.15em", margin: "4px 0 0", opacity: 0.7 }}>이름을 입력하면 여기에 표시됩니다</p>
                 </div>
               </div>
             </div>
