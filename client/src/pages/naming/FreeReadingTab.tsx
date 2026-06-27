@@ -58,15 +58,29 @@ export function FreeReadingTab() {
     alert("PDF 다운로드 기능은 준비 중입니다");
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (!data?.analysis) return;
     const certNum = data.certificateNumber;
     const url = `${window.location.origin}/share/${certNum}`;
-    navigator.clipboard.writeText(url).then(() => {
-      alert("공유 링크가 복사됐습니다!\n카카오톡에 붙여넣기 하세요.");
-    }).catch(() => {
-      prompt("아래 링크를 복사하세요:", url);
-    });
+    const shareData = {
+      title: "휴먼프리즘 이름감정 결과",
+      text: "30년 명리학 전문가의 AI 이름감정 결과를 확인해보세요.",
+      url,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (e) {
+        // 사용자가 취소한 경우 무시
+      }
+    } else {
+      // Web Share API 미지원 시 클립보드 복사
+      navigator.clipboard.writeText(url).then(() => {
+        alert("링크가 복사됐습니다!");
+      }).catch(() => {
+        prompt("아래 링크를 복사하세요:", url);
+      });
+    }
   };
 
   return (
