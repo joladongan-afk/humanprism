@@ -374,13 +374,13 @@ export default function SajuNew() {
         <Card className="hanji-card border-2 border-amber-600/30 shadow-lg">
           <CardHeader className="border-b-2 border-amber-600/20 pb-4">
             <CardTitle className="text-2xl font-bold text-amber-900">기본 정보</CardTitle>
+            <p className="text-sm text-emerald-700 mt-1">📁 실명·아이디·성별은 프로필에 저장됩니다</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label className="mb-3 block text-base font-semibold text-gray-700">
                   실명 <span className="text-red-500">*</span>
-                  <span className="ml-2 text-xs text-emerald-600 font-normal">📁 프로필 저장</span>
                 </Label>
                 <Input
                   value={realName}
@@ -392,7 +392,6 @@ export default function SajuNew() {
               <div>
                 <Label className="mb-3 block text-base font-semibold text-gray-700">
                   회원 아이디 <span className="text-red-500">*</span>
-                  <span className="ml-2 text-xs text-emerald-600 font-normal">📁 프로필 저장</span>
                 </Label>
                 <Input
                   value={memberId}
@@ -409,7 +408,7 @@ export default function SajuNew() {
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="본인 / 배우자 / 자녀" className="border-2 border-amber-400/50 focus:border-amber-600 focus:ring-amber-500/20 text-lg" />
               </div>
               <div>
-                <Label className="mb-3 block text-base font-semibold text-gray-700">성별 <span className="text-xs text-emerald-600 font-normal">📁 프로필 저장</span></Label>
+                <Label className="mb-3 block text-base font-semibold text-gray-700">성별</Label>
                 <Select value={gender} onValueChange={(v) => setGender(v as "male" | "female")}>
                   <SelectTrigger>
                     <SelectValue />
