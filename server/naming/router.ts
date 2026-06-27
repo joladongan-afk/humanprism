@@ -204,12 +204,6 @@ export const namingRouter = router({
           suriNumber: suri4.jeong,
           suriGilhyung: jeongJudgment.gilhyung,
           suriResult: jeongJudgment.description,
-          padoOhaeng: JSON.stringify({
-            won: { number: suri4.won, gilhyung: wonJudgment.gilhyung, description: wonJudgment.description },
-            hyeong: { number: suri4.hyeong, gilhyung: hyeongJudgment.gilhyung, description: hyeongJudgment.description },
-            i: { number: suri4.i, gilhyung: iJudgment.gilhyung, description: iJudgment.description },
-            jeong: { number: suri4.jeong, gilhyung: jeongJudgment.gilhyung, description: jeongJudgment.description },
-          }),
           bulmyongFlag: bulmyongCheck.hasBulmyong,
           bulmyongList: bulmyongCheck.bulmyongChars.join(","),
           overallResult,
