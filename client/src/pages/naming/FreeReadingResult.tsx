@@ -46,7 +46,7 @@ const OHAENG_COLOR: Record<string, { dot: string; text: string; bg: string; bord
   火: { dot: "#A32D2D", text: "#791F1F", bg: "#FCEBEB", border: "#F7C1C1", label: "화(火)" },
   土: { dot: "#8a6200", text: "#5a4000", bg: "#fff3c0", border: "#f0c93a", label: "토(土)" },
   金: { dot: "#555550", text: "#333330", bg: "#e8e8e0", border: "#aaaaaa", label: "금(金)" },
-  水: { dot: "#7ab8ff", text: "#cce4ff", bg: "#0a0a1a", border: "#334488", label: "수(水)" },
+  水: { dot: "#90d0ff", text: "#ffffff", bg: "#0a0a1a", border: "#334488", label: "수(水)" },
 };
 
 const GILHYUNG_STYLE: Record<string, { bg: string; color: string }> = {
@@ -154,8 +154,8 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
                 <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
                   {idx === 1 && <span style={{ color: "#AFA9EC", fontSize: 18, flex: "0 0 auto" }}>→</span>}
                   <div style={{ flex: 1, background: c?.bg || "#EEEDFE", border: `1px solid ${c?.border || "#AFA9EC"}`, borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
-                    <div style={{ fontSize: 12, color: c?.text || "#534AB7", marginBottom: 5, fontWeight: 500, opacity: 0.7 }}>{item.rank}</div>
-                    <div style={{ fontSize: 20, fontWeight: 700, color: c?.text || "#2C2C2A" }}>
+                    <div style={{ fontSize: 13, color: c?.text || "#534AB7", marginBottom: 5, fontWeight: 600, opacity: 0.75 }}>{item.rank}</div>
+                    <div style={{ fontSize: 24, fontWeight: 700, color: c?.text || "#2C2C2A" }}>
                       {c?.label || item.oh}
                     </div>
                   </div>
@@ -190,10 +190,10 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
                     background: c.bg, border: `1px solid ${c.border}`,
                     borderRadius: 10, padding: "10px 18px", textAlign: "center", minWidth: 90, flex: 1,
                   }}>
-                    <div style={{ fontSize: 18, fontWeight: 500, color: c.text, marginBottom: 5 }}>
+                    <div style={{ fontSize: 22, fontWeight: 600, color: c.text, marginBottom: 6 }}>
                       {item.char}
                     </div>
-                    <div style={{ fontSize: 13, color: c.text, fontWeight: 500 }}>{c.label}</div>
+                    <div style={{ fontSize: 14, color: c.text, fontWeight: 600 }}>{c.label}</div>
                   </div>
                 );
               })}
@@ -226,13 +226,13 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
                 background: meta.bg, border: `1px solid ${meta.border}`,
                 borderRadius: 8, padding: "11px 13px",
               }}>
-                <div style={{ fontSize: 12, fontWeight: 500, color: meta.accent, marginBottom: 1 }}>{meta.name}</div>
-                <div style={{ fontSize: 11, color: isDeep ? "#a8e8d0" : "#888780", marginBottom: 8 }}>{meta.sub}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: meta.accent, marginBottom: 2 }}>{meta.name}</div>
+                <div style={{ fontSize: 12, color: isDeep ? "#a8e8d0" : "#666660", marginBottom: 8 }}>{meta.sub}</div>
                 <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
                   <span style={{ fontSize: 26, fontWeight: 500, color: meta.accent }}>{grade.number}</span>
                   <Badge label={grade.gilhyung} style={gs} />
                 </div>
-                <div style={{ fontSize: 13, color: isDeep ? "#e0f5ec" : "#2C2C2A", lineHeight: 1.65 }}>{grade.description}</div>
+                <div style={{ fontSize: 14, color: isDeep ? "#e0f5ec" : "#1a1a18", lineHeight: 1.7 }}>{grade.description}</div>
               </div>
             );
           })}
