@@ -195,7 +195,7 @@ export default function MyRoom() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col overflow-x-hidden">
         <SiteHeader />
         <div className="container py-20 text-center text-muted-foreground">자리를 마련하는 중입니다...</div>
       </div>
@@ -203,7 +203,7 @@ export default function MyRoom() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
       <SiteHeader />
 
       {/* 히어로 영역 - 보라색 계열 */}
@@ -335,12 +335,12 @@ export default function MyRoom() {
                       · {p.gender === "male" ? "남" : "여"}
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center justify-end gap-2 shrink-0">
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setViewProfileId(p.id)}>
+                  <div className="flex flex-col items-stretch gap-2 shrink-0 min-w-[90px]">
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white w-full" onClick={() => setViewProfileId(p.id)}>
                         만세력 보기
                       </Button>
                       <Link href={`/saju/new?edit=${p.id}`}>
-                        <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
+                        <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white w-full">
                           만세력 수정
                         </Button>
                       </Link>
