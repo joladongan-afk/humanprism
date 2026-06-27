@@ -70,7 +70,7 @@ export function FreeReadingTab() {
 
       {showResult && result && (
         <div className="flex justify-center">
-          <div className="w-full max-w-3xl">
+          <div className="w-full max-w-5xl">
             <FreeReadingResult
               data={result}
               inputData={inputData || undefined}
