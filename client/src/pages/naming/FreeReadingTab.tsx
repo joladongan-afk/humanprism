@@ -61,7 +61,8 @@ export function FreeReadingTab() {
   const handleShare = async () => {
     if (!data?.analysis) return;
     const certNum = data.certificateNumber;
-    const ogUrl = `${window.location.origin}/share/${certNum}`;
+    // Railway URL: OG 태그+이미지 완벽 지원, 클릭 시 human-prism.com으로 리다이렉트
+    const ogUrl = `https://humanprism-production.up.railway.app/share/${certNum}`;
     const shareData = {
       title: "휴먼프리즘 이름감정 결과",
       text: "30년 명리학 전문가의 AI 이름감정 결과를 확인해보세요.",
