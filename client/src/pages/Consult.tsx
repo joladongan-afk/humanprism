@@ -759,8 +759,7 @@ function Consult() {
                 onClick={() => setShowManselyeokModal(true)}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-4"
               >
-                <span className="mr-2 text-xl">💫</span>
-                만세력에서 사주 입력
+                추가인원 사주 입력
               </Button>
               
               {/* 글자 크기 콘트롤 */}
