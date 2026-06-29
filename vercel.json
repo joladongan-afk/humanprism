@@ -4,6 +4,10 @@
   "outputDirectory": "dist/public",
   "routes": [
     {
+      "src": "/share/(.+)",
+      "dest": "/api/og?token=$1"
+    },
+    {
       "src": "/api/(.+)",
       "dest": "https://humanprism-production.up.railway.app/api/$1"
     },
