@@ -4,16 +4,16 @@
   "outputDirectory": "dist/public",
   "routes": [
     {
+      "src": "/api/share/(.*)",
+      "dest": "/api/share/[token]?token=$1"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "https://humanprism-production.up.railway.app/api/$1"
     },
     {
       "src": "/trpc/(.*)",
       "dest": "https://humanprism-production.up.railway.app/trpc/$1"
-    },
-    {
-      "src": "/api/share/(.*)",
-      "dest": "/api/share/[token]?token=$1"
     },
     {
       "handle": "filesystem"
