@@ -12,6 +12,10 @@
       "dest": "https://humanprism-production.up.railway.app/trpc/$1"
     },
     {
+      "src": "/api/share/(.*)",
+      "dest": "/api/share/[token]?token=$1"
+    },
+    {
       "handle": "filesystem"
     },
     {
