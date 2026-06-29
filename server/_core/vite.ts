@@ -127,14 +127,14 @@ export function serveStatic(app: Express) {
       .replace(/<title>[\s\S]*?<\/title>/i, "")
       .replace(/<meta\s+[^>]*(?:name=["'](?:description|twitter:[^"']*)["|']|property=["']og:[^"']*["'])[^>]*>\s*/gi, "")
       .replace(/<\/head>/i, `    ${ogBlock}\n  </head>`);
-    // JS/CSS 상대경로를 Vercel 절대경로로 변환 (Railway에는 정적파일 없음)
-    html = html
-      .replace(/src="\/assets\//g, 'src="https://human-prism.com/assets/')
-      .replace(/href="\/assets\//g, 'href="https://human-prism.com/assets/')
-      .replace(/href="\/manifest/g, 'href="https://human-prism.com/manifest')
-      .replace(/href="\/favicon/g, 'href="https://human-prism.com/favicon')
-      .replace(/href="\/apple-touch/g, 'href="https://human-prism.com/apple-touch');
-    res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    // 카톡 크롤러는 OG 태그 읽고, 실제 사용자는 Vercel 페이지로 리다이렉트
+    const ua = req.headers["user-agent"] || "";
+    const isBot = /kakao|facebook|twitter|telegram|discord|slack|whatsapp|bot|crawler|spider/i.test(ua);
+    if (isBot) {
+      res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    } else {
+      res.redirect(302, `https://human-prism.com/share/${certNum}`);
+    }
   });
 
   // fall through to index.html (SPA) — 항상 한글 OG 주입본을 전송
