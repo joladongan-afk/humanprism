@@ -4,13 +4,6 @@
   "outputDirectory": "dist/public",
   "routes": [
     {
-      "src": "/share/(.+)",
-      "dest": "https://humanprism-production.up.railway.app/share/$1",
-      "headers": {
-        "Accept": "text/html"
-      }
-    },
-    {
       "src": "/api/(.+)",
       "dest": "https://humanprism-production.up.railway.app/api/$1"
     },
