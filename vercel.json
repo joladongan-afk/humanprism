@@ -2,26 +2,19 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/public",
-  "functions": {
-    "api/share-og.ts": {
-      "runtime": "edge"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/share/:token",
-      "destination": "/api/share-og?token=:token"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "https://humanprism-production.up.railway.app/api/:path*"
-    },
-    {
-      "source": "/trpc/:path*",
-      "destination": "https://humanprism-production.up.railway.app/trpc/:path*"
-    }
-  ],
   "routes": [
+    {
+      "src": "/api/share/(.+)",
+      "dest": "/api/share-og?token=$1"
+    },
+    {
+      "src": "/api/(.+)",
+      "dest": "https://humanprism-production.up.railway.app/api/$1"
+    },
+    {
+      "src": "/trpc/(.+)",
+      "dest": "https://humanprism-production.up.railway.app/trpc/$1"
+    },
     {
       "handle": "filesystem"
     },
