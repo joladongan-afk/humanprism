@@ -409,7 +409,7 @@ export default function Home() {
           </div>
           <div className="mt-8 pt-8 border-t border-white/10 text-center text-sm text-white/40 space-y-1">
             <p>
-              무한상담소 (휴먼프리즘) · 운영자 마스터 전원석 · 사업자등록번호 212-34-92530
+              무한상담소 (휴먼프리즘) · 대표자 전원석 · 사업자등록번호 212-34-92530
             </p>
             <p>
               통신판매업 제2025-세종아름-0541호 · 세종특별자치시 달빛로 80 (종촌동) · 010-4448-8064
