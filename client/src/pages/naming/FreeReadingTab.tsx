@@ -61,11 +61,12 @@ export function FreeReadingTab() {
   const handleShare = async () => {
     if (!data?.analysis) return;
     const certNum = data.certificateNumber;
-    const url = `${window.location.origin}/share/${certNum}`;
+    // 카톡 공유용 URL: OG 태그가 주입된 서버리스 함수 경유 → 자동으로 /share/:token 으로 리다이렉트
+    const ogUrl = `${window.location.origin}/api/share/${certNum}`;
     const shareData = {
       title: "휴먼프리즘 이름감정 결과",
       text: "30년 명리학 전문가의 AI 이름감정 결과를 확인해보세요.",
-      url,
+      url: ogUrl,
     };
     if (navigator.share) {
       try {
