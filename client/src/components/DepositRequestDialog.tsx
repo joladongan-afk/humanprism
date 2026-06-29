@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { usePortonePayment } from "@/hooks/usePortonePayment";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PaymentNotice } from "@/components/PaymentNotice";
@@ -47,6 +48,17 @@ export default function DepositRequestDialog({
   const utils = trpc.useUtils();
 
   const requestDeposit = trpc.payment.requestDeposit.useMutation();
+  const { startPayment, isProcessing } = usePortonePayment();
+
+  const handleCardPayment = async () => {
+    if (!planType) return;
+    try {
+      await startPayment({ planType, sajuProfileId, sajuProfileBId });
+      onOpenChange(false);
+    } catch (e: any) {
+      toast.error(e.message || "결제에 실패했습니다.");
+    }
+  };
 
   // 다이얼로그 열릴 때 초기화
   useEffect(() => {
@@ -128,19 +140,18 @@ export default function DepositRequestDialog({
               </p>
             </div>
 
-            {/* 간편결제 (준비 중) - 비활성 */}
+            {/* 간편결제 - 활성 */}
             <button
               type="button"
-              onClick={() => toast.info("간편결제(카드)는 현재 준비 중입니다. 통장 입금을 이용해 주세요.")}
-              className="w-full flex items-center justify-between rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-left cursor-not-allowed"
+              onClick={handleCardPayment}
+              disabled={isProcessing}
+              className="w-full flex items-center justify-between rounded-xl border-2 border-emerald-500 bg-emerald-50 px-4 py-4 text-left transition-all duration-150 hover:bg-emerald-100 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <div>
-                <p className="text-base font-semibold text-slate-400">간편결제 (카드)</p>
-                <p className="text-sm text-slate-400 mt-0.5">신용·체크카드, 간편결제</p>
+                <p className="text-base font-bold text-emerald-900">간편결제 (카드)</p>
+                <p className="text-sm text-emerald-700 mt-0.5">신용·체크카드, 간편결제</p>
               </div>
-              <span className="text-xs font-semibold text-slate-400 bg-slate-200 px-2.5 py-1 rounded-full">
-                준비 중
-              </span>
+              <span className="text-xl text-emerald-500">→</span>
             </button>
 
             {/* 통장 입금 - 활성 */}
