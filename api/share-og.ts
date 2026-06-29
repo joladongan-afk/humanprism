@@ -2,9 +2,10 @@ export const config = { runtime: "edge" };
 
 export default async function handler(request: Request) {
   const url = new URL(request.url);
-  const token = url.pathname.split("/").pop() || "";
-  
-  const shareUrl = `https://human-prism.com/share/${token}`;
+  // vercel.json에서 ?token=HPS-... 로 넘어옴
+  const certNum = url.searchParams.get("token") || url.pathname.split("/").pop() || "";
+
+  const shareUrl = `https://human-prism.com/share/${certNum}`;
   const image = "https://human-prism.com/manus-storage/og-card-share-v3_92ae0c89.png?v=4";
   const title = "이름 감정결과 보고서 — 휴먼프리즘";
   const desc = "30년 명리학 전문가의 AI 이름감정 결과를 확인해보세요. human-prism.com";
