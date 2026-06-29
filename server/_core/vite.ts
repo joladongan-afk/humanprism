@@ -85,7 +85,7 @@ export function serveStatic(app: Express) {
     }
     let title = "이름 감정결과 보고서 — 휴먼프리즘";
     let desc = "30년 명리학 전문가의 AI 이름감정 결과를 확인해보세요.";
-    const image = "https://human-prism.com/manus-storage/og-card-share-v3_92ae0c89.png?v=4";
+    const image = "https://human-prism.com/og-share.jpg";
     try {
       const { getDb } = await import("../db.js");
       const { eq } = await import("drizzle-orm");
