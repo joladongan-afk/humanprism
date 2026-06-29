@@ -15,7 +15,7 @@ export const OG = {
   description: "현대 7대 사주명가의 지혜를 AI 알고리즘으로 구현하다. 당신의 다채로움을 듣다.",
   siteName: "휴먼프리즘",
   url: "https://human-prism.com",
-  image: "https://human-prism.com/img/og-card-share-v4_4ceb2bcf.png",
+  image: "https://human-prism.com/og-share.jpg",
   imageWidth: "1200",
   imageHeight: "630",
   locale: "ko_KR",
