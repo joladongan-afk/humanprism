@@ -127,6 +127,13 @@ export function serveStatic(app: Express) {
       .replace(/<title>[\s\S]*?<\/title>/i, "")
       .replace(/<meta\s+[^>]*(?:name=["'](?:description|twitter:[^"']*)["|']|property=["']og:[^"']*["'])[^>]*>\s*/gi, "")
       .replace(/<\/head>/i, `    ${ogBlock}\n  </head>`);
+    // JS/CSS 상대경로를 Vercel 절대경로로 변환 (Railway에는 정적파일 없음)
+    html = html
+      .replace(/src="\/assets\//g, 'src="https://human-prism.com/assets/')
+      .replace(/href="\/assets\//g, 'href="https://human-prism.com/assets/')
+      .replace(/href="\/manifest/g, 'href="https://human-prism.com/manifest')
+      .replace(/href="\/favicon/g, 'href="https://human-prism.com/favicon')
+      .replace(/href="\/apple-touch/g, 'href="https://human-prism.com/apple-touch');
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
   });
 
