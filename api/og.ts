@@ -3,7 +3,6 @@ export const config = { runtime: "edge" };
 export default async function handler(request: Request) {
   const url = new URL(request.url);
   const certNum = url.searchParams.get("token") || "";
-  const shareUrl = `https://human-prism.com/share/${certNum}`;
   const railwayUrl = `https://humanprism-production.up.railway.app/share/${certNum}`;
 
   const ua = request.headers.get("user-agent") || "";
@@ -23,10 +22,22 @@ export default async function handler(request: Request) {
         },
       });
     } catch (e) {
-      // 실패시 기본 OG
+      // 실패시 아래로 계속
     }
   }
 
-  // 사람 — share 페이지로 리다이렉트
-  return Response.redirect(shareUrl, 302);
+  // 사람 — Vercel의 index.html 가져와서 반환 (리다이렉트 X)
+  const indexUrl = `https://human-prism.com/index.html`;
+  try {
+    const res = await fetch(indexUrl);
+    const html = await res.text();
+    return new Response(html, {
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-cache",
+      },
+    });
+  } catch (e) {
+    return new Response("Error", { status: 500 });
+  }
 }
