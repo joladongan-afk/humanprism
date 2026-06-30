@@ -706,6 +706,27 @@ export const appRouter = router({
           layerCachedBlocks = layers.cachedBlocks;
           // 시간 상대성 컨텍스트를 동적 블록에 합친다
           layerDynamic = layers.dynamic + buildTemporalContext(input.content);
+          // 추가인원 사주 데이터를 AI 컨텍스트에 포함
+          const additionalSajuEntries = (s.additionalSajus as any[]) || [];
+          if (additionalSajuEntries.length > 0) {
+            let additionalContext = "
+
+[추가 입력된 사주 목록]
+";
+            for (const entry of additionalSajuEntries) {
+              const addResult = await loadSaju(entry.sajuProfileId);
+              if (addResult) {
+                const p = addResult.profile;
+                const sj = addResult.saju;
+                const label = p.label || entry.label || "추가인원";
+                const gender = p.gender === "male" ? "남" : "여";
+                const age = new Date().getFullYear() - p.birthYear + 1;
+                additionalContext += ;
+                additionalContext += ;
+              }
+            }
+            layerDynamic += additionalContext;
+          }
         }
         // 최근 30개 메시지만 사용 (컨텍스트 절약)
         const recent = previousMsgs.slice(-30);
