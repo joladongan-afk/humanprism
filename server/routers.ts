@@ -721,8 +721,11 @@ export const appRouter = router({
                 const label = p.label || entry.label || "추가인원";
                 const gender = p.gender === "male" ? "남" : "여";
                 const age = new Date().getFullYear() - p.birthYear + 1;
-                additionalContext += ;
-                additionalContext += ;
+                additionalContext += "
+● " + label + " (" + gender + "." + age + "세)
+";
+                additionalContext += "  연주: " + (sj.year?.gan ?? "") + (sj.year?.ji ?? "") + " / 월주: " + (sj.month?.gan ?? "") + (sj.month?.ji ?? "") + " / 일주: " + (sj.day?.gan ?? "") + (sj.day?.ji ?? "") + " / 시주: " + (sj.hour?.gan ?? "") + (sj.hour?.ji ?? "") + "
+";
               }
             }
             layerDynamic += additionalContext;
