@@ -554,9 +554,6 @@ function Consult() {
                   )}
                 </div>
   
-                {session.sajuProfileId && (
-                  <SajuPdfDownloadButton sajuId={session.sajuProfileId} />
-                )}
                 <ConsultationPdfDownloadButton sessionId={sessionId} />
                 <ConsultationEmailShareButton sessionId={sessionId} />
                 <Button
