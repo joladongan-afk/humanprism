@@ -1,5 +1,6 @@
 import puppeteer, { Browser } from "puppeteer";
 import type { ConsultMessage } from "../drizzle/schema";
+import type { SajuResult } from "./saju";
 
 let browserInstance: Browser | null = null;
 
@@ -218,6 +219,130 @@ export async function closeBrowser(): Promise<void> {
 }
 
 /**
+ * 사주 8글자 + 대운(70대까지)을 채팅창 스타일 카드로 렌더링
+ */
+function formatSajuCardHtml(
+  label: string,
+  gender: "male" | "female",
+  birthYear: number,
+  birthMonth: number,
+  birthDay: number,
+  birthHour: number | null,
+  birthMinute: number | null,
+  sajuData: SajuResult
+): string {
+  const { pillars, daeun } = sajuData;
+  const order: Array<{ key: "hour" | "day" | "month" | "year"; label: string }> = [
+    { key: "hour", label: "시" },
+    { key: "day", label: "일" },
+    { key: "month", label: "월" },
+    { key: "year", label: "연" },
+  ];
+
+  const elementColor = (el: string) => {
+    if (el === "목") return { bg: "#e8f0e0", fg: "#5a7a2e" };
+    if (el === "화") return { bg: "#fde9e9", fg: "#a33" };
+    if (el === "토") return { bg: "#fef3d6", fg: "#96701f" };
+    if (el === "금") return { bg: "#f0f0f0", fg: "#666" };
+    if (el === "수") return { bg: "#e5eef7", fg: "#36639a" };
+    return { bg: "#f5f5f5", fg: "#666" };
+  };
+
+  const headerCells = order
+    .map((o) => '<div style="font-size:11px; color:#999; font-weight:500;">' + o.label + '</div>')
+    .join("");
+
+  const stemCells = order
+    .map((o) => {
+      const p = pillars[o.key];
+      if (!p) return '<div style="background:#f5f5f5; border-radius:8px; padding:8px 2px;">' +
+        '<div style="font-size:20px; font-weight:700; color:#ccc;">-</div></div>';
+      const c = elementColor(p.stemElement);
+      const isDay = o.key === "day";
+      const border = isDay ? "border:2px solid #d4af37;" : "";
+      return (
+        '<div style="background:' + c.bg + '; border-radius:8px; padding:8px 2px;' + border + '">' +
+          '<div style="font-size:20px; font-weight:700; color:' + c.fg + ';">' + p.stem + '</div>' +
+          '<div style="font-size:11px; color:' + c.fg + ';">' + p.stemKr + '·' + p.stemElement + '</div>' +
+        '</div>'
+      );
+    })
+    .join("");
+
+  const branchCells = order
+    .map((o) => {
+      const p = pillars[o.key];
+      if (!p) return '<div style="background:#f5f5f5; border-radius:8px; padding:8px 2px;">' +
+        '<div style="font-size:20px; font-weight:700; color:#ccc;">-</div></div>';
+      const c = elementColor(p.branchElement);
+      const isDay = o.key === "day";
+      const border = isDay ? "border:2px solid #d4af37;" : "";
+      return (
+        '<div style="background:' + c.bg + '; border-radius:8px; padding:8px 2px;' + border + '">' +
+          '<div style="font-size:20px; font-weight:700; color:' + c.fg + ';">' + p.branch + '</div>' +
+          '<div style="font-size:11px; color:' + c.fg + ';">' + p.branchKr + '·' + p.branchElement + '</div>' +
+        '</div>'
+      );
+    })
+    .join("");
+
+  // 대운: 9세~79세까지(또는 daeunNumber 기준 8개), 우→좌로 배치 (나이 큰 순서가 왼쪽)
+  const daeunCount = Math.min(8, daeun.pillars.length);
+  const daeunItems = [];
+  for (let i = 0; i < daeunCount; i++) {
+    const age = daeun.daeunNumber + i * 10;
+    daeunItems.push({ pillar: daeun.pillars[i], age });
+  }
+  daeunItems.reverse(); // 큰 나이가 왼쪽으로
+
+  const daeunHtml = daeunItems
+    .map((d, idx) => {
+      const isFirst = idx === daeunItems.length - 1; // 가장 어린(현재) 대운
+      const boxStyle = isFirst
+        ? "border:2px solid #d4af37; background:#fffbf0; color:#a33;"
+        : "border:1px solid #eee; color:#444;";
+      const ageStyle = isFirst ? "color:#a33; font-weight:700;" : "color:#bbb;";
+      return (
+        '<div style="text-align:center; min-width:42px;">' +
+          '<div style="font-size:13px; font-weight:700; border-radius:6px; padding:4px 2px;' + boxStyle + '">' + d.pillar + '</div>' +
+          '<div style="font-size:10px; margin-top:2px;' + ageStyle + '">' + d.age + '세</div>' +
+        '</div>'
+      );
+    })
+    .join("");
+
+  const birthTimeStr = birthHour !== null && birthMinute !== null
+    ? String(birthHour).padStart(2, "0") + ":" + String(birthMinute).padStart(2, "0")
+    : "시간 모름";
+  const genderStr = gender === "male" ? "남" : "여";
+  const birthDateStr = birthYear + "-" + String(birthMonth).padStart(2, "0") + "-" + String(birthDay).padStart(2, "0");
+
+  return (
+    '<div style="border:1px solid #e5ded0; border-radius:12px; padding:1.25rem; margin-bottom:1rem;">' +
+      '<div style="font-size:15px; font-weight:700; color:#3a2f1f; margin-bottom:12px;">' +
+        label + ' <span style="font-weight:400; color:#999; font-size:12px;">' + genderStr + ' · ' + birthDateStr + ' ' + birthTimeStr + '</span>' +
+      '</div>' +
+      '<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; text-align:center;">' +
+        headerCells + stemCells + branchCells +
+      '</div>' +
+      '<div style="font-size:11px; color:#999; margin-bottom:6px;">대운 · ' + daeun.daeunNumber + '세 시작 · ' + (daeun.forward ? '순행' : '역행') + '</div>' +
+      '<div style="display:flex; gap:6px; overflow-x:auto;">' + daeunHtml + '</div>' +
+    '</div>'
+  );
+}
+
+export interface SajuCardInput {
+  label: string;
+  gender: "male" | "female";
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  birthHour: number | null;
+  birthMinute: number | null;
+  sajuData: SajuResult;
+}
+
+/**
  * 상담 메시지 목록을 독립 HTML 파일(문자열)로 생성
  * PDF(Puppeteer) 대신 사용 - 서버 부담 없음, 실패 가능성 거의 없음
  * 다운로드 후 더블클릭하면 브라우저에서 바로 예쁘게 열린다.
@@ -226,7 +351,8 @@ export async function generateConsultationHtmlFile(
   userName: string,
   messages: ConsultMessage[],
   sessionTitle: string,
-  createdAt: Date
+  createdAt: Date,
+  sajuCards: SajuCardInput[] = []
 ): Promise<string> {
   const formattedDate = createdAt.toLocaleDateString("ko-KR", {
     year: "numeric",
@@ -234,6 +360,21 @@ export async function generateConsultationHtmlFile(
     day: "numeric",
     timeZone: "Asia/Seoul",
   });
+
+  const sajuCardsHtml = sajuCards
+    .map((c) =>
+      formatSajuCardHtml(
+        c.label,
+        c.gender,
+        c.birthYear,
+        c.birthMonth,
+        c.birthDay,
+        c.birthHour,
+        c.birthMinute,
+        c.sajuData
+      )
+    )
+    .join("");
 
   const messagesHtml = messages
     .map((msg) => {
@@ -289,6 +430,7 @@ export async function generateConsultationHtmlFile(
           '<h1>휴먼프리즘</h1>' +
           '<div class="meta">' + sessionTitle + ' · ' + userName + ' · ' + formattedDate + '</div>' +
         '</div>' +
+        sajuCardsHtml +
         '<div class="divider"></div>' +
         '<div>' + messagesHtml + '</div>' +
         '<div class="footer">' +
