@@ -719,7 +719,7 @@ export const appRouter = router({
                 const gender = p.gender === "male" ? "남" : "여";
                 const age = new Date().getFullYear() - p.birthYear + 1;
                 additionalContext += "\n● " + label + " (" + gender + "." + age + "세)\n";
-                additionalContext += "  연주: " + (sj.year?.gan ?? "") + (sj.year?.ji ?? "") + " / 월주: " + (sj.month?.gan ?? "") + (sj.month?.ji ?? "") + " / 일주: " + (sj.day?.gan ?? "") + (sj.day?.ji ?? "") + " / 시주: " + (sj.hour?.gan ?? "") + (sj.hour?.ji ?? "") + "\n";
+                additionalContext += "  연주: " + (sj.pillars?.year?.stem ?? "") + (sj.pillars?.year?.branch ?? "") + " / 월주: " + (sj.pillars?.month?.stem ?? "") + (sj.pillars?.month?.branch ?? "") + " / 일주: " + (sj.pillars?.day?.stem ?? "") + (sj.pillars?.day?.branch ?? "") + " / 시주: " + (sj.pillars?.hour?.stem ?? "") + (sj.pillars?.hour?.branch ?? "") + "\n";
               }
             }
             layerDynamic += additionalContext;
