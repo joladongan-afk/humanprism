@@ -104,13 +104,57 @@ export function verifySajuClaims(answerText: string, answerKey: AnswerKeyEntry[]
   return { ok: errors.length === 0, errors };
 }
 
-/** 검증 오류를 AI 재요청용 안내 문구로 변환 */
-export function formatVerifyErrorsForRetry(errors: VerifyResult["errors"]): string {
+/** 결핍·잠복 단정 표현(데이터상 명확히 드러난 글자를 무시하고 "없다/약하다/잠복"이라 말하는 패턴) */
+const DEFICIENCY_PHRASES = [
+  "뚜렷하게 드러나지 않",
+  "원국에 드러나지 않",
+  "인성이 없",
+  "인성이 약",
+  "지장간 깊은 곳에 잠복",
+  "지장간에만 잠복",
+  "잠복해 있는 수준",
+];
+
+export interface OmissionCheck {
+  ok: boolean;
+  /** 데이터상 천간에 명확히 드러나 있는데 답변에서 언급 자체가 빠진 육친 위치 */
+  missingClear: Array<{ position: string; char: string; correctGod: string }>;
+}
+
+/**
+ * 천간에 명확히 투출된 육친(예: 시간 甲=정인)이 있는데도, 답변이 그 글자를 전혀 언급하지 않은 채
+ * "인성이 없다/약하다/잠복했다" 같은 결핍 표현을 쓰는 모순을 잡는다.
+ * (지지나 지장간의 약한 인성은 대상에서 제외 — 오직 "천간에 명확히 드러난" 경우만 엄격히 본다)
+ */
+export function checkClearGodOmission(answerText: string, answerKey: AnswerKeyEntry[], targetGods: string[]): OmissionCheck {
+  const hasDeficiencyPhrase = DEFICIENCY_PHRASES.some((p) => answerText.includes(p));
+  if (!hasDeficiencyPhrase) return { ok: true, missingClear: [] };
+
+  const missingClear: OmissionCheck["missingClear"] = [];
+  for (const entry of answerKey) {
+    if (entry.kind !== "천간") continue; // 천간 투출만 엄격히 체크 (지지 정기는 해석 여지가 있어 제외)
+    if (!targetGods.includes(entry.correctGod)) continue;
+    const mentioned = (entry.char && answerText.includes(entry.char)) || (entry.kr && answerText.includes(entry.kr));
+    if (!mentioned) {
+      missingClear.push({ position: entry.position, char: entry.char, correctGod: entry.correctGod });
+    }
+  }
+  return { ok: missingClear.length === 0, missingClear };
+}
+
+/** 검증 오류(오기재 + 누락)를 AI 재요청용 안내 문구로 변환 */
+export function formatVerifyErrorsForRetry(
+  errors: VerifyResult["errors"],
+  omissions: OmissionCheck["missingClear"] = []
+): string {
   const lines = errors.map(
     (e) => `- ${e.char}을(를) "${e.claimedGod}"로 말했으나, 데이터상 정답은 "${e.correctGod}"입니다. (해당 문장: "${e.snippet}")`
   );
+  const omissionLines = omissions.map(
+    (o) => `- ${o.position}간 ${o.char}이(가) 천간에 명확히 드러난 "${o.correctGod}"인데, 답변에서 이 글자를 전혀 언급하지 않은 채 인성이 없다/약하다/잠복했다는 식으로 말했습니다. 이는 모순입니다. ${o.position}간 ${o.char}을 반드시 짚어 언급하도록 고치세요.`
+  );
   return (
     "[시스템 자동 점검] 방금 답변에서 육친(십성) 사실 오류가 발견되었습니다. 같은 어투와 통변 스타일을 유지한 채, 아래 오류만 정확히 고쳐서 답변 전체를 다시 작성해 주세요. 오류로 지적되지 않은 부분은 굳이 바꾸지 않아도 됩니다.\n\n" +
-    lines.join("\n")
+    [...lines, ...omissionLines].join("\n")
   );
 }
