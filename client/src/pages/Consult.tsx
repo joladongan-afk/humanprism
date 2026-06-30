@@ -59,7 +59,7 @@ function ConsultationPdfDownloadButton({ sessionId }: { sessionId: number }) {
         for (let i = 0; i < binaryString.length; i++) {
           bytes[i] = binaryString.charCodeAt(i);
         }
-        const blob = new Blob([bytes], { type: "application/pdf" });
+        const blob = new Blob([bytes], { type: "text/html;charset=utf-8" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -91,7 +91,7 @@ function ConsultationPdfDownloadButton({ sessionId }: { sessionId: number }) {
       ) : (
         <Download className="w-4 h-4" />
       )}
-      <span className="hidden sm:inline ml-1">상담 기록 PDF</span>
+      <span className="hidden sm:inline ml-1">상담 기록 저장</span>
     </Button>
   );
 }
@@ -118,7 +118,7 @@ function SajuPdfDownloadButton({ sajuId }: { sajuId: number }) {
         for (let i = 0; i < binaryString.length; i++) {
           bytes[i] = binaryString.charCodeAt(i);
         }
-        const blob = new Blob([bytes], { type: "application/pdf" });
+        const blob = new Blob([bytes], { type: "text/html;charset=utf-8" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -150,7 +150,7 @@ function SajuPdfDownloadButton({ sajuId }: { sajuId: number }) {
       ) : (
         <Download className="w-4 h-4" />
       )}
-      <span className="hidden sm:inline ml-1">사주 PDF</span>
+      <span className="hidden sm:inline ml-1">사주 저장</span>
     </Button>
   );
 }
