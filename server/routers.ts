@@ -14,8 +14,8 @@ import { buildInitialGreeting, buildSystemPrompt, buildCompatibilityPrompt, buil
 import { formatSajuForPrompt } from "./saju";
 import { calculateSaju, lunarToSolar, type SajuInput } from "./saju";
 import { buildTemporalContext } from "./temporalContext";
-import { generateSajuPDF } from "./pdf";
-import { generateConsultationPDF } from "./consultPdf";
+import { generateSajuPDF, generateSajuHtmlFile } from "./pdf";
+import { generateConsultationPDF, generateConsultationHtmlFile } from "./consultPdf";
 import { portoneRouter } from "./_core/portoneRouter";
 import { depositRouter } from "./_core/depositRouter";
 import { csRouter } from "./routers/cs";
@@ -211,10 +211,10 @@ export const appRouter = router({
           gender: p.gender,
         });
         const birthDate = `${p.birthYear}-${String(p.birthMonth).padStart(2, "0")}-${String(p.birthDay).padStart(2, "0")}`;
-        const pdfBuffer = await generateSajuPDF(p.label, birthDate, p.gender === "male" ? "male" : "female", sajuResult);
-        const base64 = pdfBuffer.toString("base64");
+        const html = await generateSajuHtmlFile(p.label, birthDate, p.gender === "male" ? "male" : "female", sajuResult);
+        const base64 = Buffer.from(html, "utf-8").toString("base64");
         return {
-          filename: `${p.label}_사주명식_${new Date().toISOString().split("T")[0]}.pdf`,
+          filename: `${p.label}_사주명식_${new Date().toISOString().split("T")[0]}.html`,
           data: base64,
         };
       }),
@@ -761,7 +761,7 @@ export const appRouter = router({
         const turn = await db.consumeTurn(s.id);
         return { content: assistantContent, remaining: turn.remaining } as const;
       }),
-    /** 상담 기록 PDF 다운로드 */
+    /** 상담 기록 HTML 파일 다운로드 (PDF 대체, 안정성 우선) */
     downloadPdf: protectedProcedure
       .input(z.object({ sessionId: z.number().int() }))
       .mutation(async ({ ctx, input }) => {
@@ -777,19 +777,19 @@ export const appRouter = router({
           });
         }
         try {
-          const pdf = await generateConsultationPDF(
+          const html = await generateConsultationHtmlFile(
             ctx.user.name || "상담자",
             messages,
             `${s.planType} 상담 기록`,
             s.createdAt,
           );
-          const base64 = Buffer.from(pdf).toString("base64");
-          return { base64, fileName: `consultation-${s.id}-${Date.now()}.pdf` } as const;
+          const base64 = Buffer.from(html, "utf-8").toString("base64");
+          return { base64, fileName: `상담기록-${s.id}-${Date.now()}.html` } as const;
         } catch (err) {
-          console.error("[consult.downloadPdf] PDF generation error:", err);
+          console.error("[consult.downloadPdf] HTML generation error:", err);
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "PDF 생성에 실패했습니다.",
+            message: "상담 기록 생성에 실패했습니다.",
           });
         }
       }),
