@@ -709,10 +709,7 @@ export const appRouter = router({
           // 추가인원 사주 데이터를 AI 컨텍스트에 포함
           const additionalSajuEntries = (s.additionalSajus as any[]) || [];
           if (additionalSajuEntries.length > 0) {
-            let additionalContext = "
-
-[추가 입력된 사주 목록]
-";
+            let additionalContext = "\n\n[추가 입력된 사주 목록]\n";
             for (const entry of additionalSajuEntries) {
               const addResult = await loadSaju(entry.sajuProfileId);
               if (addResult) {
@@ -721,11 +718,8 @@ export const appRouter = router({
                 const label = p.label || entry.label || "추가인원";
                 const gender = p.gender === "male" ? "남" : "여";
                 const age = new Date().getFullYear() - p.birthYear + 1;
-                additionalContext += "
-● " + label + " (" + gender + "." + age + "세)
-";
-                additionalContext += "  연주: " + (sj.year?.gan ?? "") + (sj.year?.ji ?? "") + " / 월주: " + (sj.month?.gan ?? "") + (sj.month?.ji ?? "") + " / 일주: " + (sj.day?.gan ?? "") + (sj.day?.ji ?? "") + " / 시주: " + (sj.hour?.gan ?? "") + (sj.hour?.ji ?? "") + "
-";
+                additionalContext += "\n● " + label + " (" + gender + "." + age + "세)\n";
+                additionalContext += "  연주: " + (sj.year?.gan ?? "") + (sj.year?.ji ?? "") + " / 월주: " + (sj.month?.gan ?? "") + (sj.month?.ji ?? "") + " / 일주: " + (sj.day?.gan ?? "") + (sj.day?.ji ?? "") + " / 시주: " + (sj.hour?.gan ?? "") + (sj.hour?.ji ?? "") + "\n";
               }
             }
             layerDynamic += additionalContext;
