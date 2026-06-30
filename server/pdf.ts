@@ -352,3 +352,16 @@ export async function generateSajuPDF(
     await page.close();
   }
 }
+
+/**
+ * 사주 카드를 독립 HTML 파일(문자열)로 생성
+ * PDF(Puppeteer) 대신 사용 - 서버 부담 없음, 실패 가능성 거의 없음
+ */
+export async function generateSajuHtmlFile(
+  label: string,
+  birthDate: string,
+  gender: string,
+  sajuData: SajuResult
+): Promise<string> {
+  return generateSajuCardHTML(label, birthDate, gender, sajuData);
+}
