@@ -777,11 +777,53 @@ export const appRouter = router({
           });
         }
         try {
+          // 사주 카드 데이터 수집: 메인 사주 + 추가인원 사주 전체
+          const sajuCards: Array<{
+            label: string;
+            gender: "male" | "female";
+            birthYear: number;
+            birthMonth: number;
+            birthDay: number;
+            birthHour: number | null;
+            birthMinute: number | null;
+            sajuData: ReturnType<typeof calculateSaju>;
+          }> = [];
+          const pushSajuCard = async (profileId: number | null | undefined, fallbackLabel?: string) => {
+            if (!profileId) return;
+            const profile = await db.getSajuProfileById(profileId);
+            if (!profile) return;
+            let saju: ReturnType<typeof calculateSaju>;
+            if (profile.sajuData) {
+              saju = profile.sajuData as unknown as ReturnType<typeof calculateSaju>;
+            } else {
+              saju = calculateSaju({
+                year: profile.birthYear, month: profile.birthMonth, day: profile.birthDay,
+                hour: profile.birthHour, minute: profile.birthMinute, gender: profile.gender,
+              });
+            }
+            sajuCards.push({
+              label: profile.label || fallbackLabel || "고객님",
+              gender: profile.gender === "male" ? "male" : "female",
+              birthYear: profile.birthYear,
+              birthMonth: profile.birthMonth,
+              birthDay: profile.birthDay,
+              birthHour: profile.birthHour,
+              birthMinute: profile.birthMinute,
+              sajuData: saju,
+            });
+          };
+          await pushSajuCard(s.sajuProfileId);
+          const additionalSajuEntries = (s.additionalSajus as any[]) || [];
+          for (const entry of additionalSajuEntries) {
+            await pushSajuCard(entry.sajuProfileId, entry.label);
+          }
+
           const html = await generateConsultationHtmlFile(
             ctx.user.name || "상담자",
             messages,
             `${s.planType} 상담 기록`,
             s.createdAt,
+            sajuCards,
           );
           const base64 = Buffer.from(html, "utf-8").toString("base64");
           return { base64, fileName: `상담기록-${s.id}-${Date.now()}.html` } as const;
