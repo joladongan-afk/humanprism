@@ -216,3 +216,88 @@ export async function closeBrowser(): Promise<void> {
     browserInstance = null;
   }
 }
+
+/**
+ * 상담 메시지 목록을 독립 HTML 파일(문자열)로 생성
+ * PDF(Puppeteer) 대신 사용 - 서버 부담 없음, 실패 가능성 거의 없음
+ * 다운로드 후 더블클릭하면 브라우저에서 바로 예쁘게 열린다.
+ */
+export async function generateConsultationHtmlFile(
+  userName: string,
+  messages: ConsultMessage[],
+  sessionTitle: string,
+  createdAt: Date
+): Promise<string> {
+  const formattedDate = createdAt.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const messagesHtml = messages
+    .map((msg) => {
+      const isUser = msg.role === "user";
+      const bubbleBg = isUser ? "#fef3c7" : "#f3f0fa";
+      const bubbleColor = isUser ? "#78350f" : "#3c3489";
+      const justify = isUser ? "flex-end" : "flex-start";
+      const radius = isUser ? "12px 12px 2px 12px" : "12px 12px 12px 2px";
+      const label = isUser ? "당신" : "마스터";
+      const safeContent = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+      return (
+        '<div style="display:flex; justify-content:' + justify + '; margin-bottom:1rem;">' +
+          '<div style="max-width:80%;">' +
+            '<div style="font-size:11px; color:#999; margin-bottom:4px; padding:0 4px;">' + label + '</div>' +
+            '<div style="background:' + bubbleBg + '; color:' + bubbleColor + '; padding:10px 14px; border-radius:' + radius + '; font-size:14px; line-height:1.7; white-space:pre-wrap; word-break:break-word;">' +
+              safeContent +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    })
+    .join("");
+
+  return (
+    '<!DOCTYPE html>' +
+    '<html lang="ko">' +
+    '<head>' +
+      '<meta charset="UTF-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+      '<title>휴먼프리즘 상담 기록</title>' +
+      '<style>' +
+        '* { margin:0; padding:0; box-sizing:border-box; }' +
+        'body { font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background:#f5f1e8; padding:24px 12px; color:#333; }' +
+        '.container { max-width:560px; margin:0 auto; background:#fff; padding:1.75rem; border-radius:16px; }' +
+        '.guide { background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:14px 16px; margin-bottom:1.5rem; text-align:center; }' +
+        '.guide-title { font-size:15px; font-weight:700; color:#9a3412; }' +
+        '.guide-body { font-size:13px; color:#9a3412; margin-top:4px; line-height:1.5; }' +
+        '.header { text-align:center; margin-bottom:1.5rem; }' +
+        '.header h1 { font-size:18px; font-weight:700; color:#3a2f1f; }' +
+        '.header .meta { font-size:13px; color:#999; margin-top:4px; }' +
+        '.divider { border-top:0.5px solid #eee; margin-bottom:1.25rem; }' +
+        '.footer { border-top:0.5px solid #eee; margin-top:1.5rem; padding-top:1rem; text-align:center; font-size:12px; color:#bbb; }' +
+      '</style>' +
+    '</head>' +
+    '<body>' +
+      '<div class="container">' +
+        '<div class="guide">' +
+          '<div class="guide-title">이 파일은 이렇게 보관하세요</div>' +
+          '<div class="guide-body">다운로드 후 폴더에 저장만 해두면 끝!<br>다시 보고 싶을 때 더블클릭하세요.</div>' +
+        '</div>' +
+        '<div class="header">' +
+          '<h1>휴먼프리즘</h1>' +
+          '<div class="meta">' + sessionTitle + ' · ' + userName + ' · ' + formattedDate + '</div>' +
+        '</div>' +
+        '<div class="divider"></div>' +
+        '<div>' + messagesHtml + '</div>' +
+        '<div class="footer">' +
+          '<p>이 상담 기록은 개인의 성찰과 참고를 위한 것입니다.</p>' +
+          '<p>human-prism.com</p>' +
+        '</div>' +
+      '</div>' +
+    '</body>' +
+    '</html>'
+  );
+}
