@@ -14,6 +14,7 @@ import { buildInitialGreeting, buildSystemPrompt, buildCompatibilityPrompt, buil
 import { formatSajuForPrompt } from "./saju";
 import { calculateSaju, lunarToSolar, type SajuInput } from "./saju";
 import { buildTemporalContext } from "./temporalContext";
+import { buildAnswerKey, verifySajuClaims, formatVerifyErrorsForRetry } from "./sajuVerify";
 import { generateSajuPDF, generateSajuHtmlFile } from "./pdf";
 import { generateConsultationPDF, generateConsultationHtmlFile } from "./consultPdf";
 import { portoneRouter } from "./_core/portoneRouter";
@@ -749,6 +750,34 @@ export const appRouter = router({
         }
         if (!assistantContent || assistantContent.trim().length === 0) {
           assistantContent = "잠시 호흡을 가다듬겠습니다. 다시 한 번 같은 질문을 보내 주시겠습니까.";
+        }
+        // 육친(십성) 사실 검증 — 개인상담(메인 사주가 있을 때)만 적용, 궁합은 제외
+        if (sajuData && (sajuData as any)?.pillars?.day?.stem) {
+          try {
+            const answerKey = buildAnswerKey(sajuData as any);
+            const verifyResult = verifySajuClaims(assistantContent, answerKey);
+            if (!verifyResult.ok) {
+              console.warn("[consult.sendMessage] 육친 검증 오류 발견, 재요청:", verifyResult.errors);
+              const retryInstruction = formatVerifyErrorsForRetry(verifyResult.errors);
+              const retryMessages = [
+                ...claudeMessages,
+                { role: "assistant" as const, content: assistantContent },
+                { role: "user" as const, content: retryInstruction },
+              ];
+              const retryContent = await invokeClaudeWithRagLayers(retryMessages, {
+                cachedBlocks: layerCachedBlocks,
+                dynamicContext: layerDynamic,
+                userQuery: retryInstruction,
+                maxTokens: 2048,
+                ragOverride: useRagSearch ? undefined : "",
+              });
+              if (retryContent && retryContent.trim().length > 0) {
+                assistantContent = retryContent;
+              }
+            }
+          } catch (verifyErr) {
+            console.error("[consult.sendMessage] 육친 검증 중 오류(무시하고 원답변 사용):", verifyErr);
+          }
         }
         await db.appendConsultMessage({
           sessionId: s.id,
