@@ -69,12 +69,18 @@ export function ConsultationAccessToggle({
             {" / 오른쪽 끝 버튼을 클릭하시면 운영자(마스터)의 열람 권한을 설정하실 수 있습니다."}
           </span>
         </Label>
-        <Switch
-          id="master-access"
-          checked={isEnabled}
-          onCheckedChange={handleToggle}
-          disabled={isLoading}
-        />
+        <div className="flex items-center gap-2 shrink-0">
+          <span className={`text-sm font-bold ${isEnabled ? "text-green-700" : "text-rose-700"}`}>
+            {isEnabled ? "허용함" : "허용 안 함"}
+          </span>
+          <Switch
+            id="master-access"
+            checked={isEnabled}
+            onCheckedChange={handleToggle}
+            disabled={isLoading}
+            className="scale-125"
+          />
+        </div>
       </div>
     </Card>
   );
