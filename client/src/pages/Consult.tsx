@@ -944,9 +944,9 @@ function SajuBoxToggle({ profileId, label, tone }: { profileId: number; label: s
             </span>
           )}
         </div>
-        <span className="flex items-center gap-1 text-xs text-slate-400">
+        <span className="flex items-center gap-1 text-sm font-bold text-blue-700">
           {open ? "접기" : "펼치기"}
-          {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </span>
       </button>
       {open && (
