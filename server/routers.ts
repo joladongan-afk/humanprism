@@ -14,7 +14,7 @@ import { buildInitialGreeting, buildSystemPrompt, buildCompatibilityPrompt, buil
 import { formatSajuForPrompt } from "./saju";
 import { calculateSaju, lunarToSolar, type SajuInput } from "./saju";
 import { buildTemporalContext } from "./temporalContext";
-import { buildAnswerKey, verifySajuClaims, formatVerifyErrorsForRetry } from "./sajuVerify";
+import { buildAnswerKey, verifySajuClaims, formatVerifyErrorsForRetry, checkClearGodOmission } from "./sajuVerify";
 import { generateSajuPDF, generateSajuHtmlFile } from "./pdf";
 import { generateConsultationPDF, generateConsultationHtmlFile } from "./consultPdf";
 import { portoneRouter } from "./_core/portoneRouter";
@@ -756,9 +756,14 @@ export const appRouter = router({
           try {
             const answerKey = buildAnswerKey(sajuData as any);
             const verifyResult = verifySajuClaims(assistantContent, answerKey);
-            if (!verifyResult.ok) {
-              console.warn("[consult.sendMessage] 육친 검증 오류 발견, 재요청:", verifyResult.errors);
-              const retryInstruction = formatVerifyErrorsForRetry(verifyResult.errors);
+            const omissionResult = checkClearGodOmission(assistantContent, answerKey, ["편인", "정인"]);
+            if (!verifyResult.ok || !omissionResult.ok) {
+              console.warn(
+                "[consult.sendMessage] 육친 검증 오류 발견, 재요청:",
+                verifyResult.errors,
+                omissionResult.missingClear,
+              );
+              const retryInstruction = formatVerifyErrorsForRetry(verifyResult.errors, omissionResult.missingClear);
               const retryMessages = [
                 ...claudeMessages,
                 { role: "assistant" as const, content: assistantContent },
