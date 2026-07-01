@@ -1280,53 +1280,22 @@ export function formatSajuForPrompt(r: SajuResult): string {
   }
   // 첫 대운 시작 전(countAge < daeunNumber)이면 원국운(대운 전) 상태
 
-  // ===== 형충(刑沖) 사실값 — 원국 + 대운·세운 인동(引動) =====
-  // 현재 대운 지지 추출 (간지 마지막 글자)
-  let curDaeunBranch: string | null = null;
-  if (curDaeunIdx >= 0) {
-    const daeunGanji = r.daeun.pillars[curDaeunIdx];
-    curDaeunBranch = daeunGanji ? daeunGanji[daeunGanji.length - 1] : null;
-  }
-  // 세운 지지: curSewoon 마지막 글자
-  const curSewoonBranch: string | null = curSewoon ? curSewoon[curSewoon.length - 1] : null;
-
-  // 원국 4지지 + 대운(인덱스4) + 세운(인덱스5)
-  const branchSeqFull = [
+  // ===== 형충(刑沖) 사실값 =====
+  const branchSeq = [
     r.pillars.year?.branch ?? null,
     r.pillars.month?.branch ?? null,
     r.pillars.day?.branch ?? null,
     r.pillars.hour?.branch ?? null,
-    curDaeunBranch,
-    curSewoonBranch,
   ];
-  const POS_LABEL_EXT = ["연", "월", "일", "시", "대운", "세운"];
-  const relationsAll = findBranchRelationsExt(branchSeqFull, POS_LABEL_EXT);
-
-  // 원국끼리 vs 대운·세운 인동 분리
-  const origLabels = new Set(["연", "월", "일", "시"]);
-  const relOrig = relationsAll.filter(rel =>
-    rel.positions.every(p => origLabels.has(p))
-  );
-  const relInDong = relationsAll.filter(rel =>
-    rel.positions.some(p => p === "대운" || p === "세운")
-  );
-
+  const relations = findBranchRelations(branchSeq);
   lines.push("【형·충 — 지지가 흔들리는 지점(사실값). 좋다/나쁘다 단정 금지, 양면으로 읽을 것】");
-  if (relOrig.length === 0) {
+  if (relations.length === 0) {
     lines.push("- 원국 지지의 형·충 없음(운에서 들어올 때 비로소 흔들림). 안정적이나 변화·전환의 계기는 운에서 온다.");
   } else {
-    for (const rel of relOrig) {
+    for (const rel of relations) {
       lines.push(`- ${rel.note}`);
     }
     lines.push("- 해석 지침: 충은 '뒤바꾸는·변화에 능한' 기질(재주 많음 ↔ 진득함 부족, 양면 함께). 형은 '비틀어 보는·왜곡된' 결 — 형 맞은 육친을 정석이 아닌 방식으로 쓴다(예: 관이 형 → 권력·생사여탈·별정직 계열). 개고(진술축미)는 잠겼던 지장간이 터져나와 발현되거나 깨지는 틈 — 그 양면을 함께 읽는다.");
-  }
-  if (relInDong.length > 0) {
-    lines.push("");
-    lines.push("【대운·세운 인동(引動) — 지금 운이 원국의 무엇을 건드리는가(코드 계산값)】");
-    lines.push("- 인동 원칙: 대운·세운의 형충회합은 원국에 잠재된 가능성을 — 좋든 나쁘든 — 불러일으키는(引動) 작용이다. 운 자체가 길흉을 만드는 것이 아니라, 원국에 이미 있던 것을 드러낸다.");
-    for (const rel of relInDong) {
-      lines.push(`- ${rel.note}`);
-    }
   }
   lines.push("");
 
