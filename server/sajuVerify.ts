@@ -158,3 +158,28 @@ export function formatVerifyErrorsForRetry(
     [...lines, ...omissionLines].join("\n")
   );
 }
+
+/**
+ * 세운·대운 천간의 정답 육친 항목을 만든다.
+ * 원국 answerKey와 합쳐서 verifySajuClaims에 넘기면 세운/대운 천간 오기재도 잡을 수 있다.
+ *
+ * @param dayStem  원국 일간 한자 (예: "甲")
+ * @param extraStems  [{stem: "己", label: "세운"}, {stem: "庚", label: "대운"}] 형태
+ */
+export function buildExtraStemAnswerKey(
+  dayStem: string,
+  extraStems: Array<{ stem: string; label: string }>
+): AnswerKeyEntry[] {
+  const entries: AnswerKeyEntry[] = [];
+  for (const { stem, label } of extraStems) {
+    if (!stem) continue;
+    entries.push({
+      char: stem,
+      kr: STEM_KR[stem] ?? null,
+      position: label,
+      kind: "천간",
+      correctGod: getTenGod(dayStem, stem),
+    });
+  }
+  return entries;
+}
