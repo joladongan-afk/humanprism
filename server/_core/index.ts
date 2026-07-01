@@ -10,6 +10,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { purgeSessionsHandler } from "./scheduledHandlers";
+import { sendMasterSms } from "./sms";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -86,6 +87,43 @@ async function startServer() {
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
+
+  // ── Anthropic API 헬스체크 (1시간 간격) ──
+  // API가 끊겼을 때 고객보다 먼저 알기 위한 장치.
+  // 실패 시 Solapi SMS로 경청자 님께 알림 발송.
+  const HEALTH_INTERVAL_MS = 60 * 60 * 1000; // 1시간
+  let lastAlertSent = 0; // 연속 실패 시 1시간에 한 번만 SMS 발송
+
+  const checkAnthropicApi = async () => {
+    try {
+      const Anthropic = (await import("@anthropic-ai/sdk")).default;
+      const client = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
+      await client.messages.create({
+        model: "claude-haiku-4-5-20251001", // 가장 저렴한 모델로 ping
+        max_tokens: 1,
+        messages: [{ role: "user", content: "ping" }],
+      });
+      // 성공 — 아무것도 안 함
+    } catch (err) {
+      const now = Date.now();
+      const errMsg = err instanceof Error ? err.message : String(err);
+      console.error("[HealthCheck] Anthropic API 장애 감지:", errMsg);
+      // 마지막 알림으로부터 1시간 이상 지났을 때만 SMS 발송 (스팸 방지)
+      if (now - lastAlertSent > HEALTH_INTERVAL_MS) {
+        lastAlertSent = now;
+        const time = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+        await sendMasterSms(
+          `[휴먼프리즘 긴급] Anthropic API 장애 감지\n시각: ${time}\n오류: ${errMsg.slice(0, 50)}\n즉시 확인 요망`
+        ).catch(() => {}); // SMS 실패해도 서버는 계속 동작
+      }
+    }
+  };
+
+  // 서버 시작 5분 후 첫 체크, 이후 1시간마다 반복
+  setTimeout(() => {
+    checkAnthropicApi();
+    setInterval(checkAnthropicApi, HEALTH_INTERVAL_MS);
+  }, 5 * 60 * 1000);
 }
 
 startServer().catch(console.error);
