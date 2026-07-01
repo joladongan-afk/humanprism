@@ -70,13 +70,17 @@ export function calculateSuri4(
   const n1 = name1Hanja.split("").reduce((sum, c) => sum + calculateStrokes(c), 0);
   const n2 = name2Hanja.split("").reduce((sum, c) => sum + calculateStrokes(c), 0);
 
-  const normalize = (n: number) => ((n - 1) % 81) + 1;
+  // 0획 방어: DB에 없는 글자가 있어도 1로 처리
+  const normalize = (n: number) => {
+    if (n <= 0) return 1;
+    return ((n - 1) % 81) + 1;
+  };
 
   return {
-    won: normalize(n1),           // 원격: 가운데 글자
-    hyeong: normalize(n2),        // 형격: 끝 글자
-    i: normalize(s + n1),         // 이격: 성+가운데
-    jeong: normalize(s + n1 + n2), // 정격: 성+가운데+끝 (총격)
+    won: normalize(n1 + n2),       // 원격: 이름 가운데+끝
+    hyeong: normalize(s + n1),     // 형격: 성+가운데
+    i: normalize(s + n2),          // 이격: 성+끝
+    jeong: normalize(s + n1 + n2), // 정격: 성+이름 전체 (총격)
   };
 }
 
