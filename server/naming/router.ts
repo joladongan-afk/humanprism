@@ -15,6 +15,7 @@ import {
   judgeSuri,
   checkBulmyong,
   judgeOverall,
+  calculateStrokes,
 } from "./calculator";
 import { getRandomComment, initializeNamingData, searchHanjaBySound, getRequiredOhaeng, loadNangangmangDb } from "./dataLoader";
 import { calculateSaju, lunarToSolar } from "../saju";
@@ -229,6 +230,10 @@ export const namingRouter = router({
               result: jawonJudgment.result,
               detail: jawonJudgment.detail,
               hasHanja,
+              surnameOhaeng: surnameHanja ? (calculateJawonOhaeng(surnameHanja)[0] || "") : "",
+              surnameStrokes: calculateStrokes(surnameHanja || ""),
+              name1Strokes: calculateStrokes(name1Hanja || ""),
+              name2Strokes: calculateStrokes(name2Hanja || ""),
             },
             suri4: {
               won: { number: suri4.won, gilhyung: wonJudgment.gilhyung, description: wonJudgment.description },
