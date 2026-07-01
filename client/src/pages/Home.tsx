@@ -407,15 +407,18 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="mt-6 flex flex-col items-center gap-3">
+          <div className="mt-6 flex flex-col items-center gap-2">
             <p className="text-sm font-semibold" style={{color: "#FFE600"}}>
-              카카오톡 공식 상담 채널 : 사주프리즘
+              카카오톡 공식 상담 채널 :{" "}
+              <a
+                href="http://pf.kakao.com/_elcXX/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{color: "#FFE600", textDecoration: "underline"}}
+              >
+                사주프리즘 → 클릭
+              </a>
             </p>
-            <img
-              src="/kakao-qr.png"
-              alt="사주프리즘 카카오톡 채널 QR코드"
-              style={{width: "120px", height: "120px", borderRadius: "8px"}}
-            />
           </div>
           <div className="mt-4 pt-6 border-t border-white/10 text-center text-sm text-white/40 space-y-1">
             <p>
