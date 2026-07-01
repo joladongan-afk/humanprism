@@ -407,7 +407,12 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-white/10 text-center text-sm text-white/40 space-y-1">
+          <div className="mt-6 text-center">
+            <p className="text-sm font-semibold" style={{color: "#FFE600"}}>
+              카카오톡 공식 상담 채널 : 사주프리즘
+            </p>
+          </div>
+          <div className="mt-4 pt-6 border-t border-white/10 text-center text-sm text-white/40 space-y-1">
             <p>
               무한상담소 (휴먼프리즘) · 대표자 전원석 · 사업자등록번호 212-34-92530
             </p>
