@@ -211,13 +211,12 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
                     background: item.c.bg, border: `1px solid ${item.c.border}`,
                     borderRadius: 10, padding: "10px 14px", textAlign: "center", minWidth: 80, flex: 1,
                   }}>
-                    <div style={{ fontSize: 20, fontWeight: 600, color: item.c.text, marginBottom: 4 }}>
+                    <div style={{ fontSize: 22, fontWeight: 600, color: item.c.text, marginBottom: 6 }}>
                       {item.char}
                     </div>
-                    <div style={{ fontSize: 13, color: item.c.text, fontWeight: 600, marginBottom: 2 }}>{item.label}</div>
-                    {item.strokes > 0 && (
-                      <div style={{ fontSize: 11, color: item.c.text, opacity: 0.7 }}>{item.strokes}획</div>
-                    )}
+                    <div style={{ fontSize: 15, color: item.c.text, fontWeight: 600 }}>
+                      {item.label}{item.strokes > 0 ? ` · ${item.strokes}획` : ""}
+                    </div>
                   </div>
                 );
               })}
