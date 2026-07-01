@@ -200,9 +200,7 @@ export const namingRouter = router({
           surnameHanja: surnameHanja || undefined,
           jawonOhaeng: jawonOhaengStr,
           jawonResult: jawonJudgment.result,
-          padoOhaeng: "",
-          padoResult: "",
-          suriNumber: suri4.jeong,
+                    suriNumber: suri4.jeong,
           suriGilhyung: jeongJudgment.gilhyung,
           suriResult: jeongJudgment.description,
           suri4Json: JSON.stringify({
@@ -350,7 +348,7 @@ export const namingRouter = router({
           },
           overall: r.overallResult || "",
           comment: r.suriResult || r.rollingComment || "",
-          requiredOhaeng: r.padoResult ? { primary: r.padoResult, secondary: "" } : null,
+          requiredOhaeng: null,
         },
         createdAt: r.createdAt,
       };
