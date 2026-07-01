@@ -288,8 +288,6 @@ export const namingServices = mysqlTable("namingServices", {
   jawonOhaeng: varchar("jawonOhaeng", { length: 5 }), // 木/火/土/金/水
   jawonResult: varchar("jawonResult", { length: 20 }), // "양호" / "보완 필요" 등
 
-  padoOhaeng: varchar("padoOhaeng", { length: 50 }), // "木→火" 등
-  padoResult: varchar("padoResult", { length: 20 }),
 
   // 결과: 수리사격 (획수 기반)
   suriNumber: int("suriNumber"), // 1-81
