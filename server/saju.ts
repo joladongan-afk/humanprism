@@ -330,6 +330,129 @@ export function findBranchRelations(branches: (string | null)[]): BranchRelation
   return rels;
 }
 
+/**
+ * findBranchRelations 확장판 — posLabels 배열을 외부에서 주입받는다.
+ * 원국 4지지 외에 대운(인덱스4)·세운(인덱스5) 지지까지 포함한 형충회합 계산에 사용.
+ */
+export function findBranchRelationsExt(
+  branches: (string | null)[],
+  posLabels: string[],
+): BranchRelation[] {
+  const slots = branches
+    .map((b, i) => ({ b, i }))
+    .filter((s): s is { b: string; i: number } => !!s.b);
+  const rels: BranchRelation[] = [];
+  const label = (i: number) => posLabels[i] ?? String(i);
+  const isAdjacent = (a: number, c: number) => Math.abs(a - c) === 1;
+
+  // 충
+  for (let x = 0; x < slots.length; x++) {
+    for (let y = x + 1; y < slots.length; y++) {
+      const a = slots[x], c = slots[y];
+      const pair = SIX_CHUNG.find(
+        ([p, q]) => (p === a.b && q === c.b) || (p === c.b && q === a.b),
+      );
+      if (pair) {
+        const adjacent = isAdjacent(a.i, c.i);
+        const opensTomb = FOUR_TOMBS.includes(a.b) || FOUR_TOMBS.includes(c.b);
+        rels.push({
+          type: "충",
+          positions: [label(a.i), label(c.i)],
+          branches: [a.b, c.b],
+          adjacent,
+          opensTomb,
+          note: `${label(a.i)}지 ${a.b} ↔ ${label(c.i)}지 ${c.b} 충(${adjacent ? "인접·작용 강함" : "원격·거리만큼 약화"})${opensTomb ? ", 진술축미 개고" : ""}`,
+        });
+      }
+    }
+  }
+  // 상형
+  for (let x = 0; x < slots.length; x++) {
+    for (let y = x + 1; y < slots.length; y++) {
+      const a = slots[x], c = slots[y];
+      const pair = SANG_HYEONG.find(
+        ([p, q]) => (p === a.b && q === c.b) || (p === c.b && q === a.b),
+      );
+      if (pair) {
+        rels.push({
+          type: "상형",
+          positions: [label(a.i), label(c.i)],
+          branches: [a.b, c.b],
+          adjacent: isAdjacent(a.i, c.i),
+          opensTomb: false,
+          note: `${label(a.i)}지 ${a.b} ↔ ${label(c.i)}지 ${c.b} 상형(子卯)`,
+        });
+      }
+    }
+  }
+  // 자형
+  for (const jb of JA_HYEONG) {
+    const found = slots.filter((s) => s.b === jb);
+    if (found.length >= 2) {
+      const opensTomb = FOUR_TOMBS.includes(jb);
+      rels.push({
+        type: "자형",
+        positions: found.map((f) => label(f.i)),
+        branches: found.map((f) => f.b),
+        adjacent: found.some((f, k) => k > 0 && isAdjacent(found[k - 1].i, f.i)),
+        opensTomb,
+        note: `${jb}${jb} 자형(${found.map((f) => label(f.i)).join("·")}지)${opensTomb ? ", 진술축미 개고" : ""}`,
+      });
+    }
+  }
+  // 삼형
+  for (const group of SAM_HYEONG) {
+    const present = slots.filter((s) => group.includes(s.b));
+    const distinct = Array.from(new Set(present.map((p) => p.b)));
+    if (distinct.length >= 2) {
+      const full = distinct.length === 3;
+      const opensTomb = present.some((p) => FOUR_TOMBS.includes(p.b));
+      rels.push({
+        type: "삼형",
+        positions: present.map((p) => label(p.i)),
+        branches: present.map((p) => p.b),
+        adjacent: present.some((p, k) => k > 0 && isAdjacent(present[k - 1].i, p.i)),
+        opensTomb,
+        note: `${distinct.join("")} ${full ? "삼형 완성" : "형(부분)"}(${present.map((p) => label(p.i)).join("·")}지)${opensTomb ? ", 진술축미 개고" : ""}`,
+      });
+    }
+  }
+  // 육합
+  for (const [p, q] of SIX_HEP) {
+    const as_ = slots.filter(s => s.b === p);
+    const cs_ = slots.filter(s => s.b === q);
+    for (const a of as_) {
+      for (const c of cs_) {
+        rels.push({
+          type: "합",
+          positions: [label(a.i), label(c.i)],
+          branches: [a.b, c.b],
+          adjacent: isAdjacent(a.i, c.i),
+          opensTomb: false,
+          note: `${label(a.i)}지 ${a.b} ↔ ${label(c.i)}지 ${c.b} 육합`,
+        });
+      }
+    }
+  }
+  // 삼합
+  for (const group of SAM_HEP) {
+    const present = slots.filter((s) => group.includes(s.b));
+    const distinct = Array.from(new Set(present.map((p) => p.b)));
+    if (distinct.length >= 2) {
+      const full = distinct.length === 3;
+      rels.push({
+        type: "삼합",
+        positions: present.map((p) => label(p.i)),
+        branches: present.map((p) => p.b),
+        adjacent: false,
+        opensTomb: false,
+        note: `${distinct.join("")} ${full ? "삼합 완성" : "반합"}(${present.map((p) => label(p.i)).join("·")}지)`,
+      });
+    }
+  }
+  return rels;
+}
+
 // ===== 드러남 층위 — 육친의 정성적 무게(개수 아님) =====
 // 천간 투출(통근까지면 더 무겁다) > 지지 정기 > 지장간 잠복. 셋의 무게가 다르다.
 export interface RevealLayer {
@@ -1161,22 +1284,53 @@ export function formatSajuForPrompt(r: SajuResult): string {
   }
   lines.push("");
 
-  // ===== 형충(刑沖) 사실값 =====
-  const branchSeq = [
+  // ===== 형충(刑沖) 사실값 — 원국 + 대운·세운 인동(引動) =====
+  // 현재 대운 지지 추출 (간지 마지막 글자)
+  let curDaeunBranch: string | null = null;
+  if (curDaeunIdx >= 0) {
+    const daeunGanji = r.daeun.pillars[curDaeunIdx];
+    curDaeunBranch = daeunGanji ? daeunGanji[daeunGanji.length - 1] : null;
+  }
+  // 세운 지지: curSewoon 마지막 글자
+  const curSewoonBranch: string | null = curSewoon ? curSewoon[curSewoon.length - 1] : null;
+
+  // 원국 4지지 + 대운(인덱스4) + 세운(인덱스5)
+  const branchSeqFull = [
     r.pillars.year?.branch ?? null,
     r.pillars.month?.branch ?? null,
     r.pillars.day?.branch ?? null,
     r.pillars.hour?.branch ?? null,
+    curDaeunBranch,
+    curSewoonBranch,
   ];
-  const relations = findBranchRelations(branchSeq);
+  const POS_LABEL_EXT = ["연", "월", "일", "시", "대운", "세운"];
+  const relationsAll = findBranchRelationsExt(branchSeqFull, POS_LABEL_EXT);
+
+  // 원국끼리 vs 대운·세운 인동 분리
+  const origLabels = new Set(["연", "월", "일", "시"]);
+  const relOrig = relationsAll.filter(rel =>
+    rel.positions.every(p => origLabels.has(p))
+  );
+  const relInDong = relationsAll.filter(rel =>
+    rel.positions.some(p => p === "대운" || p === "세운")
+  );
+
   lines.push("【형·충 — 지지가 흔들리는 지점(사실값). 좋다/나쁘다 단정 금지, 양면으로 읽을 것】");
-  if (relations.length === 0) {
+  if (relOrig.length === 0) {
     lines.push("- 원국 지지의 형·충 없음(운에서 들어올 때 비로소 흔들림). 안정적이나 변화·전환의 계기는 운에서 온다.");
   } else {
-    for (const rel of relations) {
+    for (const rel of relOrig) {
       lines.push(`- ${rel.note}`);
     }
     lines.push("- 해석 지침: 충은 '뒤바꾸는·변화에 능한' 기질(재주 많음 ↔ 진득함 부족, 양면 함께). 형은 '비틀어 보는·왜곡된' 결 — 형 맞은 육친을 정석이 아닌 방식으로 쓴다(예: 관이 형 → 권력·생사여탈·별정직 계열). 개고(진술축미)는 잠겼던 지장간이 터져나와 발현되거나 깨지는 틈 — 그 양면을 함께 읽는다.");
+  }
+  if (relInDong.length > 0) {
+    lines.push("");
+    lines.push("【대운·세운 인동(引動) — 지금 운이 원국의 무엇을 건드리는가(코드 계산값)】");
+    lines.push("- 인동 원칙: 대운·세운의 형충회합은 원국에 잠재된 가능성을 — 좋든 나쁘든 — 불러일으키는(引動) 작용이다. 운 자체가 길흉을 만드는 것이 아니라, 원국에 이미 있던 것을 드러낸다.");
+    for (const rel of relInDong) {
+      lines.push(`- ${rel.note}`);
+    }
   }
   lines.push("");
   // ===== 현재 나이·현재 대운·현재 세운(코드 확정값) =====
