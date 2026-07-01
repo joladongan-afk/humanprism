@@ -34,6 +34,8 @@ interface FreeReadingResultData {
 }
 
 interface InputData {
+  surnameKorean: string;
+  surnameHanja?: string;
   name1Korean: string;
   name1Hanja?: string;
   name2Korean: string;
