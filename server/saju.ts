@@ -417,39 +417,6 @@ export function findBranchRelationsExt(
       });
     }
   }
-  // 육합
-  for (const [p, q] of SIX_HEP) {
-    const as_ = slots.filter(s => s.b === p);
-    const cs_ = slots.filter(s => s.b === q);
-    for (const a of as_) {
-      for (const c of cs_) {
-        rels.push({
-          type: "합",
-          positions: [label(a.i), label(c.i)],
-          branches: [a.b, c.b],
-          adjacent: isAdjacent(a.i, c.i),
-          opensTomb: false,
-          note: `${label(a.i)}지 ${a.b} ↔ ${label(c.i)}지 ${c.b} 육합`,
-        });
-      }
-    }
-  }
-  // 삼합
-  for (const group of SAM_HEP) {
-    const present = slots.filter((s) => group.includes(s.b));
-    const distinct = Array.from(new Set(present.map((p) => p.b)));
-    if (distinct.length >= 2) {
-      const full = distinct.length === 3;
-      rels.push({
-        type: "삼합",
-        positions: present.map((p) => label(p.i)),
-        branches: present.map((p) => p.b),
-        adjacent: false,
-        opensTomb: false,
-        note: `${distinct.join("")} ${full ? "삼합 완성" : "반합"}(${present.map((p) => label(p.i)).join("·")}지)`,
-      });
-    }
-  }
   return rels;
 }
 
