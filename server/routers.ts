@@ -12,9 +12,9 @@ import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_
 import * as db from "./db";
 import { buildInitialGreeting, buildSystemPrompt, buildCompatibilityPrompt, buildCompatibilityRagContext, buildPersonalPromptLayers, buildCompatibilityPromptLayers } from "./masterPrompt";
 import { formatSajuForPrompt } from "./saju";
-import { calculateSaju, lunarToSolar, type SajuInput } from "./saju";
+import { calculateSaju, lunarToSolar, getCurrentSajuYear, type SajuInput } from "./saju";
 import { buildTemporalContext } from "./temporalContext";
-import { buildAnswerKey, verifySajuClaims, formatVerifyErrorsForRetry, checkClearGodOmission } from "./sajuVerify";
+import { buildAnswerKey, verifySajuClaims, formatVerifyErrorsForRetry, checkClearGodOmission, buildExtraStemAnswerKey } from "./sajuVerify";
 import { generateSajuPDF, generateSajuHtmlFile } from "./pdf";
 import { generateConsultationPDF, generateConsultationHtmlFile } from "./consultPdf";
 import { portoneRouter } from "./_core/portoneRouter";
@@ -755,7 +755,28 @@ export const appRouter = router({
         if (sajuData && (sajuData as any)?.pillars?.day?.stem) {
           try {
             const answerKey = buildAnswerKey(sajuData as any);
-            const verifyResult = verifySajuClaims(assistantContent, answerKey);
+            // 세운·대운 천간 육친 검증 추가
+            const nowKst = new Date(Date.now() + 9 * 3600000);
+            const sajuYearInfo = getCurrentSajuYear(nowKst);
+            const sewoonStem = sajuYearInfo.ganji?.[0] ?? "";
+            const dayStem = (sajuData as any).pillars?.day?.stem ?? "";
+            let daeunStem = "";
+            const daeunPillars = (sajuData as any).daeun?.pillars ?? [];
+            const daeunNumber = (sajuData as any).daeun?.daeunNumber ?? 0;
+            const countAge = sajuYearInfo.sajuYearNo - ((sajuData as any).input?.year ?? 0) + 1;
+            for (let i = 0; i < daeunPillars.length; i++) {
+              const sAge = daeunNumber + i * 10;
+              if (countAge >= sAge && countAge <= sAge + 9) {
+                daeunStem = (daeunPillars[i] ?? "")[0] ?? "";
+                break;
+              }
+            }
+            const extraKey = buildExtraStemAnswerKey(dayStem, [
+              { stem: sewoonStem, label: "세운" },
+              { stem: daeunStem, label: "대운" },
+            ]);
+            const fullKey = [...answerKey, ...extraKey];
+            const verifyResult = verifySajuClaims(assistantContent, fullKey);
             const omissionResult = checkClearGodOmission(assistantContent, answerKey, ["편인", "정인"]);
             if (!verifyResult.ok || !omissionResult.ok) {
               console.warn(
