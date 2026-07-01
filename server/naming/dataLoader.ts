@@ -43,7 +43,6 @@ export interface BulmyongRecord {
  */
 export interface RollingCommentsData {
   all_pass: string[];
-  pado_fail: string[];
   jawon_fail: string[];
   suri_fail: string[];
   bulmyong: string[];
@@ -182,7 +181,6 @@ export function loadRollingComments(): RollingCommentsData {
     console.error("[Naming] Failed to load rolling comments:", error);
     return {
       all_pass: [],
-      pado_fail: [],
       jawon_fail: [],
       suri_fail: [],
       bulmyong: [],
