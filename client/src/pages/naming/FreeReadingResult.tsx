@@ -15,6 +15,10 @@ interface FreeReadingResultProps {
         result: string;
         detail?: string;
         hasHanja?: boolean;
+        surnameOhaeng?: string;
+        surnameStrokes?: number;
+        name1Strokes?: number;
+        name2Strokes?: number;
       };
       suri4: {
         won: SuriGrade;
@@ -32,6 +36,8 @@ interface FreeReadingResultProps {
     };
   };
   inputData?: {
+    surnameKorean: string;
+    surnameHanja?: string;
     name1Korean: string;
     name1Hanja?: string;
     name2Korean: string;
@@ -103,6 +109,8 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
   const { jawon, suri4, bulmyong, overall, comment } = data.analysis;
   const ohaengChars = jawon.ohaeng ? jawon.ohaeng.split("") : [];
 
+  const sKor = inputData?.surnameKorean || "";
+  const sHan = inputData?.surnameHanja || "";
   const n1Kor = inputData?.name1Korean || "";
   const n1Han = inputData?.name1Hanja || "";
   const n2Kor = inputData?.name2Korean || "";
@@ -110,14 +118,19 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
 
   const buildJawonDesc = () => {
     if (!jawon.hasHanja || ohaengChars.length < 2) return null;
+    const sOh = jawon.surnameOhaeng || "";
     const c0 = OHAENG_COLOR[ohaengChars[0]];
     const c1 = OHAENG_COLOR[ohaengChars[1]];
     if (!c0 || !c1) return null;
-    const label0 = c0.label;
-    const label1 = c1.label;
+    const charS = sHan ? `${sHan}(${sKor})` : sKor;
     const char0 = n1Han ? `${n1Han}(${n1Kor})` : n1Kor;
     const char1 = n2Han ? `${n2Han}(${n2Kor})` : n2Kor;
-    return { char0, label0, char1, label1 };
+    const cS = sOh ? OHAENG_COLOR[sOh] : null;
+    return {
+      charS, ohS: sOh, cS, strokesS: jawon.surnameStrokes || 0,
+      char0, label0: c0.label, c0, strokes0: jawon.name1Strokes || 0,
+      char1, label1: c1.label, c1, strokes1: jawon.name2Strokes || 0,
+    };
   };
 
   const jawonDesc = buildJawonDesc();
@@ -180,20 +193,31 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
           <>
             <div style={{ display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
               {[
-                { char: jawonDesc.char0, oh: ohaengChars[0] },
-                { char: jawonDesc.char1, oh: ohaengChars[1] },
+                { char: jawonDesc.charS, c: jawonDesc.cS, label: jawonDesc.ohS ? (OHAENG_COLOR[jawonDesc.ohS]?.label || "") : "", strokes: jawonDesc.strokesS },
+                { char: jawonDesc.char0, c: jawonDesc.c0, label: jawonDesc.label0, strokes: jawonDesc.strokes0 },
+                { char: jawonDesc.char1, c: jawonDesc.c1, label: jawonDesc.label1, strokes: jawonDesc.strokes1 },
               ].map((item, idx) => {
-                const c = OHAENG_COLOR[item.oh];
-                if (!c) return null;
+                if (!item.c) return (
+                  <div key={idx} style={{
+                    background: "#f1efe8", border: "1px solid #d9d5c9",
+                    borderRadius: 10, padding: "10px 18px", textAlign: "center", minWidth: 80, flex: 1,
+                  }}>
+                    <div style={{ fontSize: 22, fontWeight: 600, color: "#888", marginBottom: 6 }}>{item.char}</div>
+                    <div style={{ fontSize: 12, color: "#aaa" }}>오행 미상</div>
+                  </div>
+                );
                 return (
                   <div key={idx} style={{
-                    background: c.bg, border: `1px solid ${c.border}`,
-                    borderRadius: 10, padding: "10px 18px", textAlign: "center", minWidth: 90, flex: 1,
+                    background: item.c.bg, border: `1px solid ${item.c.border}`,
+                    borderRadius: 10, padding: "10px 14px", textAlign: "center", minWidth: 80, flex: 1,
                   }}>
-                    <div style={{ fontSize: 22, fontWeight: 600, color: c.text, marginBottom: 6 }}>
+                    <div style={{ fontSize: 20, fontWeight: 600, color: item.c.text, marginBottom: 4 }}>
                       {item.char}
                     </div>
-                    <div style={{ fontSize: 14, color: c.text, fontWeight: 600 }}>{c.label}</div>
+                    <div style={{ fontSize: 13, color: item.c.text, fontWeight: 600, marginBottom: 2 }}>{item.label}</div>
+                    {item.strokes > 0 && (
+                      <div style={{ fontSize: 11, color: item.c.text, opacity: 0.7 }}>{item.strokes}획</div>
+                    )}
                   </div>
                 );
               })}
