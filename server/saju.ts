@@ -1284,6 +1284,35 @@ export function formatSajuForPrompt(r: SajuResult): string {
   }
   lines.push("");
 
+  // ===== 현재 나이·현재 대운·현재 세운(코드 확정값) =====
+  const now = new Date();
+  const nowKst = new Date(now.getTime() + 9 * 3600000);
+  const curYear = nowKst.getUTCFullYear();
+  // 만 나이(생일 경과 여부 반영)
+  const birthY = r.input.year, birthM = r.input.month, birthD = r.input.day;
+  let age = curYear - birthY;
+  const curM = nowKst.getUTCMonth() + 1;
+  const curD = nowKst.getUTCDate();
+  if (curM < birthM || (curM === birthM && curD < birthD)) age -= 1;
+  // 현재 세운(올해 간지): ★ 입춘 세수 보정 — 산식 대신 만세력 CSV 기준.
+  // 1~입춘 전에 상담하면 사주상 올해는 아직 전년 간지이므로 자동 보정된다.
+  const sajuYearNow = getCurrentSajuYear(nowKst);
+  const curSewoon = sajuYearNow.ganji;
+  // 세운 사슬 전개의 기준점: 올해(사주연도) 간지 인덱스 / 사주연도 번호
+  const baseGanjiIdx = sajuYearNow.ganjiIndex;
+  const baseSajuYearNo = sajuYearNow.sajuYearNo;
+  // 세는나이(한국식) = 사주연도 - 출생연도 + 1. 대운 구간 판정은 이 세는나이 기준
+  // (입춘 보정된 사주연도를 써야 세운 표의 '당시 대운'과 완전히 일치한다).
+  const countAge = baseSajuYearNo - birthY + 1;
+  // 현재 대운 구간 찾기: daeunNumber세~ 구간, 10년 단위
+  let curDaeunIdx = -1;
+  for (let i = 0; i < r.daeun.pillars.length; i++) {
+    const startAge = r.daeun.daeunNumber + i * 10;
+    const endAge = startAge + 9;
+    if (countAge >= startAge && countAge <= endAge) { curDaeunIdx = i; break; }
+  }
+  // 첫 대운 시작 전(countAge < daeunNumber)이면 원국운(대운 전) 상태
+
   // ===== 형충(刑沖) 사실값 — 원국 + 대운·세운 인동(引動) =====
   // 현재 대운 지지 추출 (간지 마지막 글자)
   let curDaeunBranch: string | null = null;
@@ -1333,34 +1362,6 @@ export function formatSajuForPrompt(r: SajuResult): string {
     }
   }
   lines.push("");
-  // ===== 현재 나이·현재 대운·현재 세운(코드 확정값) =====
-  const now = new Date();
-  const nowKst = new Date(now.getTime() + 9 * 3600000);
-  const curYear = nowKst.getUTCFullYear();
-  // 만 나이(생일 경과 여부 반영)
-  const birthY = r.input.year, birthM = r.input.month, birthD = r.input.day;
-  let age = curYear - birthY;
-  const curM = nowKst.getUTCMonth() + 1;
-  const curD = nowKst.getUTCDate();
-  if (curM < birthM || (curM === birthM && curD < birthD)) age -= 1;
-  // 현재 세운(올해 간지): ★ 입춘 세수 보정 — 산식 대신 만세력 CSV 기준.
-  // 1~입춘 전에 상담하면 사주상 올해는 아직 전년 간지이므로 자동 보정된다.
-  const sajuYearNow = getCurrentSajuYear(nowKst);
-  const curSewoon = sajuYearNow.ganji;
-  // 세운 사슬 전개의 기준점: 올해(사주연도) 간지 인덱스 / 사주연도 번호
-  const baseGanjiIdx = sajuYearNow.ganjiIndex;
-  const baseSajuYearNo = sajuYearNow.sajuYearNo;
-  // 세는나이(한국식) = 사주연도 - 출생연도 + 1. 대운 구간 판정은 이 세는나이 기준
-  // (입춘 보정된 사주연도를 써야 세운 표의 '당시 대운'과 완전히 일치한다).
-  const countAge = baseSajuYearNo - birthY + 1;
-  // 현재 대운 구간 찾기: daeunNumber세~ 구간, 10년 단위
-  let curDaeunIdx = -1;
-  for (let i = 0; i < r.daeun.pillars.length; i++) {
-    const startAge = r.daeun.daeunNumber + i * 10;
-    const endAge = startAge + 9;
-    if (countAge >= startAge && countAge <= endAge) { curDaeunIdx = i; break; }
-  }
-  // 첫 대운 시작 전(countAge < daeunNumber)이면 원국운(대운 전) 상태
 
   lines.push("【대운 — 코드 확정값. 절대 임의로 다른 대운을 현재로 읽지 말 것】");
   lines.push(`- 대운수: ${r.daeun.daeunNumber}세 시작, ${r.daeun.forward ? "순행" : "역행"}`);
