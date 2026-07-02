@@ -26,7 +26,10 @@ import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { Link } from "wouter";
 
-type PlanKey = "free" | "taste" | "event" | "deep" | "master_chat" | "master_offline" | "master_kakao_15" | "master_kakao_30" | "master_kakao_60";
+type PlanKey = "free" | "taste" | "event" | "deep" | "master_kakao_15" | "master_kakao_30" | "master_kakao_60";
+
+// 화면에 노출할 플랜과 순서 (event는 프로모션 재사용을 위해 코드에는 남겨두되 평소엔 숨김)
+const VISIBLE_PLANS: PlanKey[] = ["free", "taste", "deep", "master_kakao_15", "master_kakao_30", "master_kakao_60"];
 
 const PLAN_DETAIL: Record<
   PlanKey,
@@ -77,34 +80,16 @@ const PLAN_DETAIL: Record<
     body:
       "이벤트 상담의 퀄리티는 심층 상담과 차이가 없습니다. 그 차이를 누려보세요!",
   },
-  master_chat: {
-    no: "05",
-    title: "마스터 채팅 상담",
-    badge: "예약제",
-    price: "100,000원",
-    duration: "60분",
-    body:
-      "이 프로그램을 만든 '마스터'와 직접 채팅으로 상담합니다. 상담은 예약제로만 진행합니다.",
-  },
-  master_offline: {
-    no: "06",
-    title: "마스터 대면 상담",
-    badge: "예약제",
-    price: "200,000원",
-    duration: "80분",
-    body:
-      "마스터가 있는 장소로 와 주셔야 합니다. 하루에 세 분까지만 예약을 받습니다. 최대한 한 사람에게 집중하기 위함입니다.",
-  },
   master_kakao_15: {
-    no: "05-A",
-    title: "카카오 채팅 · 15분",
+    no: "04",
+    title: "마스터 직접 채팅 · 15분",
     price: "30,000원",
     duration: "15분",
     body: "핵심 한 가지를 명확히 짚어드립니다. (1인 상담)",
   },
   master_kakao_30: {
-    no: "05-B",
-    title: "카카오 채팅 · 30분",
+    no: "05",
+    title: "마스터 직접 채팅 · 30분",
     badge: "추천",
     price: "50,000원",
     duration: "30분",
@@ -112,8 +97,9 @@ const PLAN_DETAIL: Record<
     accent: true,
   },
   master_kakao_60: {
-    no: "05-C",
-    title: "카카오 채팅 · 60분",
+    no: "06",
+    title: "마스터 직접 채팅 · 60분",
+    badge: "인원무제한",
     price: "100,000원",
     duration: "60분",
     body: "삶의 큰 그림을 여유 있게 들여다볼 수 있습니다. (인원 무제한)",
@@ -203,18 +189,12 @@ export default function Plans() {
       return;
     }
 
-    // 유료 AI 상담 플랜 (taste, deep) - 사주 선택 없이 바로 무통장 입금 신청 다이얼로그를 열다.
+    // 유료 AI 상담 플랜 (taste, deep) 및 마스터 직접 채팅 3종 - 사주 선택 없이 바로 무통장 입금 신청 다이얼로그를 열다.
     // 상담할 사주는 결제가 아니라 채팅방 입장 후 대화로 받는다(시간제·인원 무제한 가치 보존).
-    if (plan === "taste" || plan === "deep") {
+    if (plan === "taste" || plan === "deep" || plan === "master_kakao_15" || plan === "master_kakao_30" || plan === "master_kakao_60") {
       setDepositPlan(plan);
       setDepositProfileId(undefined);
       setDepositOpen(true);
-      return;
-    }
-
-    // 마스터 플랜은 예약 페이지로 이동
-    if (plan === "master_chat" || plan === "master_offline") {
-      setLocation(`/appointments/new?plan=${plan}`);
       return;
     }
   };
@@ -350,11 +330,11 @@ export default function Plans() {
           </h1>
           <div className="gold-divider w-40 mx-auto mt-8" />
           <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
-            <span className="font-bold text-amber-300 text-xl">01-04</span>
+            <span className="font-bold text-amber-300 text-xl">01-03</span>
             <span className="text-white text-xl font-semibold">대화형 AI 문답 사주</span>
             <span className="text-white/50 text-xl mx-1">/</span>
-            <span className="font-bold text-amber-300 text-xl">05-06</span>
-            <span className="text-white text-xl font-semibold">마스터와 상담</span>
+            <span className="font-bold text-amber-300 text-xl">04-06</span>
+            <span className="text-white text-xl font-semibold">마스터 직접 채팅</span>
           </div>
         </div>
       </div>
@@ -363,7 +343,7 @@ export default function Plans() {
       <div className="container py-16 max-w-7xl">
         {/* 플랜 카드 그리드 */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {(Object.keys(PLAN_DETAIL) as PlanKey[]).map((key) => {
+          {VISIBLE_PLANS.map((key) => {
             const plan = PLAN_DETAIL[key];
             const isFreePlanUsed = key === "free" && freeStatusQuery.data?.used;
             const isEventPlanUsed = key === "event" && eventStatusQuery.data?.used;
