@@ -28,6 +28,8 @@ import { Link } from "wouter";
 
 type PlanKey = "free" | "taste" | "event" | "deep" | "master_kakao_15" | "master_kakao_30" | "master_kakao_60";
 
+const KAKAO_CHAT_URL = "http://pf.kakao.com/_elcXX/chat";
+
 // 화면에 노출할 플랜과 순서 (event는 프로모션 재사용을 위해 코드에는 남겨두되 평소엔 숨김)
 const VISIBLE_PLANS: PlanKey[] = ["free", "taste", "deep", "master_kakao_15", "master_kakao_30", "master_kakao_60"];
 
@@ -429,20 +431,23 @@ export default function Plans() {
           })}
         </div>
 
-        {/* 이용 문의 안내 */}
+        {/* 카카오톡 문의 */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 rounded-lg border border-amber-300 bg-amber-50 mt-4">
           <div className="flex items-start gap-3">
-            <span className="text-amber-700 text-lg mt-0.5 shrink-0">📞</span>
+            <span className="text-amber-700 text-lg mt-0.5 shrink-0">💬</span>
             <div>
-              <p className="font-semibold text-amber-900">이용 관련 문의는 문자로 접수해 주세요</p>
+              <p className="font-semibold text-amber-900">이용 관련 문의는 카카오톡으로 편하게 남겨주세요</p>
               <p className="text-sm text-amber-900/80 mt-0.5 leading-relaxed">
-                결제 오류, 접속 지연, 사이트 오작동 등 문제가 있으면 아래 번호로 문자를 남겨주세요. <span className="font-semibold">문자 응대 09:00~21:00</span>
+                결제 오류, 접속 지연, 사이트 오작동 등 문제가 있으면 카카오 채팅방으로 남겨주세요. <span className="font-semibold">채팅 응대 09:00~22:00</span>
               </p>
             </div>
           </div>
-          <a href="sms:01044488064" className="shrink-0">
-            <button className="px-4 py-2 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-mono text-base transition-colors">
-              010-4448-8064
+          <a href={KAKAO_CHAT_URL} target="_blank" rel="noopener noreferrer" className="shrink-0">
+            <button
+              className="px-4 py-2 rounded-md text-[#3C1E1E] font-semibold text-base transition-all hover:brightness-95"
+              style={{ background: "#FEE500" }}
+            >
+              카카오톡 문의하기
             </button>
           </a>
         </div>
