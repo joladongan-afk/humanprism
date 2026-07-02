@@ -85,7 +85,7 @@ const PLAN_DETAIL: Record<
     title: "마스터 직접 채팅 · 15분",
     price: "30,000원",
     duration: "15분",
-    body: "핵심 한 가지를 명확히 짚어드립니다. (1인 상담)",
+    body: "실속파를 위한 핵심 상담 플랜\n\n미리 준비하면 가성비 좋은 상담이 됩니다.\n\n1인 상담 입니다.",
   },
   master_kakao_30: {
     no: "05",
@@ -93,7 +93,7 @@ const PLAN_DETAIL: Record<
     badge: "추천",
     price: "50,000원",
     duration: "30분",
-    body: "주요 흐름을 충분히 살펴볼 수 있는 시간입니다. (1인 심층 상담)",
+    body: "궁금한 점이 많을 때.\n\n30분간 다양한 질문을 무제한으로 하실 수 있습니다.\n\n1인 상담 입니다.",
     accent: true,
   },
   master_kakao_60: {
@@ -102,7 +102,7 @@ const PLAN_DETAIL: Record<
     badge: "인원무제한",
     price: "100,000원",
     duration: "60분",
-    body: "삶의 큰 그림을 여유 있게 들여다볼 수 있습니다. (인원 무제한)",
+    body: "나와 주변의 모든 사람에 대한 상담 가능\n\n가성비 끝판왕.\n\n60분, 휴식 없이 쭉 갑니다.",
   },
 };
 
@@ -358,9 +358,30 @@ export default function Plans() {
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between mb-2">
-                    <span className="text-sm tracking-[0.2em] text-muted-foreground">{plan.no}</span>
+                    <span
+                      className="flex items-center justify-center rounded-full font-extrabold shrink-0"
+                      style={{
+                        width: "42px",
+                        height: "42px",
+                        fontSize: "18px",
+                        background: "rgba(212,160,23,0.12)",
+                        border: "2px solid rgba(212,160,23,0.55)",
+                        color: "#D4A017",
+                      }}
+                    >
+                      {plan.no}
+                    </span>
                     {plan.badge && (
-                      <span className="text-sm bg-gold/20 text-gold px-2 py-1 rounded">
+                      <span
+                        className="font-bold tracking-wide rounded-full"
+                        style={{
+                          fontSize: "13px",
+                          padding: "6px 14px",
+                          background: "linear-gradient(135deg, #D4A017, #F4D98A)",
+                          color: "#241a08",
+                          boxShadow: "0 2px 10px rgba(212,160,23,0.45)",
+                        }}
+                      >
                         {plan.badge}
                       </span>
                     )}
