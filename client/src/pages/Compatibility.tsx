@@ -50,6 +50,7 @@ export default function Compatibility() {
   const historyQuery = trpc.compatibility.list.useQuery(undefined, { enabled: isAuthenticated });
 
   const [profileAId, setProfileAId] = useState<string>("");
+  const [compatTab, setCompatTab] = useState<"saved" | "new">("saved");
   const [profileBId, setProfileBId] = useState<string>("");
   const [relationType, setRelationType] = useState<string>("couple");
   const [question, setQuestion] = useState<string>("");
@@ -210,10 +211,37 @@ export default function Compatibility() {
             <CardTitle className="text-xl hanja-display">궁합 볼 두 사람 선택/입력 하기</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5" id="compat-picker">
-            {!hasEnoughProfiles && (
+            {/* 탭: 저장된 사주 프로필 사용 vs 새로 등록 */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setCompatTab("saved")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${compatTab === "saved" ? "bg-amber-300 text-amber-900 border-amber-400" : "bg-white/10 text-white/70 border-white/20 hover:bg-white/20"}`}
+              >
+                저장된 사주 프로필 ({profiles.length}개)
+              </button>
+              <button
+                onClick={() => setCompatTab("new")}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${compatTab === "new" ? "bg-amber-300 text-amber-900 border-amber-400" : "bg-white/10 text-white/70 border-white/20 hover:bg-white/20"}`}
+              >
+                새 사주 등록하기
+              </button>
+            </div>
+            {compatTab === "new" && (
               <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-4">
                 <p className="text-base text-amber-900 leading-relaxed mb-3">
-                  궁합은 두 사람의 사주가 필요합니다. 먼저 만세력에서 두 사람의 사주를 등록해 주세요.
+                  만세력에서 사주를 등록하면 이곳에서 바로 선택할 수 있습니다.
+                  <br />
+                  <span className="text-sm text-amber-900/80">현재 저장된 사주: {profiles.length}개 (최소 2명 필요)</span>
+                </p>
+                <Link href="/saju/new?return=/compatibility">
+                  <Button variant="default">만세력에서 사주 등록하기</Button>
+                </Link>
+              </div>
+            )}
+            {compatTab === "saved" && !hasEnoughProfiles && (
+              <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-4">
+                <p className="text-base text-amber-900 leading-relaxed mb-3">
+                  저장된 사주가 2개 이상 필요합니다. 만세력에서 먼저 사주를 등록해 주세요.
                   <br />
                   <span className="text-sm text-amber-900/80">현재 저장된 사주: {profiles.length}개 (최소 2명 필요)</span>
                 </p>
