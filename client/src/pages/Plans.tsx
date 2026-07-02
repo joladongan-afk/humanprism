@@ -100,15 +100,15 @@ const PLAN_DETAIL: Record<
     title: "카카오 채팅 · 15분",
     price: "30,000원",
     duration: "15분",
-    body: "핵심 한 가지를 명확히 짚어드립니다.",
+    body: "핵심 한 가지를 명확히 짚어드립니다. (1인 상담)",
   },
   master_kakao_30: {
     no: "05-B",
     title: "카카오 채팅 · 30분",
     badge: "추천",
-    price: "60,000원",
+    price: "50,000원",
     duration: "30분",
-    body: "주요 흐름을 충분히 살펴볼 수 있는 시간입니다.",
+    body: "주요 흐름을 충분히 살펴볼 수 있는 시간입니다. (1인 심층 상담)",
     accent: true,
   },
   master_kakao_60: {
@@ -116,7 +116,7 @@ const PLAN_DETAIL: Record<
     title: "카카오 채팅 · 60분",
     price: "100,000원",
     duration: "60분",
-    body: "삶의 큰 그림을 여유 있게 들여다볼 수 있습니다.",
+    body: "삶의 큰 그림을 여유 있게 들여다볼 수 있습니다. (인원 무제한)",
   },
 };
 
