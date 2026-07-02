@@ -28,11 +28,14 @@ const PLAN_CONFIG = {
   taste: { amount: 9900, durationMinutes: 1440, turns: 20, label: "맛보기 상담" },
   deep: { amount: 14900, durationMinutes: 1440, turns: 30, label: "메인 상담" },
   compatibility_chat: { amount: 7900, durationMinutes: 1440, turns: 10, label: "궁합 채팅 상담" },
+  master_kakao_15: { amount: 30000, durationMinutes: 15, turns: 0, label: "마스터 카카오 채팅 15분" },
+  master_kakao_30: { amount: 60000, durationMinutes: 30, turns: 0, label: "마스터 카카오 채팅 30분" },
+  master_kakao_60: { amount: 100000, durationMinutes: 60, turns: 0, label: "마스터 카카오 채팅 60분" },
 } as const;
 
 type DepositPlan = keyof typeof PLAN_CONFIG;
 
-const depositPlanSchema = z.enum(["taste", "deep", "compatibility_chat"]);
+const depositPlanSchema = z.enum(["taste", "deep", "master_kakao_15", "master_kakao_30", "master_kakao_60", "compatibility_chat"]);
 
 // 승인 후 입장 유효기간 (3일 = 72시간)
 const ENTER_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
