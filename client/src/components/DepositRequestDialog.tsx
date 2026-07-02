@@ -130,13 +130,13 @@ export default function DepositRequestDialog({
         {step === "method" && (
           <div className="space-y-3 py-1">
             {/* 시간제·인원 무제한 강조 배너 */}
-            <div className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3.5 text-center shadow-sm">
-              <p className="text-white text-base font-extrabold leading-snug">
+            <div className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3.5 shadow-sm">
+              <p className="text-white text-base font-extrabold leading-snug text-left">
                 질문 개수만 제한 · 상담 인원은 무제한!
               </p>
-              <p className="text-indigo-100 text-sm mt-1 leading-relaxed">
+              <p className="text-indigo-100 text-sm mt-1 leading-relaxed text-left">
                 정해진 질문 개수 안에서는 본인·가족·연인·친구 누구의 사주든,
-                <br />몇 명이든 제한 없이 물어보실 수 있습니다.
+                몇 명이든 제한 없이 물어보실 수 있습니다.
               </p>
             </div>
 
