@@ -20,6 +20,7 @@ import { getSessionStatusView } from "@shared/sessionStatus";
 import Admin from "./Admin";
 
 const AdminPanel = Admin;
+const KAKAO_CHAT_URL = "http://pf.kakao.com/_elcXX/chat";
 
 function formatKst(d: Date | string | null | undefined) {
   if (!d) return "";
@@ -694,7 +695,16 @@ export default function MyRoom() {
                         국민은행 652301-01-809536 (예금주: 전원석)
                       </div>
                       <p className="text-sm text-amber-800 mt-2">
-                        입금 후 010-4448-8064 로 문자 남겨주시면 더 빠르게 확인됩니다.
+                        입금 후{" "}
+                        <a
+                          href={KAKAO_CHAT_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-amber-900 underline"
+                        >
+                          카카오톡으로 남겨주시면
+                        </a>{" "}
+                        더 빠르게 확인됩니다.
                       </p>
                     </div>
                   )}
