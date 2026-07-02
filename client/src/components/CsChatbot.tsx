@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Send, X, MessageCircle, Phone } from "lucide-react";
+import { Send, X, MessageCircle } from "lucide-react";
 import { CsAvatarIcon } from "./CsAvatarIcon";
 
 interface Message {
@@ -15,8 +15,8 @@ interface Message {
   timestamp: Date;
 }
 
-const CONTACT_NUMBER = "010-4448-8064";
-const CONTACT_HOURS = "09:00 ~ 21:00";
+const KAKAO_CHAT_URL = "http://pf.kakao.com/_elcXX/chat";
+const CONTACT_HOURS = "09:00 ~ 22:00";
 
 export function CsChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -90,7 +90,7 @@ export function CsChatbot() {
         id: `error-${Date.now()}`,
         role: "assistant",
         content:
-          "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주시거나, 운영자에게 직접 문의해 주세요.\n\n📞 **010-4448-8064** (문자, 09:00~21:00)",
+          "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주시거나, 운영자에게 직접 문의해 주세요.\n\n💬 **카카오톡으로 문의하기** (09:00~22:00)",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -155,12 +155,14 @@ export function CsChatbot() {
         <span>
           직접 문의:{" "}
           <a
-            href={`sms:${CONTACT_NUMBER.replace(/-/g, "")}`}
+            href={KAKAO_CHAT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-semibold text-blue-700 hover:underline"
           >
-            {CONTACT_NUMBER}
+            카카오톡으로 문의하기
           </a>
-          {" "}문자 응대 {CONTACT_HOURS}
+          {" "}응대 {CONTACT_HOURS}
         </span>
       </div>
 
