@@ -73,15 +73,15 @@ export default function AppointmentNew() {
           })}
         </div>
         <div className="relative z-10 container max-w-6xl mx-auto text-center">
-          <span className="text-base md:text-lg tracking-[0.4em] text-cyan-200/90 font-semibold">MASTER CONSULTATION</span>
+          <span className="text-base md:text-lg tracking-[0.4em] text-cyan-200/90 font-semibold">FACE-TO-FACE CONSULTATION</span>
           <h1 className="hanja-display text-5xl md:text-6xl mt-6 text-white leading-[1.3] font-bold">
-            마스터와 직접 상담
+            마스터를 직접 만나는 시간
           </h1>
           <div className="gold-divider w-40 mx-auto mt-8" />
           <p className="text-cyan-50/90 mt-6 leading-relaxed max-w-2xl mx-auto text-lg md:text-xl">
-            30년 경험의 마스터와 함께 깊이 있는 인생 상담을 나누세요.
+            30년 경험의 마스터와 마주 앉아 나누는 완전 집중 1:1 대면 상담입니다.
             <br />
-            <span className="text-amber-300 font-semibold">하루 최대 3분만 받습니다.</span> 지금 자리가 있을 때 연결하세요.
+            <span className="text-amber-300 font-semibold">하루 최대 세 분만 받습니다.</span> 지금 자리가 있을 때 연결하세요.
           </p>
         </div>
       </div>
@@ -89,92 +89,53 @@ export default function AppointmentNew() {
       {/* 본문 */}
       <div className="container py-14 max-w-4xl">
 
-        {/* 2개 카드 */}
-        <div className="grid md:grid-cols-2 gap-6 fade-up">
+        {/* 대면 상담 - 프리미엄 강조 카드 (단독) */}
+        <div
+          className="rounded-2xl p-10 md:p-12 fade-up relative overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg, #1c1608 0%, #3b2a0d 55%, #241a08 100%)",
+            border: "1px solid rgba(212,160,23,0.5)",
+            boxShadow: "0 0 60px rgba(212,160,23,0.15), inset 0 1px 0 rgba(255,255,255,0.05)",
+          }}
+        >
+          {/* 은은한 빛 장식 */}
+          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl pointer-events-none"
+            style={{ background: "radial-gradient(circle, rgba(212,160,23,0.35), transparent 70%)" }} />
 
-          {/* 05 카카오 채팅 상담 */}
-          <div className="hanji-card rounded-xl p-8 flex flex-col">
-            <div className="text-sm tracking-[0.3em] text-muted-foreground mb-2">05</div>
-            <h2 className="hanja-display text-2xl font-bold mb-1">카카오 채팅 상담</h2>
-            <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
-              30년 내공이 담긴 채팅 상담.<br />
-              결제 후 카카오 채팅방에서 바로 시작합니다.
-            </p>
-
-            {/* 가격표 */}
-            <div className="space-y-3 mb-2">
-              {[
-                { time: "15분", price: "30,000원", badge: null, note: "1인 상담" },
-                { time: "30분", price: "50,000원", badge: "추천", note: "1인 심층 상담" },
-                { time: "60분", price: "100,000원", badge: "인원무제한", note: "인원 무제한 상담" },
-              ].map(({ time, price, badge, note }) => (
-                <div
-                  key={time}
-                  className="flex items-center justify-between px-4 py-3 rounded-lg"
-                  style={{
-                    background: badge ? "rgba(212,160,23,0.12)" : "var(--surface-1, rgba(0,0,0,0.03))",
-                    border: badge ? "1px solid rgba(212,160,23,0.4)" : "1px solid transparent",
-                  }}
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <span
+                  className="text-xs font-bold tracking-[0.2em] px-3 py-1 rounded-full"
+                  style={{ background: "#D4A017", color: "#1c1608" }}
                 >
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-base">{time}</span>
-                    <span className="text-xs text-muted-foreground">{note}</span>
-                  </div>
-                  {badge && (
-                    <span style={{
-                      fontSize: "11px",
-                      background: "#D4A017",
-                      color: "#fff",
-                      borderRadius: "4px",
-                      padding: "2px 7px",
-                      fontWeight: 700,
-                    }}>{badge}</span>
-                  )}
-                  <span className="font-bold text-lg text-gold-deep">{price}</span>
-                </div>
-              ))}
+                  PREMIUM · 예약제
+                </span>
+                <span className="text-xs font-semibold tracking-[0.15em] text-amber-300/90">
+                  하루 최대 3명 한정
+                </span>
+              </div>
+              <h2 className="hanja-display text-3xl md:text-4xl font-bold mb-3" style={{ color: "#F4D98A" }}>
+                마스터 대면 상담
+              </h2>
+              <p className="text-amber-50/80 text-base leading-relaxed mb-2">
+                마스터가 있는 장소로 직접 오셔서, 완전히 집중된 1:1 대면 상담을 받으실 수 있습니다.
+                <br />
+                일정·장소는 채팅으로 먼저 안내드립니다.
+              </p>
             </div>
 
-            {/* 이용 순서 */}
-            <div className="flex items-center gap-2 mt-5 mb-1 text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">① 결제</span>
-              <span>→</span>
-              <span className="font-semibold text-foreground">② 채팅방 입장</span>
-              <span>→</span>
-              <span className="font-semibold text-foreground">③ 상담 시작</span>
-            </div>
-
-            <div className="mt-auto">
-              <KakaoButton label="카카오로 상담 신청하기" />
-            </div>
-          </div>
-
-          {/* 06 대면 상담 */}
-          <div className="hanji-card rounded-xl p-8 flex flex-col">
-            <div className="text-sm tracking-[0.3em] text-muted-foreground mb-2">06</div>
-            <h2 className="hanja-display text-2xl font-bold mb-1">마스터 대면 상담</h2>
-            <p className="text-muted-foreforeground text-sm mb-6 leading-relaxed text-muted-foreground">
-              마스터가 있는 장소로 직접 오시는 프리미엄 상담.<br />
-              일정·장소는 채팅으로 안내드립니다.
-            </p>
-
-            {/* 가격 */}
-            <div className="px-4 py-5 rounded-lg text-center mb-4"
-              style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.25)" }}>
-              <div className="text-3xl font-bold text-gold-deep">200,000원</div>
-              <div className="text-muted-foreground text-sm mt-1">80분 · 완전 집중 1:1</div>
-            </div>
-
-            <p className="text-sm text-muted-foreground leading-relaxed mb-2">
-              하루 최대 세 분까지만 예약을 받습니다.<br />
-              카카오 채팅으로 일정을 먼저 확인해 주세요.
-            </p>
-
-            <div className="mt-auto">
+            <div className="flex flex-col items-center md:min-w-[220px]">
+              <div
+                className="w-full text-center px-6 py-6 rounded-xl mb-4"
+                style={{ background: "rgba(0,0,0,0.25)", border: "1px solid rgba(212,160,23,0.4)" }}
+              >
+                <div className="text-4xl font-extrabold" style={{ color: "#F4D98A" }}>200,000원</div>
+                <div className="text-amber-200/70 text-sm mt-1">80분 · 완전 집중 1:1</div>
+              </div>
               <KakaoButton label="카카오로 일정 문의하기" />
             </div>
           </div>
-
         </div>
 
         {/* 하단 공통 안내 */}
