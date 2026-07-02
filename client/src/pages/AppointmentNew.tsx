@@ -1,101 +1,57 @@
 import SiteHeader from "@/components/SiteHeader";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { trpc } from "@/lib/trpc";
-import { useMemo, useState } from "react";
-import { useLocation, useSearch } from "wouter";
-import { toast } from "sonner";
+
+const KAKAO_CHAT_URL = "http://pf.kakao.com/_elcXX/chat";
+
+function KakaoButton({ label = "카카오로 상담 신청하기" }: { label?: string }) {
+  return (
+    <a
+      href={KAKAO_CHAT_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px",
+        width: "100%",
+        padding: "14px 0",
+        borderRadius: "10px",
+        background: "#FEE500",
+        color: "#3C1E1E",
+        fontWeight: 700,
+        fontSize: "17px",
+        textDecoration: "none",
+        marginTop: "20px",
+        transition: "filter 0.15s",
+      }}
+      onMouseEnter={e => (e.currentTarget.style.filter = "brightness(0.93)")}
+      onMouseLeave={e => (e.currentTarget.style.filter = "brightness(1)")}
+    >
+      {/* 자체 제작 말풍선 아이콘 */}
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <ellipse cx="12" cy="11" rx="9" ry="7" fill="#3C1E1E" />
+        <path d="M9 15.5 Q12 19 15 15.5" fill="#3C1E1E" />
+        <circle cx="9" cy="11" r="1.2" fill="#FEE500" />
+        <circle cx="12" cy="11" r="1.2" fill="#FEE500" />
+        <circle cx="15" cy="11" r="1.2" fill="#FEE500" />
+      </svg>
+      {label}
+    </a>
+  );
+}
 
 export default function AppointmentNew() {
-  const { isAuthenticated, loading: authLoading, user } = useAuth({
-    redirectOnUnauthenticated: true,
-  });
-  const search = useSearch();
-  const [, setLocation] = useLocation();
-
-  const params = useMemo(() => new URLSearchParams(search), [search]);
-  const paymentId = params.get("paymentId");
-  const planFromUrl = params.get("plan");
-
-  const isOffline = planFromUrl === "master_offline";
-  const [consultType, setConsultType] = useState<"chat" | "offline">(
-    isOffline ? "offline" : "chat",
-  );
-  // 제목/가격은 선택한 상담 유형에 따라 자연스럽게 바뀝니다.
-  const typeLabel = consultType === "offline" ? "대면" : "채팅";
-  const planPrice =
-    consultType === "offline" ? "200,000원 / 80분" : "100,000원 / 60분";
-  const planTitle = `마스터와 직접 ${typeLabel} 상담`;
-  const [realName, setRealName] = useState("");
-  const [nickname, setNickname] = useState(user?.nickname ?? "");
-  const [phone, setPhone] = useState(user?.phone ?? "");
-  const [preferredDate, setPreferredDate] = useState("");
-  const [alternativeDate, setAlternativeDate] = useState("");
-  const [notes, setNotes] = useState("");
-
-  const createMutation = trpc.appointment.create.useMutation({
-    onSuccess: () => {
-      toast.success("예약 요청이 전송되었습니다. 빠른 확정을 위해 010-4448-8064로 문자를 남겨주세요.", { duration: 6000 });
-      setLocation("/me");
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  function handleSubmit() {
-    if (!realName || !phone || !preferredDate) {
-      toast.error("실명, 연락처, 희망 일시는 필수입니다.");
-      return;
-    }
-    const pref = new Date(preferredDate);
-    if (isNaN(pref.getTime())) {
-      toast.error("희망 일시 형식이 올바르지 않습니다.");
-      return;
-    }
-    createMutation.mutate({
-      paymentId: paymentId ? parseInt(paymentId) : undefined,
-      consultType,
-      realName,
-      nickname: nickname || undefined,
-      phone,
-      preferredDate: pref,
-      alternativeDate: alternativeDate ? new Date(alternativeDate) : undefined,
-      notes: notes || undefined,
-    });
-  }
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <SiteHeader />
-        <div className="container py-20 text-center text-muted-foreground">자리를 마련하는 중입니다...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
-      {/* 우주 배경 (파란색/바다색 톤) */}
+
+      {/* 히어로 배경 */}
       <div className="page-hero relative w-full h-[360px] flex items-center bg-gradient-to-br from-slate-950 via-cyan-900 to-blue-950 overflow-hidden">
-        {/* 우주 배경 그라디언트 - 파란색/바다색 */}
         <div className="absolute inset-0 opacity-50">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-700/30 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-600/25 rounded-full blur-3xl" />
           <div className="absolute top-1/2 right-0 w-96 h-96 bg-teal-600/20 rounded-full blur-3xl" />
         </div>
-        
-        {/* 별자리 효과 (천체) */}
         <div className="absolute inset-0">
           {[...Array(40)].map((_, i) => {
             const size = Math.random() > 0.75 ? 2.5 : 1.5;
@@ -110,172 +66,142 @@ export default function AppointmentNew() {
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
                   animation: `constellation ${duration}s ease-in-out infinite`,
-                  boxShadow: `0 0 ${size * 2}px rgba(255, 255, 255, 0.9), 0 0 ${size * 4}px rgba(100, 200, 255, 0.6)`,
+                  boxShadow: `0 0 ${size * 2}px rgba(255,255,255,0.9), 0 0 ${size * 4}px rgba(100,200,255,0.6)`,
                 }}
               />
             );
           })}
-          {/* 별 연결선 효과 (별자리) */}
-          <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.2 }} preserveAspectRatio="none">
-            <line x1="5%" y1="15%" x2="20%" y2="30%" stroke="white" strokeWidth="0.5" />
-            <line x1="20%" y1="30%" x2="35%" y2="20%" stroke="white" strokeWidth="0.5" />
-            <line x1="35%" y1="20%" x2="50%" y2="35%" stroke="white" strokeWidth="0.5" />
-            <line x1="55%" y1="10%" x2="70%" y2="25%" stroke="white" strokeWidth="0.5" />
-            <line x1="70%" y1="25%" x2="85%" y2="15%" stroke="white" strokeWidth="0.5" />
-            <line x1="10%" y1="65%" x2="25%" y2="75%" stroke="white" strokeWidth="0.5" />
-            <line x1="25%" y1="75%" x2="40%" y2="70%" stroke="white" strokeWidth="0.5" />
-            <line x1="60%" y1="70%" x2="75%" y2="80%" stroke="white" strokeWidth="0.5" />
-            <line x1="75%" y1="80%" x2="85%" y2="75%" stroke="white" strokeWidth="0.5" />
-          </svg>
         </div>
-        
-        {/* 콘텐츠 */}
         <div className="relative z-10 container max-w-6xl mx-auto text-center">
-          <span className="text-base md:text-lg tracking-[0.4em] text-cyan-200/90 font-semibold leading-tight h-6 flex items-center justify-center">APPOINTMENT</span>
-          <h1 className="hanja-display text-6xl md:text-7xl mt-6 text-white leading-[1.3] font-bold">
-            마스터와 직접 상담 예약
+          <span className="text-base md:text-lg tracking-[0.4em] text-cyan-200/90 font-semibold">MASTER CONSULTATION</span>
+          <h1 className="hanja-display text-5xl md:text-6xl mt-6 text-white leading-[1.3] font-bold">
+            마스터와 직접 상담
           </h1>
           <div className="gold-divider w-40 mx-auto mt-8" />
-          <p className="text-cyan-50/90 mt-8 leading-relaxed max-w-2xl mx-auto text-xl md:text-2xl">
+          <p className="text-cyan-50/90 mt-6 leading-relaxed max-w-2xl mx-auto text-lg md:text-xl">
             30년 경험의 마스터와 함께 깊이 있는 인생 상담을 나누세요.
             <br />
-            원하시는 일정을 남기시면 마스터가 확인 후 연락드립니다.
+            <span className="text-amber-300 font-semibold">하루 최대 3분만 받습니다.</span> 지금 자리가 있을 때 연결하세요.
           </p>
         </div>
       </div>
-      
-      <div className="container py-12 max-w-4xl">
-        <div className="mb-10 fade-up">
-          <span className="text-base tracking-[0.4em] text-muted-foreground">APPOINTMENT</span>
-          <h1 className="hanja-display text-4xl mt-3">{planTitle} 예약</h1>
-          <div className="gold-divider w-32 mt-6" />
-          <p className="text-lg md:text-xl text-muted-foreground mt-6 leading-relaxed">
-            마스터가 직접 응대하는 상담입니다. 아래 <span className="text-foreground font-semibold">상담 유형 및 상담료</span>에서
-            채팅 또는 대면 중 원하시는 방식을 선택하실 수 있습니다.
-          </p>
-          <div className="mt-4 grid sm:grid-cols-2 gap-3">
-            <div className="hanji-card rounded-md px-5 py-4">
-              <div className="text-lg font-semibold text-foreground">채팅 상담</div>
-              <div className="text-2xl font-bold text-gold-deep mt-1">100,000원 · 60분</div>
+
+      {/* 본문 */}
+      <div className="container py-14 max-w-4xl">
+
+        {/* 2개 카드 */}
+        <div className="grid md:grid-cols-2 gap-6 fade-up">
+
+          {/* 05 카카오 채팅 상담 */}
+          <div className="hanji-card rounded-xl p-8 flex flex-col">
+            <div className="text-sm tracking-[0.3em] text-muted-foreground mb-2">05</div>
+            <h2 className="hanja-display text-2xl font-bold mb-1">카카오 채팅 상담</h2>
+            <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+              30년 내공이 담긴 채팅 상담.<br />
+              결제 후 카카오 채팅방에서 바로 시작합니다.
+            </p>
+
+            {/* 가격표 */}
+            <div className="space-y-3 mb-2">
+              {[
+                { time: "15분", price: "30,000원", badge: false },
+                { time: "30분", price: "60,000원", badge: true },
+                { time: "60분", price: "100,000원", badge: false },
+              ].map(({ time, price, badge }) => (
+                <div
+                  key={time}
+                  className="flex items-center justify-between px-4 py-3 rounded-lg"
+                  style={{
+                    background: badge ? "rgba(212,160,23,0.12)" : "var(--surface-1, rgba(0,0,0,0.03))",
+                    border: badge ? "1px solid rgba(212,160,23,0.4)" : "1px solid transparent",
+                  }}
+                >
+                  <span className="font-semibold text-base">{time}</span>
+                  {badge && (
+                    <span style={{
+                      fontSize: "11px",
+                      background: "#D4A017",
+                      color: "#fff",
+                      borderRadius: "4px",
+                      padding: "2px 7px",
+                      fontWeight: 700,
+                    }}>추천</span>
+                  )}
+                  <span className="font-bold text-lg text-gold-deep">{price}</span>
+                </div>
+              ))}
             </div>
-            <div className="hanji-card rounded-md px-5 py-4">
-              <div className="text-lg font-semibold text-foreground">대면 상담</div>
-              <div className="text-2xl font-bold text-gold-deep mt-1">200,000원 · 80분</div>
+
+            {/* 이용 순서 */}
+            <div className="flex items-center gap-2 mt-5 mb-1 text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">① 결제</span>
+              <span>→</span>
+              <span className="font-semibold text-foreground">② 채팅방 입장</span>
+              <span>→</span>
+              <span className="font-semibold text-foreground">③ 상담 시작</span>
+            </div>
+
+            <div className="mt-auto">
+              <KakaoButton label="카카오로 상담 신청하기" />
             </div>
           </div>
-          <p className="text-lg md:text-xl text-muted-foreground mt-4 leading-relaxed">
-            먼저 예약을 신청하시면 마스터가 일정을 확정한 뒤, 그때 입금만 안내드립니다. 지금 결제하시지 않으셔도 됩니다.
+
+          {/* 06 대면 상담 */}
+          <div className="hanji-card rounded-xl p-8 flex flex-col">
+            <div className="text-sm tracking-[0.3em] text-muted-foreground mb-2">06</div>
+            <h2 className="hanja-display text-2xl font-bold mb-1">마스터 대면 상담</h2>
+            <p className="text-muted-foreforeground text-sm mb-6 leading-relaxed text-muted-foreground">
+              마스터가 있는 장소로 직접 오시는 프리미엄 상담.<br />
+              일정·장소는 채팅으로 안내드립니다.
+            </p>
+
+            {/* 가격 */}
+            <div className="px-4 py-5 rounded-lg text-center mb-4"
+              style={{ background: "rgba(212,160,23,0.08)", border: "1px solid rgba(212,160,23,0.25)" }}>
+              <div className="text-3xl font-bold text-gold-deep">200,000원</div>
+              <div className="text-muted-foreground text-sm mt-1">80분 · 완전 집중 1:1</div>
+            </div>
+
+            <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+              하루 최대 세 분까지만 예약을 받습니다.<br />
+              카카오 채팅으로 일정을 먼저 확인해 주세요.
+            </p>
+
+            <div className="mt-auto">
+              <KakaoButton label="카카오로 일정 문의하기" />
+            </div>
+          </div>
+
+        </div>
+
+        {/* 하단 공통 안내 */}
+        <div className="mt-10 px-5 py-4 rounded-xl text-center fade-up"
+          style={{ background: "rgba(254,229,0,0.08)", border: "1px solid rgba(254,229,0,0.25)" }}>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            카카오 채팅방 입장 후 <strong className="text-foreground">공지사항을 먼저 확인</strong>해 주세요.
+            결제 방법·상담 규정·환불 정책이 안내되어 있습니다.
           </p>
         </div>
 
-        {/* 예약 진행 3단계 안내 */}
-        <div className="grid grid-cols-3 gap-3 mb-8 fade-up">
-          {[
-            { n: "01", t: "예약 신청", d: "희망 일시와 주제를 남깁니다" },
-            { n: "02", t: "확정 대기", d: "마스터가 일정을 검토·확정합니다" },
-            { n: "03", t: "입금 안내", d: "확정 후 결제 안내를 받습니다" },
-          ].map((s) => (
-            <div key={s.n} className="hanji-card rounded-md p-5 text-center">
-              <div className="hanja-display text-3xl text-gold-deep">{s.n}</div>
-              <div className="text-xl font-semibold mt-2">{s.t}</div>
-              <div className="text-base text-muted-foreground mt-2 leading-relaxed">{s.d}</div>
+        {/* 문자 문의 */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 mt-6 rounded-lg border border-amber-300 bg-amber-50 fade-up">
+          <div className="flex items-start gap-3">
+            <span className="text-amber-700 text-lg mt-0.5 shrink-0">📞</span>
+            <div>
+              <p className="font-semibold text-amber-900">이용 관련 문의는 문자로 접수해 주세요</p>
+              <p className="text-sm text-amber-900/80 mt-0.5 leading-relaxed">
+                결제 오류, 접속 지연 등 문제가 있으면 아래 번호로 문자를 남겨주세요.{" "}
+                <span className="font-semibold">문자 응대 09:00~21:00</span>
+              </p>
             </div>
-          ))}
+          </div>
+          <a href="sms:01044488064" className="shrink-0">
+            <button className="px-4 py-2 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-mono text-base transition-colors">
+              010-4448-8064
+            </button>
+          </a>
         </div>
 
-        <Card className="hanji-card">
-          <CardHeader>
-            <CardTitle className="text-2xl">예약 정보</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div>
-              <Label className="mb-2 block text-base font-semibold">상담 유형 및 상담료</Label>
-              <Select value={consultType} onValueChange={(v) => setConsultType(v as any)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="chat">채팅 상담 · 100,000원 / 60분 (AI 자료 병행)</SelectItem>
-                  <SelectItem value="offline">대면 상담 · 200,000원 / 80분</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="mb-2 block text-base font-semibold">실명 *</Label>
-                <Input value={realName} onChange={(e) => setRealName(e.target.value)} className="text-lg" />
-              </div>
-              <div>
-                <Label className="mb-2 block text-base font-semibold">닉네임 (선택)</Label>
-                <Input value={nickname} onChange={(e) => setNickname(e.target.value)} className="text-lg" />
-              </div>
-            </div>
-
-            <div>
-              <Label className="mb-2 block text-base font-semibold">연락처 *</Label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000" className="text-lg" />
-            </div>
-
-            <div>
-              <Label className="mb-2 block text-base font-semibold">희망 일시 *</Label>
-              <Input
-                type="datetime-local"
-                value={preferredDate}
-                onChange={(e) => setPreferredDate(e.target.value)}
-                className="text-lg"
-              />
-            </div>
-
-            <div>
-              <Label className="mb-2 block text-base font-semibold">차순위 일시 (선택)</Label>
-              <Input
-                type="datetime-local"
-                value={alternativeDate}
-                onChange={(e) => setAlternativeDate(e.target.value)}
-                className="text-lg"
-              />
-            </div>
-
-            <div>
-              <Label className="mb-2 block text-base font-semibold">마스터에게 전하고 싶은 말 / 상담 주제</Label>
-              <Textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={5}
-                placeholder="가장 무겁게 걸리는 한 가지를 미리 적어 주시면 결을 더 빨리 잡을 수 있습니다."
-                className="text-lg"
-              />
-            </div>
-
-            <Button
-              onClick={handleSubmit}
-              disabled={createMutation.isPending}
-              className="w-full bg-primary hover:bg-jusa-deep text-primary-foreground"
-            >
-              {createMutation.isPending ? "전송 중..." : "예약 요청 보내기"}
-            </Button>
-            <p className="text-lg text-muted-foreground text-center">
-              아직 결제를 하지 않습니다. 마스터가 일정을 확정한 뒤, 그때 입금·결제 안내를 드립니다.
-            </p>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 rounded-lg border border-amber-300 bg-amber-50">
-              <div className="flex items-start gap-3">
-                <span className="text-amber-700 text-lg mt-0.5 shrink-0">📞</span>
-                <div>
-                  <p className="font-semibold text-amber-900">이용 관련 문의는 문자로 접수해 주세요</p>
-                  <p className="text-sm text-amber-900/80 mt-0.5 leading-relaxed">
-                    빠른 일정 조율, 결제 오류, 접속 지연 등 문제가 있으면 아래 번호로 문자를 남겨주세요. <span className="font-semibold">문자 응대 09:00~21:00</span>
-                  </p>
-                </div>
-              </div>
-              <a href="sms:01044488064" className="shrink-0">
-                <button className="px-4 py-2 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-mono text-base transition-colors">
-                  010-4448-8064
-                </button>
-              </a>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
