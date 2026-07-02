@@ -22,11 +22,14 @@ const PLAN_CONFIG = {
   master_offline: { amount: 200000, durationMinutes: 80, turns: null, label: "마스터 대면 상담" },
   compatibility: { amount: 7900, durationMinutes: 0, turns: null, label: "궁합 분석" },
   compatibility_chat: { amount: 7900, durationMinutes: 1440, turns: 10, label: "궁합 채팅 상담" },
+  master_kakao_15: { amount: 30000, durationMinutes: 15, turns: 0, label: "마스터 직접 채팅 15분" },
+  master_kakao_30: { amount: 50000, durationMinutes: 30, turns: 0, label: "마스터 직접 채팅 30분" },
+  master_kakao_60: { amount: 100000, durationMinutes: 60, turns: 0, label: "마스터 직접 채팅 60분" },
 } as const;
 
 type PlanType = keyof typeof PLAN_CONFIG;
 
-const planSchema = z.enum(["free", "taste", "event", "deep", "master_chat", "master_offline", "compatibility", "compatibility_chat"]);
+const planSchema = z.enum(["free", "taste", "event", "deep", "master_chat", "master_offline", "compatibility", "compatibility_chat", "master_kakao_15", "master_kakao_30", "master_kakao_60"]);
 
 /**
  * 결제 완료(검증 성공) 후 플랜에 따라 세션을 생성하거나 예약 단계로 보낸다.
