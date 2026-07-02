@@ -74,10 +74,13 @@ export const payments = mysqlTable("payments", {
     "taste", // 02 맛보기 / 15분 / 9,900원
     "event", // 03 이벤트 / 25분 / 무료 (YouTube 구독+후기)
     "deep", // 04 메인 상담 / 50분 / 30,000원
-    "master_chat", // 05 경청자 직접 채팅 / 60분 / 100,000원 (예약제)
+    "master_chat", // (레거시) 경청자 직접 채팅 / 60분 / 100,000원 (예약제)
     "master_offline", // 06 경청자 대면 상담 / 80분 / 200,000원 (예약제)
     "compatibility", // 07 궁합 분석 / 1회 무료 후 회당 4,900원
     "compatibility_chat", // 08 궁합 채팅 / 15분 / 4,900원
+    "master_kakao_15", // 마스터 직접 채팅 15분 / 30,000원
+    "master_kakao_30", // 마스터 직접 채팅 30분 / 50,000원
+    "master_kakao_60", // 마스터 직접 채팅 60분 / 100,000원 (인원무제한)
   ]).notNull(),
   amount: int("amount").notNull(), // 원 단위
   // 기존 pending/paid/refunded/failed 보존 + awaiting_deposit(무통장 입금 대기) 추가
@@ -109,7 +112,7 @@ export const consultSessions = mysqlTable("consultSessions", {
   sajuProfileId: int("sajuProfileId"),
   sajuProfileBId: int("sajuProfileBId"), // 궁합 채팅 시 두 번째 사주 프로필 ID
   paymentId: int("paymentId"),
-  planType: mysqlEnum("planType", ["free", "taste", "event", "deep", "master_chat", "master_offline", "compatibility_chat"]).notNull(),
+  planType: mysqlEnum("planType", ["free", "taste", "event", "deep", "master_chat", "master_offline", "compatibility_chat", "master_kakao_15", "master_kakao_30", "master_kakao_60"]).notNull(),
   durationMinutes: int("durationMinutes").notNull(), // (레거시) 시간제 세션용. 횟수제 세션에서는 마스터 시간제 상품만 사용.
   // 질문 횟수제: maxTurns=구매한 질문 횟수, usedTurns=사용한 질문 수. 남은 질문 = maxTurns - usedTurns.
   // maxTurns=null(또는 0)이고 durationMinutes만 있는 행은 레거시 시간제 세션으로 호환 처리.
