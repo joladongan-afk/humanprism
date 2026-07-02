@@ -26,7 +26,7 @@ import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { Link } from "wouter";
 
-type PlanKey = "free" | "taste" | "event" | "deep" | "master_chat" | "master_offline";
+type PlanKey = "free" | "taste" | "event" | "deep" | "master_chat" | "master_offline" | "master_kakao_15" | "master_kakao_30" | "master_kakao_60";
 
 const PLAN_DETAIL: Record<
   PlanKey,
