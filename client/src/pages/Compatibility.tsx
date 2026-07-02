@@ -250,7 +250,7 @@ export default function Compatibility() {
                 </Link>
               </div>
             )}
-            {hasEnoughProfiles && (
+            {compatTab === "saved" && hasEnoughProfiles && (
               <>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
