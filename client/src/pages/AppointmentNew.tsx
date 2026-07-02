@@ -104,10 +104,10 @@ export default function AppointmentNew() {
             {/* 가격표 */}
             <div className="space-y-3 mb-2">
               {[
-                { time: "15분", price: "30,000원", badge: false },
-                { time: "30분", price: "60,000원", badge: true },
-                { time: "60분", price: "100,000원", badge: false },
-              ].map(({ time, price, badge }) => (
+                { time: "15분", price: "30,000원", badge: null, note: "1인 상담" },
+                { time: "30분", price: "50,000원", badge: "추천", note: "1인 심층 상담" },
+                { time: "60분", price: "100,000원", badge: "인원무제한", note: "인원 무제한 상담" },
+              ].map(({ time, price, badge, note }) => (
                 <div
                   key={time}
                   className="flex items-center justify-between px-4 py-3 rounded-lg"
@@ -116,7 +116,10 @@ export default function AppointmentNew() {
                     border: badge ? "1px solid rgba(212,160,23,0.4)" : "1px solid transparent",
                   }}
                 >
-                  <span className="font-semibold text-base">{time}</span>
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-base">{time}</span>
+                    <span className="text-xs text-muted-foreground">{note}</span>
+                  </div>
                   {badge && (
                     <span style={{
                       fontSize: "11px",
@@ -125,7 +128,7 @@ export default function AppointmentNew() {
                       borderRadius: "4px",
                       padding: "2px 7px",
                       fontWeight: 700,
-                    }}>추천</span>
+                    }}>{badge}</span>
                   )}
                   <span className="font-bold text-lg text-gold-deep">{price}</span>
                 </div>
