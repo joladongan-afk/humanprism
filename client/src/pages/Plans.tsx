@@ -95,6 +95,29 @@ const PLAN_DETAIL: Record<
     body:
       "마스터가 있는 장소로 와 주셔야 합니다. 하루에 세 분까지만 예약을 받습니다. 최대한 한 사람에게 집중하기 위함입니다.",
   },
+  master_kakao_15: {
+    no: "05-A",
+    title: "카카오 채팅 · 15분",
+    price: "30,000원",
+    duration: "15분",
+    body: "핵심 한 가지를 명확히 짚어드립니다.",
+  },
+  master_kakao_30: {
+    no: "05-B",
+    title: "카카오 채팅 · 30분",
+    badge: "추천",
+    price: "60,000원",
+    duration: "30분",
+    body: "주요 흐름을 충분히 살펴볼 수 있는 시간입니다.",
+    accent: true,
+  },
+  master_kakao_60: {
+    no: "05-C",
+    title: "카카오 채팅 · 60분",
+    price: "100,000원",
+    duration: "60분",
+    body: "삶의 큰 그림을 여유 있게 들여다볼 수 있습니다.",
+  },
 };
 
 export default function Plans() {
