@@ -36,9 +36,12 @@ const PLAN_CONFIG = {
   master_chat: { amount: 100000, durationMinutes: 60, turns: null, label: "마스터 채팅 상담" },
   master_offline: { amount: 200000, durationMinutes: 80, turns: null, label: "마스터 대면 상담" },
   compatibility_chat: { amount: 7900, durationMinutes: 1440, turns: 10, label: "궁합 채팅 상담" },
+  master_kakao_15: { amount: 30000, durationMinutes: 15, turns: 0, label: "마스터 직접 채팅 15분" },
+  master_kakao_30: { amount: 50000, durationMinutes: 30, turns: 0, label: "마스터 직접 채팅 30분" },
+  master_kakao_60: { amount: 100000, durationMinutes: 60, turns: 0, label: "마스터 직접 채팅 60분" },
 } as const;
 type PlanType = keyof typeof PLAN_CONFIG;
-const planSchema = z.enum(["free", "taste", "event", "deep", "master_chat", "master_offline", "compatibility_chat"]);
+const planSchema = z.enum(["free", "taste", "event", "deep", "master_chat", "master_offline", "compatibility_chat", "master_kakao_15", "master_kakao_30", "master_kakao_60"]);
 const sajuInputSchema = z.object({
   year: z.number().int().min(1900).max(2100),
   month: z.number().int().min(1).max(12),
