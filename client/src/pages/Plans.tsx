@@ -326,17 +326,12 @@ export default function Plans() {
             상담 안내
           </h1>
           <div className="gold-divider w-40 mx-auto mt-8" />
-          <div className="mt-8 max-w-3xl mx-auto space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-              <span className="font-bold text-amber-300 text-xl whitespace-nowrap">01–04</span>
-              <span className="text-white text-lg font-semibold">AI 문답식 사주 상담</span>
-            </div>
-            <p className="text-white/70 text-base pl-0 sm:pl-16">7대 사주명가의 비전을 담은 AI의 문답식 상담</p>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-4">
-              <span className="font-bold text-amber-300 text-xl whitespace-nowrap">05–06</span>
-              <span className="text-white text-lg font-semibold">마스터 직접 1:1 상담</span>
-            </div>
-            <p className="text-white/70 text-base pl-0 sm:pl-16">경청자 님과 직접 대화합니다.</p>
+          <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
+            <span className="font-bold text-amber-300 text-xl">01-04</span>
+            <span className="text-white text-xl font-semibold">대화형 AI 문답 사주</span>
+            <span className="text-white/50 text-xl mx-1">/</span>
+            <span className="font-bold text-amber-300 text-xl">05-06</span>
+            <span className="text-white text-xl font-semibold">마스터와 상담</span>
           </div>
         </div>
       </div>
