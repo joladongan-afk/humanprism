@@ -59,7 +59,7 @@ const PLAN_DETAIL: Record<
     price: "9,900원",
     duration: "질문 20회",
     body:
-      "질문 20회로 핵심을 충분히 짚을 수 있습니다. 5만원, 10만원짜리 상담과 견줄 수 있는 깊이를 경험해 보세요.",
+      "**마스터와 7대 사주명가의 비기를 탑재한 AI와 문답할 수 있습니다.**\n\n질문은 20회로 넉넉히 제공합니다. 5만원짜리 상담, 그 이상의 퀄리티를 느껴보세요.",
   },
   deep: {
     no: "03",
@@ -67,7 +67,7 @@ const PLAN_DETAIL: Record<
     price: "14,900원",
     duration: "질문 30회",
     body:
-      "질문 30회로 사주의 큰 그림부터 세부 흐름까지, 여유 있게 들여다볼 수 있습니다.",
+      "**마스터와 7대 사주명가의 비기를 탑재한 AI와 문답할 수 있습니다.**\n\n질문은 30회로 좀 더 많은 문답을 주고받으실 수 있습니다.",
     accent: true,
     primary: true,
   },
@@ -85,7 +85,7 @@ const PLAN_DETAIL: Record<
     title: "마스터 직접 채팅 · 15분",
     price: "30,000원",
     duration: "15분",
-    body: "실속파를 위한 핵심 상담 플랜\n\n미리 준비하면 가성비 좋은 상담이 됩니다.\n\n1인 상담 입니다.",
+    body: "실속파를 위한 핵심 상담 플랜\n\n**미리 준비하면 가성비 좋은 상담이 됩니다.**\n\n1인 상담 입니다.",
   },
   master_kakao_30: {
     no: "05",
@@ -93,7 +93,7 @@ const PLAN_DETAIL: Record<
     badge: "추천",
     price: "50,000원",
     duration: "30분",
-    body: "궁금한 점이 많을 때.\n\n30분간 다양한 질문을 무제한으로 하실 수 있습니다.\n\n1인 상담 입니다.",
+    body: "궁금한 점이 많을 때.\n\n**30분간 다양한 질문을 무제한으로 하실 수 있습니다.**\n\n1인 상담 입니다.",
     accent: true,
   },
   master_kakao_60: {
@@ -102,7 +102,7 @@ const PLAN_DETAIL: Record<
     badge: "인원무제한",
     price: "100,000원",
     duration: "60분",
-    body: "나와 주변의 모든 사람에 대한 상담 가능\n\n가성비 끝판왕.\n\n60분, 휴식 없이 쭉 갑니다.",
+    body: "나와 주변의 모든 사람에 대한 상담 가능\n\n**가성비 끝판왕.**\n\n60분, 휴식 없이 쭉 갑니다.",
   },
 };
 
@@ -394,16 +394,23 @@ export default function Plans() {
                     <p className="text-base text-muted-foreground mt-1">{plan.duration}</p>
                   </div>
                   <p className="text-lg text-muted-foreground flex-1 whitespace-pre-wrap leading-relaxed">
-                    {plan.body.split('\n\n').map((paragraph, idx) => (
-                      <span key={idx}>
-                        {idx === 1 ? (
-                          <span className="block text-base font-bold text-orange-500 mt-2">{paragraph}</span>
-                        ) : (
-                          <span>{paragraph}</span>
-                        )}
-                        {idx < plan.body.split('\n\n').length - 1 && <br />}
-                      </span>
-                    ))}
+                    {(() => {
+                      const paragraphs = plan.body.split('\n\n');
+                      return paragraphs.map((paragraph, idx) => {
+                        const isEmphasis = paragraph.startsWith('**') && paragraph.endsWith('**');
+                        const text = isEmphasis ? paragraph.slice(2, -2) : paragraph;
+                        return (
+                          <span key={idx}>
+                            {isEmphasis ? (
+                              <span className="block text-base font-bold text-orange-500 mt-2">{text}</span>
+                            ) : (
+                              <span>{text}</span>
+                            )}
+                            {idx < paragraphs.length - 1 && <br />}
+                          </span>
+                        );
+                      });
+                    })()}
                   </p>
                   <Button
                     onClick={() => handleStart(key)}
