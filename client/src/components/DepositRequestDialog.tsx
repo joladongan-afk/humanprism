@@ -23,9 +23,9 @@ const PLAN_LABEL: Record<DepositPlanType, { label: string; amount: number; durat
   taste: { label: "알뜰 상담", amount: 9900, duration: "질문 20회" },
   deep: { label: "심층 상담", amount: 14900, duration: "질문 30회" },
   compatibility_chat: { label: "궁합 채팅 상담", amount: 7900, duration: "질문 10회" },
-  master_kakao_15: { label: "카카오 채팅 상담 15분", amount: 30000, duration: "15분" },
-  master_kakao_30: { label: "카카오 채팅 상담 30분", amount: 60000, duration: "30분" },
-  master_kakao_60: { label: "카카오 채팅 상담 60분", amount: 100000, duration: "60분" },
+  master_kakao_15: { label: "카카오 채팅 상담 15분 (1인 상담)", amount: 30000, duration: "15분" },
+  master_kakao_30: { label: "카카오 채팅 상담 30분 (1인 심층 상담)", amount: 50000, duration: "30분" },
+  master_kakao_60: { label: "카카오 채팅 상담 60분 (인원 무제한)", amount: 100000, duration: "60분" },
 };
 
 type Step = "method" | "form" | "done";
