@@ -24,6 +24,7 @@ import {
   normalizeStoredFontSize,
 } from "@shared/chatFont";
 
+const KAKAO_CHAT_URL = "http://pf.kakao.com/_elcXX/chat";
 
 function formatRemain(ms: number) {
   if (ms <= 0) return "00:00";
@@ -818,15 +819,18 @@ function Consult() {
           </div>
         </div>
 
-        {/* 이용 문의 안내 - 대화 영역 아래 */}
+        {/* 카카오톡 문의 - 대화 영역 아래 */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 py-2 rounded-lg border border-amber-200 bg-amber-50/70 mt-2">
           <div className="flex items-center gap-2">
-            <span className="text-amber-600 shrink-0 text-sm">📞</span>
-            <p className="text-xs font-medium text-amber-800">이용 관련 문의는 문자로 접수해 주세요 <span className="text-amber-600">(09:00~21:00)</span></p>
+            <span className="text-amber-600 shrink-0 text-sm">💬</span>
+            <p className="text-xs font-medium text-amber-800">이용 관련 문의는 카카오톡으로 남겨주세요 <span className="text-amber-600">(09:00~22:00)</span></p>
           </div>
-          <a href="sms:01044488064" className="shrink-0">
-            <button className="px-2.5 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white font-mono text-xs transition-colors">
-              010-4448-8064
+          <a href={KAKAO_CHAT_URL} target="_blank" rel="noopener noreferrer" className="shrink-0">
+            <button
+              className="px-2.5 py-1 rounded-md text-[#3C1E1E] font-semibold text-xs transition-all hover:brightness-95"
+              style={{ background: "#FEE500" }}
+            >
+              카카오톡 문의하기
             </button>
           </a>
         </div>
