@@ -152,7 +152,7 @@ export const namingRouter = router({
           ? checkBulmyong(nameHanja)
           : { hasBulmyong: false, bulmyongChars: [] };
 
-        // 3-1. 필요오행 계산 (생년월일 있을 때)
+        // 3-1. 복덕오행 계산 (생년월일 있을 때)
         let requiredOhaeng: { primary: string; secondary: string } | null = null;
         if (input.birthYear && input.birthMonth && input.birthDay) {
           try {
@@ -168,7 +168,7 @@ export const namingRouter = router({
             const birthMonthBranch = saju.pillars.month.branch;
             requiredOhaeng = getRequiredOhaeng(ilgan, birthMonthBranch);
           } catch (e) {
-            console.warn("[Naming] 필요오행 계산 실패:", e);
+            console.warn("[Naming] 복덕오행 계산 실패:", e);
           }
         }
 
