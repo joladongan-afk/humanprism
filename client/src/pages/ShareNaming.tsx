@@ -81,10 +81,10 @@ export default function SharePage() {
           </div>
         </div>
 
-        {/* 필요오행 */}
+        {/* 복덕오행 */}
         {analysis.requiredOhaeng?.primary && (
           <div style={{ background: "#fff", border: "0.5px solid #e0ddd6", borderTop: "3px solid #534AB7", borderRadius: 12, padding: "14px 16px" }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#0d6b4a", marginBottom: 10 }}>사주 기반 필요오행</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#0d6b4a", marginBottom: 10 }}>사주 기반 복덕오행</div>
             <div style={{ display: "flex", gap: 8 }}>
               {[{ rank: "1순위", oh: analysis.requiredOhaeng.primary }, { rank: "2순위", oh: analysis.requiredOhaeng.secondary }].map((item, idx) => {
                 const c = OHAENG_COLOR[item.oh];
