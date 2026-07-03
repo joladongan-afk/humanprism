@@ -153,10 +153,10 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
         </div>
       </div>
 
-      {/* 사주 기반 필요오행 */}
+      {/* 사주 기반 복덕오행 */}
       {data.analysis.requiredOhaeng && (
         <div style={card("#534AB7")}>
-          <SectionTitle label="사주 기반 필요오행" />
+          <SectionTitle label="사주 기반 복덕오행" />
           <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
             {[
               { rank: "1순위", oh: data.analysis.requiredOhaeng.primary },
