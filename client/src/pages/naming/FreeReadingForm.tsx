@@ -145,18 +145,21 @@ function HanjaInput({ value, onChange, koreanChar, placeholder }: HanjaInputProp
         )}
       </div>
       {open && candidates.length > 0 && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border-2 border-emerald-300 rounded-xl shadow-2xl max-h-64 overflow-y-auto">
-          <div className="p-2 text-xs text-gray-500 border-b bg-emerald-50">
+        <div
+          className="absolute z-50 top-full left-1/2 -translate-x-1/2 mt-2 bg-white border-2 border-emerald-300 rounded-2xl shadow-2xl overflow-y-auto"
+          style={{ width: "min(92vw, 480px)", maxHeight: "26rem" }}
+        >
+          <div className="p-3 text-sm text-gray-600 border-b bg-emerald-50 sticky top-0">
             &quot;{koreanChar}&quot; 독음 한자 {candidates.length}개 — 클릭하면 선택됩니다
           </div>
-          <div className="grid grid-cols-4 gap-1 p-2">
+          <div className="grid grid-cols-3 gap-2 p-3">
             {candidates.map((c) => (
               <button key={c.char} type="button"
                 onClick={() => { onChange(c.char); setOpen(false); }}
-                className={`flex flex-col items-center p-2 rounded-lg border transition-all hover:shadow-md ${OHAENG_BG[c.ohaeng] || "bg-gray-50 border-gray-200"}`}>
-                <span className="text-2xl font-bold text-gray-800">{c.char}</span>
-                <span className="text-xs text-gray-500 truncate w-full text-center leading-tight">{c.huneum}</span>
-                <span className={`text-xs font-bold mt-0.5 ${OHAENG_COLOR[c.ohaeng] || ""}`}>{c.ohaeng}({c.strokes}획)</span>
+                className={`flex flex-col items-center p-3 rounded-xl border-2 transition-all hover:shadow-lg hover:scale-105 ${OHAENG_BG[c.ohaeng] || "bg-gray-50 border-gray-200"}`}>
+                <span className="text-5xl font-bold text-gray-800 leading-tight">{c.char}</span>
+                <span className="text-sm text-gray-500 truncate w-full text-center leading-tight mt-1.5">{c.huneum}</span>
+                <span className={`text-sm font-bold mt-1 ${OHAENG_COLOR[c.ohaeng] || ""}`}>{c.ohaeng}({c.strokes}획)</span>
               </button>
             ))}
           </div>
