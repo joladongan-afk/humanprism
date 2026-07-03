@@ -244,12 +244,12 @@ export function searchHanjaBySound(sound: string, limit: number = 30): HanjaReco
 }
 
 /**
- * 난강망 120분면 데이터: 일간×월지 → 필요오행
+ * 난강망 120분면 데이터: 일간×월지 → 복덕오행
  */
 export interface NangangmangRecord {
   ilgan: string;       // 天干 (甲乙丙丁戊己庚辛壬癸)
   birthMonth: string;  // 地支 (子丑寅卯辰巳午未申酉戌亥)
-  primaryElement: string; // 1순위 필요오행 (木火土金水)
+  primaryElement: string; // 1순위 복덕오행 (木火土金水)
 }
 
 // 오행 상생 (생하는 오행)
@@ -300,7 +300,7 @@ export function loadNangangmangDb(): Map<string, NangangmangRecord> {
 }
 
 /**
- * 일간+월지로 필요오행 조회
+ * 일간+월지로 복덕오행 조회
  * @returns { primary: 1순위오행, secondary: 1순위를 생하는 오행 }
  */
 export function getRequiredOhaeng(ilgan: string, birthMonth: string): { primary: string; secondary: string } | null {
