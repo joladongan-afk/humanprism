@@ -1,0 +1,36 @@
+{
+  "surnameCombos": [
+    { "surname": "방", "pattern": "귀", "reason": "생리현상 '방귀' 연상", "severity": "high" },
+    { "surname": "방", "pattern": "가방", "reason": "사물 '가방' 연상", "severity": "high" },
+    { "surname": "변", "pattern": "기", "reason": "위생기구 '변기' 연상", "severity": "high" },
+    { "surname": "변", "pattern": "태", "reason": "부정적 성적 어휘 '변태' 연상", "severity": "high" },
+    { "surname": "임", "pattern": "신", "reason": "'임신' 연상으로 놀림 우려", "severity": "high" },
+    { "surname": "피", "pattern": "바다", "reason": "공포감을 주는 어휘 '피바다' 연상", "severity": "high" },
+    { "surname": "피", "pattern": "똥", "reason": "생리현상 비속어 '피똥' 연상", "severity": "high" },
+    { "surname": "배", "pattern": "신", "reason": "부정적 행위 '배신자' 연상", "severity": "high" },
+    { "surname": "배", "pattern": "설", "reason": "생리현상 '배설' 연상", "severity": "high" },
+    { "surname": "안", "pattern": "해", "reason": "부정 명령형 문장 '안 해'로 오인", "severity": "high" },
+    { "surname": "안", "pattern": "하리", "reason": "부정형 표현 연상", "severity": "high" },
+    { "surname": "강", "pattern": "도", "reason": "범죄자 '강도' 연상", "severity": "high" },
+    { "surname": "강", "pattern": "간", "reason": "중범죄 단어 연상으로 절대 금지", "severity": "high" },
+    { "surname": "성", "pattern": "기", "reason": "신체 특정 부위 연상으로 심각한 문제 발생", "severity": "high" },
+    { "surname": "성", "pattern": "인용", "reason": "성인용 제품 연상", "severity": "high" },
+    { "surname": "설", "pattern": "사", "reason": "생리현상인 '설사' 완벽 일치", "severity": "high" },
+    { "surname": "신", "pattern": "발장", "reason": "가구 '신발장' 연상", "severity": "medium" }
+  ],
+  "liaisonTraps": [
+    { "surname": "박", "patterns": ["아지", "아리"], "reason": "연음 시 '바가지', '바가리' 등 비속어 및 놀림감 발음 유발", "severity": "high" },
+    { "surname": "손", "patterns": ["아귀", "곳"], "reason": "연음 시 '소나귀(손아귀)', '소곳(소곳이)' 등 일반 명사 및 부사화", "severity": "high" },
+    { "surname": "목", "patterns": ["아지", "디"], "reason": "연음 시 '모가지(비속어)', '모디' 등 어색한 발음 유발", "severity": "high" }
+  ],
+  "initialSoundRule": {
+    "article11": {
+      "description": "한글 맞춤법 제11항: 려·료·류·리 등은 단어 첫머리에서 ㄹ이 탈락한다",
+      "map": { "련": "연", "룡": "용", "린": "인" }
+    },
+    "article12": {
+      "description": "한글 맞춤법 제12항: 라·래·로·뢰·루·르 등은 단어 첫머리에서 ㄹ이 ㄴ으로 바뀐다",
+      "map": { "래": "내", "로": "노", "롱": "농" }
+    }
+  }
+}
