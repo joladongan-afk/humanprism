@@ -17,7 +17,7 @@ import { toast } from "sonner";
  * requestDeposit 호출은 trpc.payment.requestDeposit 으로 노출되어 있다.
  */
 
-export type DepositPlanType = "taste" | "deep" | "compatibility_chat" | "master_kakao_15" | "master_kakao_30" | "master_kakao_60";
+export type DepositPlanType = "taste" | "deep" | "compatibility_chat" | "master_kakao_15" | "master_kakao_30" | "master_kakao_60" | "self_naming";
 
 const PLAN_LABEL: Record<DepositPlanType, { label: string; amount: number; duration: string }> = {
   taste: { label: "알뜰 상담", amount: 9900, duration: "질문 20회" },
@@ -26,6 +26,7 @@ const PLAN_LABEL: Record<DepositPlanType, { label: string; amount: number; durat
   master_kakao_15: { label: "카카오 채팅 상담 15분 (1인 상담)", amount: 30000, duration: "15분" },
   master_kakao_30: { label: "카카오 채팅 상담 30분 (1인 심층 상담)", amount: 50000, duration: "30분" },
   master_kakao_60: { label: "카카오 채팅 상담 60분 (인원 무제한)", amount: 100000, duration: "60분" },
+  self_naming: { label: "셀프 작명", amount: 50000, duration: "1회 이용권" },
 };
 
 type Step = "method" | "form" | "done";
@@ -36,12 +37,14 @@ export default function DepositRequestDialog({
   planType,
   sajuProfileId,
   sajuProfileBId,
+  onDepositSuccess,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   planType: DepositPlanType | null;
   sajuProfileId?: number;
   sajuProfileBId?: number;
+  onDepositSuccess?: () => void;
 }) {
   const { user } = useAuth();
   const [step, setStep] = useState<Step>("method");
@@ -109,6 +112,7 @@ export default function DepositRequestDialog({
       });
       await utils.session.list.invalidate().catch(() => {});
       setStep("done");
+      onDepositSuccess?.();
     } catch (e) {
       const msg = e instanceof Error ? e.message : "입금 신청 중 오류가 발생했습니다.";
       toast.error(msg);
