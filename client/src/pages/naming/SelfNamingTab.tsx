@@ -15,6 +15,22 @@ const YEARS = Array.from({ length: 100 }, (_, i) => currentYear - i);
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
+const HOUR_BRANCHES = [
+  { value: "unknown", label: "시간을 모릅니다" },
+  { value: "0", label: "자시 (23:00 ~ 00:59)" },
+  { value: "2", label: "축시 (01:00 ~ 02:59)" },
+  { value: "4", label: "인시 (03:00 ~ 04:59)" },
+  { value: "6", label: "묘시 (05:00 ~ 06:59)" },
+  { value: "8", label: "진시 (07:00 ~ 08:59)" },
+  { value: "10", label: "사시 (09:00 ~ 10:59)" },
+  { value: "12", label: "오시 (11:00 ~ 12:59)" },
+  { value: "14", label: "미시 (13:00 ~ 14:59)" },
+  { value: "16", label: "신시 (15:00 ~ 16:59)" },
+  { value: "18", label: "유시 (17:00 ~ 18:59)" },
+  { value: "20", label: "술시 (19:00 ~ 20:59)" },
+  { value: "22", label: "해시 (21:00 ~ 22:59)" },
+];
+
 const MODE_OPTIONS: { value: "A" | "B" | "C"; label: string; desc: string }[] = [
   { value: "A", label: "완전 자동", desc: "이름 두 글자 모두 알아서 지어드립니다" },
   { value: "B", label: "앞글자 지정", desc: "이름 첫 글자를 정하면 둘째 글자를 찾아드립니다" },
@@ -30,12 +46,12 @@ const OHAENG_BG: Record<string, string> = {
   土: "bg-yellow-50 border-yellow-200", 金: "bg-gray-50 border-gray-200", 水: "bg-blue-50 border-blue-200",
 };
 const GILHYUNG_STYLE: Record<string, string> = {
-  大吉: "bg-[color-mix(in_oklch,var(--gold)_20%,transparent)] text-[var(--gold)] font-bold border-[var(--gold)]",
+  大吉: "bg-[color-mix(in_oklch,var(--gold)_22%,transparent)] text-[var(--gold)] font-bold border-[var(--gold)]",
   吉: "bg-emerald-50 text-emerald-700 border-emerald-300",
   半吉半凶: "bg-gray-100 text-gray-500 border-gray-300",
 };
 
-// ─── 한자 선택 입력 (기존 셀프작명/이름감정 화면과 동일한 방식) ───
+// ─── 한자 선택 입력 ─────────────────────────────────────────
 
 interface HanjaCandidate {
   char: string;
@@ -80,7 +96,7 @@ function HanjaInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder || "한자"}
-          className="flex-1"
+          className="flex-1 text-lg font-semibold h-12"
         />
         {koreanChar && (
           <button
@@ -146,34 +162,34 @@ function ResultCard({ surnameKorean, surnameHanja, candidate }: {
   ];
 
   return (
-    <div className={`hanji-card p-5 relative ${isTop ? "ring-1 ring-[var(--gold)]" : ""}`}>
+    <div className={`hanji-card p-6 relative ${isTop ? "ring-2 ring-[var(--gold)]" : ""}`}>
       {isTop && (
-        <span className="absolute -top-2.5 right-4 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--gold)] text-white tracking-wide">
+        <span className="absolute -top-3 right-5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-[var(--gold)] text-white tracking-wide shadow-md">
           최상위 매칭
         </span>
       )}
-      <div className="text-center mb-3">
-        <div className="text-2xl font-bold text-gray-800">
+      <div className="text-center mb-4">
+        <div className="text-3xl font-extrabold text-gray-900 tracking-tight">
           {surnameKorean}{candidate.name1Korean}{candidate.name2Korean}
         </div>
-        <div className="hanja-display text-lg mt-0.5">
+        <div className="hanja-display text-2xl mt-1 font-bold">
           {surnameHanja}{candidate.name1Hanja}{candidate.name2Hanja}
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-1.5 mb-3">
+      <div className="grid grid-cols-4 gap-2 mb-4">
         {gyeokList.map((g) => (
-          <div key={g.label} className={`text-center rounded-lg border px-1 py-1.5 ${GILHYUNG_STYLE[g.judgment] || "bg-gray-50 border-gray-200"}`}>
-            <div className="text-[10px] opacity-70">{g.label}</div>
-            <div className="text-xs font-semibold">{g.strokes}획</div>
-            <div className="text-[10px]">{g.judgment}</div>
+          <div key={g.label} className={`text-center rounded-lg border-2 px-1.5 py-2 ${GILHYUNG_STYLE[g.judgment] || "bg-gray-50 border-gray-200"}`}>
+            <div className="text-[11px] font-semibold opacity-70">{g.label}</div>
+            <div className="text-sm font-extrabold">{g.strokes}획</div>
+            <div className="text-[11px] font-bold">{g.judgment}</div>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-1.5">
+      <div className="flex items-center justify-center gap-2">
         {candidate.jawonOhaeng.map((o, i) => (
-          <span key={i} className={`text-xs font-bold px-2 py-0.5 rounded-full border ${OHAENG_BG[o] || ""} ${OHAENG_COLOR[o] || ""}`}>
+          <span key={i} className={`text-sm font-extrabold px-2.5 py-1 rounded-full border-2 ${OHAENG_BG[o] || ""} ${OHAENG_COLOR[o] || ""}`}>
             {o}
           </span>
         ))}
@@ -196,6 +212,7 @@ export function SelfNamingTab() {
   const [birthYear, setBirthYear] = useState<string>("");
   const [birthMonth, setBirthMonth] = useState<string>("");
   const [birthDay, setBirthDay] = useState<string>("");
+  const [birthHour, setBirthHour] = useState<string>("unknown");
   const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
 
   const [page, setPage] = useState(1);
@@ -231,6 +248,7 @@ export function SelfNamingTab() {
         birthYear: Number(birthYear),
         birthMonth: Number(birthMonth),
         birthDay: Number(birthDay),
+        birthHour: birthHour === "unknown" ? undefined : Number(birthHour),
         calendarType,
         page: targetPage,
       },
@@ -253,25 +271,26 @@ export function SelfNamingTab() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
+    <div className="w-full max-w-5xl mx-auto space-y-10">
       {/* 입력 폼 */}
-      <div className="hanji-card p-6 md:p-8 space-y-7">
+      <div className="hanji-card p-8 md:p-10 space-y-9">
         <div className="text-center">
-          <h2 className="hanja-display text-2xl">셀프 작명</h2>
-          <div className="gold-divider w-24 mx-auto mt-3" />
-          <p className="text-sm text-muted-foreground mt-3">
+          <h2 className="hanja-display text-4xl font-extrabold">셀프 작명</h2>
+          <div className="gold-divider w-28 mx-auto mt-4" />
+          <p className="text-base text-muted-foreground mt-4 font-medium">
             성씨와 생년월일시만 입력하시면, 수리사격·복덕오행에 맞는 이름을 찾아드립니다.
           </p>
         </div>
 
         {/* 성씨 */}
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">성씨</label>
-          <div className="grid grid-cols-2 gap-3">
+          <label className="text-base font-bold text-gray-800 mb-2.5 block">성씨</label>
+          <div className="grid grid-cols-2 gap-4">
             <Input
               value={surnameKorean}
               onChange={(e) => setSurnameKorean(e.target.value.slice(0, 2))}
               placeholder="예: 김"
+              className="text-lg font-semibold h-12"
             />
             <HanjaInput
               value={surnameHanja}
@@ -284,35 +303,36 @@ export function SelfNamingTab() {
 
         {/* 모드 선택 */}
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">이름 작명 방식</label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label className="text-base font-bold text-gray-800 mb-2.5 block">이름 작명 방식</label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {MODE_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 type="button"
                 onClick={() => setMode(opt.value)}
-                className={`text-left p-3 rounded-xl border-2 transition-all ${
+                className={`text-left p-4 rounded-xl border-2 transition-all ${
                   mode === opt.value
-                    ? "border-[var(--gold)] bg-[color-mix(in_oklch,var(--gold)_10%,transparent)]"
+                    ? "border-[var(--gold)] bg-[color-mix(in_oklch,var(--gold)_12%,transparent)] shadow-md"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <div className="font-semibold text-sm">{opt.label}</div>
-                <div className="text-xs text-muted-foreground mt-1 leading-snug">{opt.desc}</div>
+                <div className="font-bold text-base text-gray-900">{opt.label}</div>
+                <div className="text-sm text-muted-foreground mt-1 leading-snug">{opt.desc}</div>
               </button>
             ))}
           </div>
 
           {mode !== "A" && (
-            <div className="mt-3">
-              <label className="text-xs text-muted-foreground mb-1.5 block">
+            <div className="mt-4">
+              <label className="text-sm font-bold text-gray-700 mb-2 block">
                 {mode === "B" ? "이름 첫 글자" : "이름 둘째 글자"}
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <Input
                   value={specifiedKorean}
                   onChange={(e) => setSpecifiedKorean(e.target.value.slice(0, 1))}
                   placeholder="한글 입력"
+                  className="text-lg font-semibold h-12"
                 />
                 <HanjaInput
                   value={specifiedHanja}
@@ -327,41 +347,53 @@ export function SelfNamingTab() {
 
         {/* 생년월일시 */}
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">생년월일</label>
-          <div className="grid grid-cols-3 gap-3">
+          <label className="text-base font-bold text-gray-800 mb-2.5 block">생년월일시</label>
+          <div className="grid grid-cols-3 gap-4">
             <Select value={birthYear} onValueChange={setBirthYear}>
-              <SelectTrigger><SelectValue placeholder="년" /></SelectTrigger>
+              <SelectTrigger className="h-12 text-base font-semibold"><SelectValue placeholder="년" /></SelectTrigger>
               <SelectContent>
                 {YEARS.map((y) => <SelectItem key={y} value={String(y)}>{y}년</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={birthMonth} onValueChange={setBirthMonth}>
-              <SelectTrigger><SelectValue placeholder="월" /></SelectTrigger>
+              <SelectTrigger className="h-12 text-base font-semibold"><SelectValue placeholder="월" /></SelectTrigger>
               <SelectContent>
                 {MONTHS.map((m) => <SelectItem key={m} value={String(m)}>{m}월</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={birthDay} onValueChange={setBirthDay}>
-              <SelectTrigger><SelectValue placeholder="일" /></SelectTrigger>
+              <SelectTrigger className="h-12 text-base font-semibold"><SelectValue placeholder="일" /></SelectTrigger>
               <SelectContent>
                 {DAYS.map((d) => <SelectItem key={d} value={String(d)}>{d}일</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-4 mt-3">
-            <label className="flex items-center gap-1.5 text-sm cursor-pointer">
-              <input type="radio" checked={calendarType === "solar"} onChange={() => setCalendarType("solar")} />
-              양력
-            </label>
-            <label className="flex items-center gap-1.5 text-sm cursor-pointer">
-              <input type="radio" checked={calendarType === "lunar"} onChange={() => setCalendarType("lunar")} />
-              음력
-            </label>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <Select value={birthHour} onValueChange={setBirthHour}>
+              <SelectTrigger className="h-12 text-base font-semibold"><SelectValue placeholder="태어난 시간" /></SelectTrigger>
+              <SelectContent>
+                {HOUR_BRANCHES.map((h) => <SelectItem key={h.value} value={h.value}>{h.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <div className="flex items-center gap-5">
+              <label className="flex items-center gap-2 text-base font-semibold cursor-pointer">
+                <input type="radio" className="w-4 h-4" checked={calendarType === "solar"} onChange={() => setCalendarType("solar")} />
+                양력
+              </label>
+              <label className="flex items-center gap-2 text-base font-semibold cursor-pointer">
+                <input type="radio" className="w-4 h-4" checked={calendarType === "lunar"} onChange={() => setCalendarType("lunar")} />
+                음력
+              </label>
+            </div>
           </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            자정(23시~1시) 근처 출생은 일주가 달라질 수 있어 시간을 알면 더 정확합니다.
+          </p>
         </div>
 
         <Button
-          className="w-full"
+          className="w-full h-14 text-lg font-bold"
           size="lg"
           disabled={mutation.isPending}
           onClick={() => runSearch(1, false)}
@@ -374,19 +406,19 @@ export function SelfNamingTab() {
       {/* 결과 */}
       {hasSearched && results.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-700">
-              총 <span className="text-[var(--gold)] font-bold">{totalCount.toLocaleString()}</span>개 중 상위 {results.length}개
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="font-bold text-lg text-gray-800">
+              총 <span className="text-[var(--gold)] font-extrabold">{totalCount.toLocaleString()}</span>개 중 상위 {results.length}개
             </h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {results.map((c, i) => (
               <ResultCard key={i} surnameKorean={surnameKorean} surnameHanja={surnameHanja} candidate={c} />
             ))}
           </div>
           {hasMore && (
-            <div className="text-center mt-6">
-              <Button variant="outline" disabled={mutation.isPending} onClick={() => runSearch(page + 1, true)}>
+            <div className="text-center mt-8">
+              <Button variant="outline" size="lg" className="font-bold text-base h-12 px-8" disabled={mutation.isPending} onClick={() => runSearch(page + 1, true)}>
                 {mutation.isPending ? <Spinner className="mr-2" /> : null}
                 더 보기
               </Button>
