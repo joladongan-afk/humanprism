@@ -37,7 +37,7 @@ const steps = [
 export function MasterNamingTab() {
   return (
     <div className="flex justify-center">
-      <Card className="w-full max-w-2xl border-amber-300 bg-stone-50">
+      <Card className="w-full max-w-5xl border-amber-300 bg-stone-50">
         <CardHeader className="pb-2">
           <CardTitle className="text-2xl font-bold text-amber-900">
             명의 본질에 가장 부합하는 이름 짓기
