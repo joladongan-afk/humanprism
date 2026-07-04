@@ -284,6 +284,7 @@ export const namingRouter = router({
       birthYear: z.number(),
       birthMonth: z.number(),
       birthDay: z.number(),
+      birthHour: z.number().min(0).max(23).optional(),
       calendarType: z.enum(["solar", "lunar"]).optional(),
       page: z.number().min(1).optional(),
     }))
@@ -297,7 +298,12 @@ export const namingRouter = router({
           year = solar.year; month = solar.month; day = solar.day;
         }
 
-        const saju = calculateSaju({ year, month, day, gender: "male" });
+        const saju = calculateSaju({
+          year, month, day,
+          hour: input.birthHour ?? null,
+          minute: input.birthHour !== undefined ? 0 : null,
+          gender: "male",
+        });
         const ilgan = saju.pillars.day.stem;
         const birthMonthBranch = saju.pillars.month.branch;
 
