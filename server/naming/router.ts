@@ -20,6 +20,7 @@ import {
 import { getRandomComment, initializeNamingData, searchHanjaBySound, getRequiredOhaeng, loadNangangmangDb } from "./dataLoader";
 import { calculateSaju, lunarToSolar } from "../saju";
 import { getUserFreeReadingCount } from "../db";
+import { generateAutoNames } from "./autoNaming";
 
 
 /**
@@ -276,12 +277,46 @@ export const namingRouter = router({
 
   selfNaming: protectedProcedure
     .input(z.object({
-      surnameKorean: z.string().min(1),
-      surnameHanja: z.string().optional(),
-      requiredOhaeng: z.enum(["木", "火", "土", "金", "水"]),
+      surnameKorean: z.string().min(1, "성씨를 입력해주세요"),
+      surnameHanja: z.string().min(1, "성씨 한자를 선택해주세요"),
+      mode: z.enum(["A", "B", "C"]),
+      specifiedHanja: z.string().optional(),
+      birthYear: z.number(),
+      birthMonth: z.number(),
+      birthDay: z.number(),
+      calendarType: z.enum(["solar", "lunar"]).optional(),
+      page: z.number().min(1).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      return { success: true, message: "셀프작명 기능은 준비 중입니다", nameCandidates: [] };
+      try {
+        let year = input.birthYear;
+        let month = input.birthMonth;
+        let day = input.birthDay;
+        if (input.calendarType === "lunar") {
+          const solar = lunarToSolar(year, month, day, false);
+          year = solar.year; month = solar.month; day = solar.day;
+        }
+
+        const saju = calculateSaju({ year, month, day, gender: "male" });
+        const ilgan = saju.pillars.day.stem;
+        const birthMonthBranch = saju.pillars.month.branch;
+
+        const result = generateAutoNames({
+          surnameKorean: input.surnameKorean,
+          surnameHanja: input.surnameHanja,
+          mode: input.mode,
+          specifiedHanja: input.specifiedHanja,
+          ilgan,
+          birthMonth: birthMonthBranch,
+          page: input.page ?? 1,
+        });
+
+        return { success: true, ...result };
+      } catch (error) {
+        console.error("[Naming] Self naming error:", error);
+        const message = error instanceof Error ? error.message : "자동 작명 중 오류가 발생했습니다";
+        throw new Error(message);
+      }
     }),
 
   masterNaming: protectedProcedure
