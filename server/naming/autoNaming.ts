@@ -24,6 +24,9 @@ import {
 } from "./dataLoader";
 import { checkNamingHazard } from "./nameSafety";
 import comboTable from "./data/surname_suri_combo_table.json";
+import uncommonReadingsList from "./data/uncommon_readings.json";
+
+const uncommonReadings = new Set(uncommonReadingsList as string[]);
 
 export interface AutoNameGenerationRequest {
   surnameKorean: string;
@@ -188,6 +191,11 @@ function processCandidatePair(
   const c2Korean = convertHanjaToKorean(c2.char);
 
   if (!c1Korean || !c2Korean) {
+    return;
+  }
+
+  // 실제 이름에 거의 안 쓰이는 낯선 소리 필터 (세션17, 교차검증 137개)
+  if (uncommonReadings.has(c1Korean) || uncommonReadings.has(c2Korean)) {
     return;
   }
 
