@@ -145,6 +145,15 @@ function calculateMatchingScore(
   return Math.min(Math.round(finalScore * 100) / 100, 100);
 }
 
+function shuffleArray<T>(arr: T[]): T[] {
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 function processCandidatePair(
   c1: HanjaRecord,
   c2: HanjaRecord,
@@ -296,40 +305,53 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     // 정렬 후 상위 후보만 쓰므로, 넉넉하게 3,000개만 모아도 다양성은 충분하다.
     const CANDIDATE_CAP = 3000;
 
-    outer:
-    for (const [s1, s2] of allowedStrokePairs) {
-      const primaryForS1 = primaryBuckets.get(s1) || [];
-      const secondaryForS2 = secondaryBuckets.get(s2) || [];
+    const shuffledPairs = shuffleArray(allowedStrokePairs);
+    const PER_PAIR_CAP = 15; // 획수쌍 하나에서 너무 많이 뽑지 않도록 제한 (다양성 확보)
 
+    outer:
+    for (const [s1, s2] of shuffledPairs) {
+      const primaryForS1 = shuffleArray(primaryBuckets.get(s1) || []);
+      const secondaryForS2 = shuffleArray(secondaryBuckets.get(s2) || []);
+
+      let takenThisPairA = 0;
       for (const c1 of primaryForS1) {
+        if (takenThisPairA >= PER_PAIR_CAP) break;
         for (const c2 of secondaryForS2) {
+          if (takenThisPairA >= PER_PAIR_CAP) break;
           const pairKey = `${c1.char}_${c2.char}`;
           if (processedPairs.has(pairKey)) continue;
           processedPairs.add(pairKey);
 
+          const before = validCandidates.length;
           processCandidatePair(
             c1, c2,
             surnameHanja, surnameKorean,
             requiredOhaeng, validCandidates
           );
+          if (validCandidates.length > before) takenThisPairA++;
           if (validCandidates.length >= CANDIDATE_CAP) break outer;
         }
       }
 
-      const secondaryForS1 = secondaryBuckets.get(s1) || [];
-      const primaryForS2 = primaryBuckets.get(s2) || [];
+      const secondaryForS1 = shuffleArray(secondaryBuckets.get(s1) || []);
+      const primaryForS2 = shuffleArray(primaryBuckets.get(s2) || []);
 
+      let takenThisPairB = 0;
       for (const c1 of secondaryForS1) {
+        if (takenThisPairB >= PER_PAIR_CAP) break;
         for (const c2 of primaryForS2) {
+          if (takenThisPairB >= PER_PAIR_CAP) break;
           const pairKey = `${c1.char}_${c2.char}`;
           if (processedPairs.has(pairKey)) continue;
           processedPairs.add(pairKey);
 
+          const beforeB = validCandidates.length;
           processCandidatePair(
             c1, c2,
             surnameHanja, surnameKorean,
             requiredOhaeng, validCandidates
           );
+          if (validCandidates.length > beforeB) takenThisPairB++;
           if (validCandidates.length >= CANDIDATE_CAP) break outer;
         }
       }
