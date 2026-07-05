@@ -240,9 +240,32 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
 
   return (
     <div className="w-full max-w-5xl mx-auto">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-emerald-900">무료 이름 감정</h2>
-        <p className="text-gray-500 mt-1">성씨와 이름을 입력하면 자원오행과 수리사격을 분석해드립니다.</p>
+      <div
+        className="relative rounded-2xl p-6 md:p-8 mb-8"
+        style={{
+          border: "3px solid var(--gold)",
+          background: "linear-gradient(160deg, #FBF6EA 0%, #F4EDDB 100%)",
+          boxShadow: "0 0 0 1px rgba(212,160,23,0.25), 0 20px 50px -12px rgba(59,42,13,0.25), inset 0 1px 0 rgba(255,255,255,0.4)",
+        }}
+      >
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[11px] font-bold tracking-widest text-white" style={{ background: "var(--gold)" }}>
+          FREE ANALYSIS
+        </div>
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-emerald-900">무료 이름 감정</h2>
+          <p className="text-gray-500 mt-2 text-base">성씨와 이름을 입력하면 자원오행과 수리사격을 분석해드립니다.</p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-4">
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ 자원오행 정밀 분석
+            </span>
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ 수리사격 4격 계산
+            </span>
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ 완전 무료 체험
+            </span>
+          </div>
+        </div>
       </div>
 
       <Form {...form}>
