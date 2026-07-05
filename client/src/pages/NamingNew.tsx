@@ -71,8 +71,8 @@ export default function NamingNew() {
             <TabsTrigger
               value="master-naming"
               className="flex-col h-auto py-5 px-4 rounded-2xl border-2 text-base md:text-lg font-extrabold transition-all
-                border-rose-200 bg-rose-50/60 text-rose-900
-                data-[state=active]:border-rose-700 data-[state=active]:bg-gradient-to-br data-[state=active]:from-rose-700 data-[state=active]:to-red-900 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-900/30 data-[state=active]:scale-[1.03]"
+                border-[var(--gold)]/40 bg-[color-mix(in_oklch,var(--gold)_8%,transparent)] text-amber-900
+                data-[state=active]:border-[var(--gold)] data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#1c1608] data-[state=active]:to-[#3b2a0d] data-[state=active]:text-[#F4D98A] data-[state=active]:shadow-lg data-[state=active]:shadow-black/30 data-[state=active]:scale-[1.03]"
             >
               마스터 작명
             </TabsTrigger>
