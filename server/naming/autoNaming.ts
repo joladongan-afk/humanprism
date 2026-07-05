@@ -26,8 +26,10 @@ import {
 import { checkNamingHazard } from "./nameSafety";
 import comboTable from "./data/surname_suri_combo_table.json";
 import uncommonReadingsList from "./data/uncommon_readings.json";
+import simplifiedCharsList from "./data/simplified_chars.json";
 
 const uncommonReadings = new Set(uncommonReadingsList as string[]);
+const simplifiedChars = new Set(simplifiedCharsList as string[]);
 
 export interface AutoNameGenerationRequest {
   surnameKorean: string;
@@ -82,7 +84,8 @@ function getHanjaByStrokesAndOhaeng(
     if (
       record.ohaeng === targetOhaeng &&
       allowedStrokes.has(record.strokes) &&
-      !isBulmyong(record.char)
+      !isBulmyong(record.char) &&
+      !simplifiedChars.has(record.char)
     ) {
       const list = buckets.get(record.strokes);
       if (list) {
@@ -101,7 +104,7 @@ function getAllHanjaByStrokes(strokesList: number[]): HanjaRecord[] {
   const db = loadHanjaDb();
   const result: HanjaRecord[] = [];
   for (const record of db.values()) {
-    if (strokeSet.has(record.strokes) && !isBulmyong(record.char)) {
+    if (strokeSet.has(record.strokes) && !isBulmyong(record.char) && !simplifiedChars.has(record.char)) {
       result.push(record);
     }
   }
@@ -169,6 +172,11 @@ function processCandidatePair(
   skipUncommonFilter: boolean = false
 ): void {
   if (isBulmyong(c1.char) || isBulmyong(c2.char)) {
+    return;
+  }
+
+  // 중국 간체자 필터 (세션17, OpenCC 기반 탐지, DB에서 삭제하지 않고 후보에서만 제외)
+  if (simplifiedChars.has(c1.char) || simplifiedChars.has(c2.char)) {
     return;
   }
 
@@ -268,8 +276,8 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     for (const nameStr of nameCandidates) {
       const syl1 = nameStr[0];
       const syl2 = nameStr[1];
-      const cands1 = searchHanjaBySound(syl1, 50).filter((r) => !isBulmyong(r.char));
-      const cands2 = searchHanjaBySound(syl2, 50).filter((r) => !isBulmyong(r.char));
+      const cands1 = searchHanjaBySound(syl1, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
+      const cands2 = searchHanjaBySound(syl2, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
 
       for (const c1 of cands1) {
         for (const c2 of cands2) {
