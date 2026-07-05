@@ -347,7 +347,7 @@ export function SelfNamingTab() {
             <p className="text-base font-semibold text-gray-700 text-center px-4">
               결제 후 조건을 입력하시면, 바로 이름을 만들어드립니다.
             </p>
-            <Button size="lg" className="h-12 px-8 text-base font-bold" onClick={() => (isAuthenticated ? setDepositOpen(true) : setLoginOpen(true))}>
+            <Button size="lg" className="h-12 px-8 text-base font-bold" style={{ background: "#8b1a1a", color: "#fff" }} onClick={() => (isAuthenticated ? setDepositOpen(true) : setLoginOpen(true))}>
               결제 후 셀프작명 시작하기
             </Button>
           </div>
