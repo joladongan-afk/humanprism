@@ -347,9 +347,9 @@ export function FreeReadingForm({ onSuccess }: FreeReadingFormProps) {
 
                 <div style={{
                   display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  background: "linear-gradient(135deg, #0d0d1f 0%, #131330 50%, #0f2550 100%)",
+                  background: "linear-gradient(135deg, #06231a 0%, #0a3327 50%, #0d4a34 100%)",
                   borderRadius: 20, border: "2px solid #c9a84c",
-                  boxShadow: "0 0 0 1px #0d0d1f, 0 0 0 4px #c9a84c, 0 8px 32px rgba(201,168,76,0.35)",
+                  boxShadow: "0 0 0 1px #06231a, 0 0 0 4px #c9a84c, 0 8px 32px rgba(201,168,76,0.35)",
                   padding: "28px 20px 20px", gap: 10, minHeight: 160, width: "100%",
                 }}>
                   <p style={{ fontSize: 14, color: "#f0d080", letterSpacing: "0.35em", margin: 0, fontWeight: 600, textTransform: "uppercase" }}>Your Name</p>
