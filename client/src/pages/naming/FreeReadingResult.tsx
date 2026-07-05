@@ -88,6 +88,75 @@ function Badge({ label, style }: { label: string; style?: { bg: string; color: s
   );
 }
 
+// ─── 4격 판정 도넛 차트 (숫자 조작 없이, 실제 판정 그대로 시각화) ───
+
+const GILHYUNG_DONUT_COLOR: Record<string, string> = {
+  "大吉": "#D4A017",
+  "吉": "#1D9E75",
+  "半吉半凶": "#C99A3E",
+  "凶": "#A32D2D",
+};
+
+function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
+  const rad = ((angleDeg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function donutSegmentPath(cx: number, cy: number, rOuter: number, rInner: number, startAngle: number, endAngle: number) {
+  const p1 = polarToCartesian(cx, cy, rOuter, endAngle);
+  const p2 = polarToCartesian(cx, cy, rOuter, startAngle);
+  const p3 = polarToCartesian(cx, cy, rInner, startAngle);
+  const p4 = polarToCartesian(cx, cy, rInner, endAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+  return [
+    `M ${p1.x} ${p1.y}`,
+    `A ${rOuter} ${rOuter} 0 ${largeArc} 0 ${p2.x} ${p2.y}`,
+    `L ${p3.x} ${p3.y}`,
+    `A ${rInner} ${rInner} 0 ${largeArc} 1 ${p4.x} ${p4.y}`,
+    "Z",
+  ].join(" ");
+}
+
+function Suri4Donut({ suri4, overall }: { suri4: { won: SuriGrade; hyeong: SuriGrade; i: SuriGrade; jeong: SuriGrade }; overall: string }) {
+  const segs = [
+    { key: "won", label: "원격", grade: suri4.won.gilhyung },
+    { key: "hyeong", label: "형격", grade: suri4.hyeong.gilhyung },
+    { key: "i", label: "이격", grade: suri4.i.gilhyung },
+    { key: "jeong", label: "정격", grade: suri4.jeong.gilhyung },
+  ];
+  const gap = 4;
+  const step = 90;
+  const cx = 100, cy = 100, rOuter = 88, rInner = 56;
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+      <svg width={180} height={180} viewBox="0 0 200 200" style={{ flexShrink: 0 }}>
+        {segs.map((s, idx) => {
+          const start = idx * step + gap / 2;
+          const end = (idx + 1) * step - gap / 2;
+          const color = GILHYUNG_DONUT_COLOR[s.grade] || "#c9c4b6";
+          return <path key={s.key} d={donutSegmentPath(cx, cy, rOuter, rInner, start, end)} fill={color} />;
+        })}
+        <text x={cx} y={cy - 6} textAnchor="middle" fontSize="15" fontWeight={700} fill="#1a1714">
+          종합
+        </text>
+        <text x={cx} y={cy + 16} textAnchor="middle" fontSize="17" fontWeight={800} fill="#1D9E75">
+          {overall}
+        </text>
+      </svg>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, minWidth: 180 }}>
+        {segs.map((s) => (
+          <div key={s.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 11, height: 11, borderRadius: 3, background: GILHYUNG_DONUT_COLOR[s.grade] || "#c9c4b6", flexShrink: 0 }} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: "#4a453d", width: 46 }}>{s.label}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: GILHYUNG_DONUT_COLOR[s.grade] || "#6b6558" }}>{s.grade}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const card = (accentColor: string): React.CSSProperties => ({
   background: "#ffffff",
   border: `0.5px solid #e0ddd6`,
@@ -143,6 +212,9 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
           <SectionTitle label="종합 판정" />
           <Badge label={overall} style={RESULT_STYLE[overall] || { bg: "#F1EFE8", color: "#444441" }} />
+        </div>
+        <div style={{ marginBottom: 14 }}>
+          <Suri4Donut suri4={suri4} overall={overall} />
         </div>
         <div style={{
           borderLeft: "3px solid #1D9E75", borderRadius: "0 8px 8px 0",
