@@ -5,6 +5,7 @@ import LoginDialog from "@/components/LoginDialog";
 import DepositRequestDialog from "@/components/DepositRequestDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
@@ -33,10 +34,11 @@ const HOUR_BRANCHES = [
   { value: "unknown", label: "시간을 모릅니다" },
 ];
 
-const MODE_OPTIONS: { value: "A" | "B" | "C"; label: string; desc: string }[] = [
+const MODE_OPTIONS: { value: "A" | "B" | "C" | "D"; label: string; desc: string }[] = [
   { value: "A", label: "완전 자동", desc: "이름 두 글자 모두 알아서 지어드립니다" },
   { value: "B", label: "앞글자 지정", desc: "이름 첫 글자를 정하면 둘째 글자를 찾아드립니다" },
   { value: "C", label: "뒷글자 지정", desc: "이름 둘째 글자를 정하면 첫 글자를 찾아드립니다" },
+  { value: "D", label: "셀프 한글이름 >>> 한자 추천", desc: "원하시는 한글 이름에 맞는 한자를 찾아드립니다" },
 ];
 
 const OHAENG_COLOR: Record<string, string> = {
@@ -210,9 +212,10 @@ export function SelfNamingTab() {
 
   const [surnameKorean, setSurnameKorean] = useState("");
   const [surnameHanja, setSurnameHanja] = useState("");
-  const [mode, setMode] = useState<"A" | "B" | "C">("A");
+  const [mode, setMode] = useState<"A" | "B" | "C" | "D">("A");
   const [specifiedKorean, setSpecifiedKorean] = useState("");
   const [specifiedHanja, setSpecifiedHanja] = useState("");
+  const [koreanNameCandidatesText, setKoreanNameCandidatesText] = useState("");
   const [birthYear, setBirthYear] = useState<string>("");
   const [birthMonth, setBirthMonth] = useState<string>("");
   const [birthDay, setBirthDay] = useState<string>("");
@@ -227,11 +230,16 @@ export function SelfNamingTab() {
 
   const mutation = trpc.naming.selfNaming.useMutation();
 
+  const koreanNameCandidates = koreanNameCandidatesText
+    .split(/[,\n]/)
+    .map((s) => s.trim())
+    .filter((s) => s.length === 2);
+
   const canSubmit =
     surnameKorean.trim().length > 0 &&
     surnameHanja.trim().length > 0 &&
     birthYear && birthMonth && birthDay &&
-    (mode === "A" || specifiedHanja.trim().length > 0);
+    (mode === "A" || (mode === "D" && koreanNameCandidates.length > 0) || ((mode === "B" || mode === "C") && specifiedHanja.trim().length > 0));
 
   function runSearch(targetPage: number, append: boolean) {
     if (!isAuthenticated) {
@@ -243,7 +251,8 @@ export function SelfNamingTab() {
       return;
     }
     if (!canSubmit) {
-      toast.error("성씨 한자, 생년월일" + (mode !== "A" ? ", 지정 글자" : "") + "를 모두 입력해주세요");
+      const extra = mode === "D" ? ", 원하시는 한글 이름" : (mode !== "A" ? ", 지정 글자" : "");
+      toast.error("성씨 한자, 생년월일" + extra + "를 모두 입력해주세요");
       return;
     }
 
@@ -252,7 +261,8 @@ export function SelfNamingTab() {
         surnameKorean: surnameKorean.trim(),
         surnameHanja: surnameHanja.trim(),
         mode,
-        specifiedHanja: mode === "A" ? undefined : specifiedHanja.trim(),
+        specifiedHanja: (mode === "B" || mode === "C") ? specifiedHanja.trim() : undefined,
+        koreanNameCandidates: mode === "D" ? koreanNameCandidates : undefined,
         birthYear: Number(birthYear),
         birthMonth: Number(birthMonth),
         birthDay: Number(birthDay),
@@ -325,8 +335,8 @@ export function SelfNamingTab() {
 
           {/* 모드 선택 */}
           <div className="mt-7">
-            <label className="text-base font-bold text-gray-800 mb-2.5 block">이름 작명 방식</label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <label className="text-base font-bold text-gray-800 mb-2.5 block">셀프 작명 방식</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {MODE_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
@@ -344,7 +354,7 @@ export function SelfNamingTab() {
               ))}
             </div>
 
-            {mode !== "A" && (
+            {(mode === "B" || mode === "C") && (
               <div className="mt-4">
                 <label className="text-sm font-bold text-gray-700 mb-2 block">
                   {mode === "B" ? "이름 첫 글자" : "이름 둘째 글자"}
@@ -363,6 +373,23 @@ export function SelfNamingTab() {
                     placeholder="한자 선택"
                   />
                 </div>
+              </div>
+            )}
+
+            {mode === "D" && (
+              <div className="mt-4">
+                <label className="text-sm font-bold text-gray-700 mb-2 block">
+                  원하시는 한글 이름 (2글자씩, 여러 개는 줄바꿈이나 쉼표로 구분)
+                </label>
+                <Textarea
+                  value={koreanNameCandidatesText}
+                  onChange={(e) => setKoreanNameCandidatesText(e.target.value)}
+                  placeholder={"예: 하윤\n서연, 지호"}
+                  className="text-lg font-semibold min-h-[100px]"
+                />
+                <p className="text-sm font-semibold text-amber-700 mt-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200">
+                  ⚠ 이 작명방식은 나올 수 있는 이름의 수가 상대적으로 제한적입니다.
+                </p>
               </div>
             )}
           </div>
