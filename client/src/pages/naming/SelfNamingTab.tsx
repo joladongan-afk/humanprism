@@ -323,7 +323,22 @@ export function SelfNamingTab() {
           <p className="text-base md:text-lg text-muted-foreground mt-4 font-medium">
             성씨와 생년월일시만 입력하시면, 수리사격·복덕오행에 맞는 이름을 찾아드립니다.
           </p>
-          <p className="text-sm font-bold text-[var(--gold)] mt-2">1회 이용권 50,000원</p>
+
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-5">
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ 놀림 걱정 없는 이름만 통과
+            </span>
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ 획수 하나까지 정밀 계산
+            </span>
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ✓ 세상에 없던 단 하나의 조합
+            </span>
+          </div>
+
+          <p className="text-3xl md:text-4xl font-extrabold mt-6" style={{ color: "#C0392B" }}>
+            1회 이용권 50,000원
+          </p>
         </div>
 
         {!paid && (
@@ -333,7 +348,7 @@ export function SelfNamingTab() {
               결제 후 조건을 입력하시면, 바로 이름을 만들어드립니다.
             </p>
             <Button size="lg" className="h-12 px-8 text-base font-bold" onClick={() => (isAuthenticated ? setDepositOpen(true) : setLoginOpen(true))}>
-              50,000원 결제하고 시작하기
+              결제 후 셀프작명 시작하기
             </Button>
           </div>
         )}
