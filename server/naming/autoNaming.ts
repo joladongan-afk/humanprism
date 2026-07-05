@@ -276,18 +276,25 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     for (const nameStr of nameCandidates) {
       const syl1 = nameStr[0];
       const syl2 = nameStr[1];
-      const cands1 = searchHanjaBySound(syl1, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
-      const cands2 = searchHanjaBySound(syl2, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
+      const allCands1 = searchHanjaBySound(syl1, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
+      const allCands2 = searchHanjaBySound(syl2, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
 
-      for (const c1 of cands1) {
-        for (const c2 of cands2) {
-          // 부모가 직접 고른 소리이므로 "낯선 소리" 필터는 건너뛴다 (skipUncommonFilter=true)
-          processCandidatePair(
-            c1, c2,
-            surnameHanja, surnameKorean,
-            requiredOhaeng, validCandidates,
-            true
-          );
+      // 복덕오행(주+보조)에 해당하는 한자만 후보로 남긴다 (완전자동 모드와 동일한 원칙)
+      const cands1Primary = allCands1.filter((r) => r.ohaeng === requiredOhaeng.primary);
+      const cands1Secondary = allCands1.filter((r) => r.ohaeng === requiredOhaeng.secondary);
+      const cands2Primary = allCands2.filter((r) => r.ohaeng === requiredOhaeng.primary);
+      const cands2Secondary = allCands2.filter((r) => r.ohaeng === requiredOhaeng.secondary);
+
+      // 경우 A: 첫 글자=주 오행, 둘째 글자=보조 오행
+      for (const c1 of cands1Primary) {
+        for (const c2 of cands2Secondary) {
+          processCandidatePair(c1, c2, surnameHanja, surnameKorean, requiredOhaeng, validCandidates, true);
+        }
+      }
+      // 경우 B: 첫 글자=보조 오행, 둘째 글자=주 오행
+      for (const c1 of cands1Secondary) {
+        for (const c2 of cands2Primary) {
+          processCandidatePair(c1, c2, surnameHanja, surnameKorean, requiredOhaeng, validCandidates, true);
         }
       }
     }
