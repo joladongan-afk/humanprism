@@ -354,11 +354,20 @@ export default function Plans() {
             return (
               <Card
                 key={key}
-                className={`hanji-card flex flex-col ${plan.accent ? "border-gold" : ""} ${
-                  plan.primary ? "ring-2 ring-gold" : ""
-                } ${isDisabled ? "opacity-50" : ""}`}
+                className={`hanji-card flex flex-col relative ${plan.primary ? "ring-2 ring-gold" : ""} ${isDisabled ? "opacity-50" : ""}`}
+                style={{
+                  border: "2px solid var(--gold)",
+                  boxShadow: "0 4px 20px -6px rgba(59,42,13,0.2)",
+                  marginTop: "10px",
+                }}
               >
-                <CardHeader className="pb-3">
+                <div
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold tracking-widest text-white z-10"
+                  style={{ background: "var(--gold)" }}
+                >
+                  PLAN {plan.no}
+                </div>
+                <CardHeader className="pb-3 pt-5">
                   <div className="flex items-start justify-between mb-2">
                     <span
                       className="flex items-center justify-center rounded-full font-extrabold shrink-0"
