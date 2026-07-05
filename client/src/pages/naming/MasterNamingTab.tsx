@@ -132,7 +132,7 @@ export function MasterNamingTab() {
           카톡으로 상의하신 후, 이 화면으로 돌아와 결제를 진행해 주세요.
         </p>
 
-        <Button className="w-full text-lg font-bold py-7 mt-3 bg-amber-700 hover:bg-amber-800 text-white" onClick={handlePayClick}>
+        <Button className="w-full text-lg font-bold py-7 mt-3" style={{ background: "#8b1a1a", color: "#fff" }} onClick={handlePayClick}>
           마스터 작명 간편결제/입금하기
         </Button>
       </div>
