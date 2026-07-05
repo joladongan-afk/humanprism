@@ -279,8 +279,9 @@ export const namingRouter = router({
     .input(z.object({
       surnameKorean: z.string().min(1, "성씨를 입력해주세요"),
       surnameHanja: z.string().min(1, "성씨 한자를 선택해주세요"),
-      mode: z.enum(["A", "B", "C"]),
+      mode: z.enum(["A", "B", "C", "D"]),
       specifiedHanja: z.string().optional(),
+      koreanNameCandidates: z.array(z.string()).optional(),
       birthYear: z.number(),
       birthMonth: z.number(),
       birthDay: z.number(),
@@ -312,6 +313,7 @@ export const namingRouter = router({
           surnameHanja: input.surnameHanja,
           mode: input.mode,
           specifiedHanja: input.specifiedHanja,
+          koreanNameCandidates: input.koreanNameCandidates,
           ilgan,
           birthMonth: birthMonthBranch,
           page: input.page ?? 1,
