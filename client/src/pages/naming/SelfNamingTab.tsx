@@ -34,24 +34,24 @@ const HOUR_BRANCHES = [
   { value: "unknown", label: "시간을 모릅니다" },
 ];
 
-const MODE_OPTIONS: { value: "A" | "B" | "C" | "D"; label: string; desc: string; bg: string; selectedBg: string }[] = [
+const MODE_OPTIONS: { no: number; value: "A" | "B" | "C" | "D"; label: string; desc: string; bg: string; selectedBg: string }[] = [
   {
-    value: "A", label: "완전 자동", desc: "이름 두 글자 모두 알아서 지어드립니다",
+    no: 1, value: "A", label: "완전 자동", desc: "이름 두 글자 모두 알아서 지어드립니다",
     bg: "linear-gradient(160deg, #FBF6EA 0%, #F4EDDB 100%)",
     selectedBg: "linear-gradient(160deg, #F4EDDB 0%, #E9DCB8 100%)",
   },
   {
-    value: "B", label: "앞글자 지정", desc: "이름 첫 글자를 정하면 둘째 글자를 찾아드립니다",
+    no: 2, value: "B", label: "앞글자 지정", desc: "이름 첫 글자를 정하면 둘째 글자를 찾아드립니다",
     bg: "linear-gradient(160deg, #F6EED8 0%, #EBDCB0 100%)",
     selectedBg: "linear-gradient(160deg, #EBDCB0 0%, #DCC788 100%)",
   },
   {
-    value: "C", label: "뒷글자 지정", desc: "이름 둘째 글자를 정하면 첫 글자를 찾아드립니다",
+    no: 3, value: "C", label: "뒷글자 지정", desc: "이름 둘째 글자를 정하면 첫 글자를 찾아드립니다",
     bg: "linear-gradient(160deg, #EFDDAF 0%, #DFC585 100%)",
     selectedBg: "linear-gradient(160deg, #DFC585 0%, #CBA95C 100%)",
   },
   {
-    value: "D", label: "셀프 한글이름 >>> 한자 추천", desc: "원하시는 한글 이름에 맞는 한자를 찾아드립니다",
+    no: 4, value: "D", label: "셀프 한글이름 >>> 한자 추천", desc: "원하시는 한글 이름에 맞는 한자를 찾아드립니다",
     bg: "linear-gradient(160deg, #241a08 0%, #3b2a0d 100%)",
     selectedBg: "linear-gradient(160deg, #3b2a0d 0%, #4f3810 100%)",
   },
@@ -208,9 +208,12 @@ function ResultCard({ surnameKorean, surnameHanja, candidate }: {
       </div>
 
       <div className="flex items-center justify-center gap-2">
-        {candidate.jawonOhaeng.map((o, i) => (
-          <span key={i} className={`text-sm font-extrabold px-2.5 py-1 rounded-full border-2 ${OHAENG_BG[o] || ""} ${OHAENG_COLOR[o] || ""}`}>
-            {o}
+        {[
+          { char: candidate.name1Korean, o: candidate.jawonOhaeng[0] },
+          { char: candidate.name2Korean, o: candidate.jawonOhaeng[1] },
+        ].map((pair, i) => (
+          <span key={i} className={`text-sm font-extrabold px-2.5 py-1 rounded-full border-2 ${OHAENG_BG[pair.o] || ""} ${OHAENG_COLOR[pair.o] || ""}`}>
+            {pair.char}:{pair.o}
           </span>
         ))}
       </div>
@@ -244,6 +247,7 @@ export function SelfNamingTab() {
   const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [requiredOhaeng, setRequiredOhaeng] = useState<{ primary: string; secondary: string } | null>(null);
 
   const mutation = trpc.naming.selfNaming.useMutation();
 
@@ -291,6 +295,7 @@ export function SelfNamingTab() {
         onSuccess: (data) => {
           setResults((prev) => (append ? [...prev, ...data.candidates] : data.candidates));
           setTotalCount(data.totalCount);
+          setRequiredOhaeng(data.requiredOhaeng ?? null);
           setHasMore(data.hasMore);
           setPage(targetPage);
           setHasSearched(true);
@@ -394,7 +399,13 @@ export function SelfNamingTab() {
                       isSelected ? "shadow-lg scale-[1.02]" : "hover:shadow-md"
                     }`}
                   >
-                    <div className={`font-extrabold text-base ${isDark ? "text-[var(--gold-soft,#F4D98A)]" : "text-gray-900"}`}>
+                    <div className={`font-extrabold text-base flex items-center gap-2 ${isDark ? "text-[var(--gold-soft,#F4D98A)]" : "text-gray-900"}`}>
+                      <span
+                        className="inline-flex items-center justify-center w-6 h-6 rounded-full text-[12px] font-extrabold shrink-0"
+                        style={{ background: isDark ? "var(--gold)" : "rgba(212,160,23,0.2)", color: isDark ? "#1c1608" : "#8a6a1a" }}
+                      >
+                        {opt.no}
+                      </span>
                       {opt.label}
                     </div>
                     <div className={`text-sm mt-1 leading-snug ${isDark ? "text-amber-50/75" : "text-gray-600"}`}>
@@ -507,10 +518,15 @@ export function SelfNamingTab() {
       {/* 결과 */}
       {hasSearched && results.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
             <h3 className="font-bold text-lg text-gray-800">
               총 <span className="text-[var(--gold)] font-extrabold">{totalCount.toLocaleString()}</span>개 중 상위 {results.length}개
             </h3>
+            {requiredOhaeng && (
+              <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-[color-mix(in_oklch,var(--gold)_12%,transparent)] border border-[var(--gold)]/50 text-amber-900">
+                복덕오행 · {requiredOhaeng.primary}(주) · {requiredOhaeng.secondary}(보조)
+              </span>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {results.map((c, i) => (
