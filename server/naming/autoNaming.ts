@@ -65,6 +65,7 @@ export interface AutoNameGenerationResponse {
   page: number;
   pageSize: number;
   hasMore: boolean;
+  requiredOhaeng: { primary: string; secondary: string };
 }
 
 function getStrokePairsFromComboTable(surnameStrokes: number): number[][] {
@@ -316,6 +317,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
       page,
       pageSize: pageSizeD,
       hasMore: endIdxD < totalCountD,
+      requiredOhaeng,
     };
   }
 
@@ -500,5 +502,6 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     page,
     pageSize,
     hasMore: endIdx < totalCount,
+    requiredOhaeng,
   };
 }
