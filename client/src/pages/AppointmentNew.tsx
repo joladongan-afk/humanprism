@@ -1,4 +1,8 @@
 import SiteHeader from "@/components/SiteHeader";
+import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import LoginDialog from "@/components/LoginDialog";
+import DepositRequestDialog from "@/components/DepositRequestDialog";
 
 const KAKAO_CHAT_URL = "http://pf.kakao.com/_elcXX/chat";
 
@@ -41,6 +45,18 @@ function KakaoButton({ label = "카카오로 상담 신청하기" }: { label?: s
 }
 
 export default function AppointmentNew() {
+  const { isAuthenticated } = useAuth();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [depositOpen, setDepositOpen] = useState(false);
+
+  function handlePayClick() {
+    if (!isAuthenticated) {
+      setLoginOpen(true);
+      return;
+    }
+    setDepositOpen(true);
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
@@ -134,9 +150,23 @@ export default function AppointmentNew() {
                 <div className="text-amber-200/70 text-sm mt-1">80분 · 완전 집중 1:1</div>
               </div>
               <KakaoButton label="카카오로 일정 문의하기" />
+              <button
+                onClick={handlePayClick}
+                className="w-full mt-3 py-3.5 rounded-lg font-bold text-base transition-all hover:brightness-110"
+                style={{ background: "#8b1a1a", color: "#fff" }}
+              >
+                마스터 대면 상담 결제하기
+              </button>
             </div>
           </div>
         </div>
+
+        <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+        <DepositRequestDialog
+          open={depositOpen}
+          onOpenChange={setDepositOpen}
+          planType="master_offline"
+        />
 
         {/* 하단 공통 안내 */}
         <div className="mt-10 px-5 py-4 rounded-xl text-center fade-up"
