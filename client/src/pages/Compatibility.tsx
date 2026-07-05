@@ -332,8 +332,9 @@ export default function Compatibility() {
 
             <Button
               onClick={handleAnalyze}
-              className="w-full text-base"
+              className="w-full text-base font-bold"
               size="lg"
+              style={{ background: "#8b1a1a", color: "#fff" }}
             >
               7,900원 궁합 신청하기
             </Button>
