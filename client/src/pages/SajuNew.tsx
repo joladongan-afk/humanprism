@@ -371,7 +371,16 @@ export default function SajuNew() {
       <div className="container py-12 max-w-4xl">
         <div className="mb-10 fade-up"></div>
 
-        <Card className="hanji-card border-2 border-amber-600/30 shadow-lg">
+        <Card
+          className="hanji-card relative"
+          style={{
+            border: "3px solid var(--gold)",
+            boxShadow: "0 0 0 1px rgba(212,160,23,0.25), 0 20px 50px -12px rgba(59,42,13,0.25), inset 0 1px 0 rgba(255,255,255,0.4)",
+          }}
+        >
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[11px] font-bold tracking-widest text-white z-10" style={{ background: "var(--gold)" }}>
+            MANSAERYEOK
+          </div>
           <CardHeader className="border-b-2 border-amber-600/20 pb-4">
             <CardTitle className="text-2xl font-bold text-amber-900">기본 정보</CardTitle>
             <p className="text-sm text-emerald-700 mt-1">📁 실명·아이디·성별은 프로필에 저장됩니다</p>
