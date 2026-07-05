@@ -325,13 +325,13 @@ export function SelfNamingTab() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-2.5 mt-5">
-            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full" style={{ background: "rgba(212,160,23,0.12)", color: "#8a6a1a", border: "1px solid rgba(212,160,23,0.5)" }}>
               ✓ 놀림 걱정 없는 이름만 통과
             </span>
-            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full" style={{ background: "rgba(212,160,23,0.12)", color: "#8a6a1a", border: "1px solid rgba(212,160,23,0.5)" }}>
               ✓ 획수 하나까지 정밀 계산
             </span>
-            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="text-sm font-bold px-3.5 py-1.5 rounded-full" style={{ background: "rgba(212,160,23,0.12)", color: "#8a6a1a", border: "1px solid rgba(212,160,23,0.5)" }}>
               ✓ 세상에 없던 단 하나의 조합
             </span>
           </div>
