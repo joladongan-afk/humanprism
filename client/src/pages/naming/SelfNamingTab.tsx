@@ -34,11 +34,27 @@ const HOUR_BRANCHES = [
   { value: "unknown", label: "시간을 모릅니다" },
 ];
 
-const MODE_OPTIONS: { value: "A" | "B" | "C" | "D"; label: string; desc: string }[] = [
-  { value: "A", label: "완전 자동", desc: "이름 두 글자 모두 알아서 지어드립니다" },
-  { value: "B", label: "앞글자 지정", desc: "이름 첫 글자를 정하면 둘째 글자를 찾아드립니다" },
-  { value: "C", label: "뒷글자 지정", desc: "이름 둘째 글자를 정하면 첫 글자를 찾아드립니다" },
-  { value: "D", label: "셀프 한글이름 >>> 한자 추천", desc: "원하시는 한글 이름에 맞는 한자를 찾아드립니다" },
+const MODE_OPTIONS: { value: "A" | "B" | "C" | "D"; label: string; desc: string; bg: string; selectedBg: string }[] = [
+  {
+    value: "A", label: "완전 자동", desc: "이름 두 글자 모두 알아서 지어드립니다",
+    bg: "linear-gradient(160deg, #FBF6EA 0%, #F4EDDB 100%)",
+    selectedBg: "linear-gradient(160deg, #F4EDDB 0%, #E9DCB8 100%)",
+  },
+  {
+    value: "B", label: "앞글자 지정", desc: "이름 첫 글자를 정하면 둘째 글자를 찾아드립니다",
+    bg: "linear-gradient(160deg, #F6EED8 0%, #EBDCB0 100%)",
+    selectedBg: "linear-gradient(160deg, #EBDCB0 0%, #DCC788 100%)",
+  },
+  {
+    value: "C", label: "뒷글자 지정", desc: "이름 둘째 글자를 정하면 첫 글자를 찾아드립니다",
+    bg: "linear-gradient(160deg, #EFDDAF 0%, #DFC585 100%)",
+    selectedBg: "linear-gradient(160deg, #DFC585 0%, #CBA95C 100%)",
+  },
+  {
+    value: "D", label: "셀프 한글이름 >>> 한자 추천", desc: "원하시는 한글 이름에 맞는 한자를 찾아드립니다",
+    bg: "linear-gradient(160deg, #241a08 0%, #3b2a0d 100%)",
+    selectedBg: "linear-gradient(160deg, #3b2a0d 0%, #4f3810 100%)",
+  },
 ];
 
 const OHAENG_COLOR: Record<string, string> = {
@@ -291,7 +307,16 @@ export function SelfNamingTab() {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-10">
       {/* 입력 폼 */}
-      <div className="hanji-card p-8 md:p-10 space-y-9 border-2 border-[var(--gold)]/40 relative">
+      <div
+        className="hanji-card p-8 md:p-10 space-y-9 relative"
+        style={{
+          border: "3px solid var(--gold)",
+          boxShadow: "0 0 0 1px rgba(212,160,23,0.25), 0 20px 50px -12px rgba(59,42,13,0.35), inset 0 1px 0 rgba(255,255,255,0.4)",
+        }}
+      >
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 rounded-full text-[11px] font-bold tracking-widest text-white" style={{ background: "var(--gold)" }}>
+          PREMIUM SERVICE
+        </div>
         <div className="text-center">
           <h2 className="hanja-display text-4xl md:text-5xl font-extrabold">셀프 작명</h2>
           <div className="gold-divider w-32 mx-auto mt-4" />
@@ -337,21 +362,31 @@ export function SelfNamingTab() {
           <div className="mt-7">
             <label className="text-base font-bold text-gray-800 mb-2.5 block">셀프 작명 방식</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {MODE_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setMode(opt.value)}
-                  className={`text-left p-4 rounded-xl border-2 transition-all ${
-                    mode === opt.value
-                      ? "border-[var(--gold)] bg-[color-mix(in_oklch,var(--gold)_12%,transparent)] shadow-md"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <div className="font-bold text-base text-gray-900">{opt.label}</div>
-                  <div className="text-sm text-muted-foreground mt-1 leading-snug">{opt.desc}</div>
-                </button>
-              ))}
+              {MODE_OPTIONS.map((opt) => {
+                const isDark = opt.value === "D";
+                const isSelected = mode === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setMode(opt.value)}
+                    style={{
+                      background: isSelected ? opt.selectedBg : opt.bg,
+                      borderColor: isSelected ? "var(--gold)" : "transparent",
+                    }}
+                    className={`text-left p-4 rounded-xl border-2 transition-all ${
+                      isSelected ? "shadow-lg scale-[1.02]" : "hover:shadow-md"
+                    }`}
+                  >
+                    <div className={`font-extrabold text-base ${isDark ? "text-[var(--gold-soft,#F4D98A)]" : "text-gray-900"}`}>
+                      {opt.label}
+                    </div>
+                    <div className={`text-sm mt-1 leading-snug ${isDark ? "text-amber-50/75" : "text-gray-600"}`}>
+                      {opt.desc}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
             {(mode === "B" || mode === "C") && (
