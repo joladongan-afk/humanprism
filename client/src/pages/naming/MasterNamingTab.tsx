@@ -1,4 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/_core/hooks/useAuth";
+import LoginDialog from "@/components/LoginDialog";
+import DepositRequestDialog from "@/components/DepositRequestDialog";
 
 const KAKAO_CHAT_URL = "http://pf.kakao.com/_elcXX/chat";
 
@@ -22,6 +26,18 @@ const STEP_STYLES = [
 ];
 
 export function MasterNamingTab() {
+  const { isAuthenticated } = useAuth();
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [depositOpen, setDepositOpen] = useState(false);
+
+  function handlePayClick() {
+    if (!isAuthenticated) {
+      setLoginOpen(true);
+      return;
+    }
+    setDepositOpen(true);
+  }
+
   return (
     <div className="w-full max-w-5xl mx-auto">
       <div
@@ -116,10 +132,17 @@ export function MasterNamingTab() {
           카톡으로 상의하신 후, 이 화면으로 돌아와 결제를 진행해 주세요.
         </p>
 
-        <Button className="w-full text-lg font-bold py-7 mt-3 bg-amber-700 hover:bg-amber-800 text-white">
-          마스터 작명 상담 신청
+        <Button className="w-full text-lg font-bold py-7 mt-3 bg-amber-700 hover:bg-amber-800 text-white" onClick={handlePayClick}>
+          마스터 작명 간편결제/입금하기
         </Button>
       </div>
+
+      <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+      <DepositRequestDialog
+        open={depositOpen}
+        onOpenChange={setDepositOpen}
+        planType="master_naming"
+      />
     </div>
   );
 }
