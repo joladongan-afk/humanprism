@@ -20,6 +20,7 @@ import {
   getHanja,
   isBulmyong,
   getRequiredOhaeng,
+  searchHanjaBySound,
   type HanjaRecord,
 } from "./dataLoader";
 import { checkNamingHazard } from "./nameSafety";
@@ -31,8 +32,9 @@ const uncommonReadings = new Set(uncommonReadingsList as string[]);
 export interface AutoNameGenerationRequest {
   surnameKorean: string;
   surnameHanja: string;
-  mode: "A" | "B" | "C";
+  mode: "A" | "B" | "C" | "D";
   specifiedHanja?: string;
+  koreanNameCandidates?: string[]; // 모드 D 전용: 부모가 원하는 한글 이름 후보 (2글자씩)
   ilgan: string;
   birthMonth: string;
   page?: number;
@@ -163,7 +165,8 @@ function processCandidatePair(
   surnameHanja: string,
   surnameKorean: string,
   requiredOhaeng: { primary: string; secondary: string },
-  validCandidates: AutoNameCandidate[]
+  validCandidates: AutoNameCandidate[],
+  skipUncommonFilter: boolean = false
 ): void {
   if (isBulmyong(c1.char) || isBulmyong(c2.char)) {
     return;
@@ -195,7 +198,8 @@ function processCandidatePair(
   }
 
   // 실제 이름에 거의 안 쓰이는 낯선 소리 필터 (세션17, 교차검증 137개)
-  if (uncommonReadings.has(c1Korean) || uncommonReadings.has(c2Korean)) {
+  // 모드 D(한글이름 지정)에서는 부모가 이미 그 소리를 직접 골랐으므로 이 필터를 건너뛴다.
+  if (!skipUncommonFilter && (uncommonReadings.has(c1Korean) || uncommonReadings.has(c2Korean))) {
     return;
   }
 
@@ -247,6 +251,59 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     throw new Error("복덕오행을 조회할 수 없습니다. 일간/월지 정보를 확인해주세요.");
   }
 
+  const validCandidates: AutoNameCandidate[] = [];
+
+  // ─── 모드 D: 부모가 원하는 한글 이름 → 한자 추천 ───────────
+  // 수리조합표(획수 사전필터)를 쓰지 않는다. 후보군 자체가 작아서
+  // (음 하나당 한자 수십 개 수준) 전체 조합을 그냥 다 검사해도 충분히 빠르다.
+  if (mode === "D") {
+    const nameCandidates = (input.koreanNameCandidates || [])
+      .map((s) => s.trim())
+      .filter((s) => s.length === 2);
+
+    if (nameCandidates.length === 0) {
+      throw new Error("원하시는 한글 이름을 2글자로 입력해주세요");
+    }
+
+    for (const nameStr of nameCandidates) {
+      const syl1 = nameStr[0];
+      const syl2 = nameStr[1];
+      const cands1 = searchHanjaBySound(syl1, 50).filter((r) => !isBulmyong(r.char));
+      const cands2 = searchHanjaBySound(syl2, 50).filter((r) => !isBulmyong(r.char));
+
+      for (const c1 of cands1) {
+        for (const c2 of cands2) {
+          // 부모가 직접 고른 소리이므로 "낯선 소리" 필터는 건너뛴다 (skipUncommonFilter=true)
+          processCandidatePair(
+            c1, c2,
+            surnameHanja, surnameKorean,
+            requiredOhaeng, validCandidates,
+            true
+          );
+        }
+      }
+    }
+
+    validCandidates.sort((a, b) => b.matchingScore - a.matchingScore);
+
+    const totalCountD = validCandidates.length;
+    for (let i = 0; i < totalCountD; i++) {
+      validCandidates[i].rarity_score = Math.round(((totalCountD - i) / totalCountD) * 100);
+    }
+
+    const pageSizeD = 30;
+    const startIdxD = (page - 1) * pageSizeD;
+    const endIdxD = startIdxD + pageSizeD;
+
+    return {
+      candidates: validCandidates.slice(startIdxD, endIdxD),
+      totalCount: totalCountD,
+      page,
+      pageSize: pageSizeD,
+      hasMore: endIdxD < totalCountD,
+    };
+  }
+
   const allowedStrokePairs = getStrokePairsFromComboTable(surnameStrokes);
 
   if (allowedStrokePairs.length === 0) {
@@ -259,8 +316,6 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
 
   const primaryBuckets = getHanjaByStrokesAndOhaeng(allStrokes, requiredOhaeng.primary);
   const secondaryBuckets = getHanjaByStrokesAndOhaeng(allStrokes, requiredOhaeng.secondary);
-
-  const validCandidates: AutoNameCandidate[] = [];
 
   if (mode === "B" || mode === "C") {
     if (!specifiedHanja) {
