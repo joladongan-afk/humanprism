@@ -221,7 +221,8 @@ function ResultCard({ surnameKorean, surnameHanja, candidate }: {
 // ─── 메인 컴포넌트 ────────────────────────────────────────
 
 export function SelfNamingTab() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const isAdmin = (user as any)?.role === "admin";
   const [loginOpen, setLoginOpen] = useState(false);
   const [depositOpen, setDepositOpen] = useState(false);
   const [paid, setPaid] = useState(false);
@@ -262,7 +263,7 @@ export function SelfNamingTab() {
       setLoginOpen(true);
       return;
     }
-    if (!paid) {
+    if (!paid && !isAdmin) {
       setDepositOpen(true);
       return;
     }
@@ -341,7 +342,7 @@ export function SelfNamingTab() {
           </p>
         </div>
 
-        {!paid && (
+        {!paid && !isAdmin && (
           <div className="flex flex-col items-center justify-center gap-3 py-6 border-2 border-dashed border-[var(--gold)]/50 rounded-xl bg-[color-mix(in_oklch,var(--gold)_6%,transparent)]">
             <Lock className="w-7 h-7 text-[var(--gold)]" />
             <p className="text-base font-semibold text-gray-700 text-center px-4">
@@ -353,7 +354,7 @@ export function SelfNamingTab() {
           </div>
         )}
 
-        <div className={!paid ? "opacity-40 pointer-events-none select-none" : ""}>
+        <div className={(!paid && !isAdmin) ? "opacity-40 pointer-events-none select-none" : ""}>
           {/* 성씨 */}
           <div>
             <label className="text-base font-bold text-gray-800 mb-2.5 block">성씨</label>
