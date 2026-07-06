@@ -508,7 +508,7 @@ export function SelfNamingTab() {
             className="w-full h-14 text-lg font-bold mt-8"
             size="lg"
             disabled={mutation.isPending}
-            onClick={() => runSearch(1, false)}
+            onClick={() => { setCurrentTier(1); setTierMessage(undefined); setResults([]); runSearch(1, false, 1); }}
           >
             {mutation.isPending ? <Spinner className="mr-2" /> : null}
             이름 만들기
@@ -517,109 +517,111 @@ export function SelfNamingTab() {
       </div>
 
       {/* 결과 */}
-      {hasSearched && results.length > 0 && (
+      {hasSearched && (
         <div>
-          <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
-            <h3 className="font-bold text-lg text-gray-800">
-              {/* 단계 탐색 안내 배너 */}
-              {hasSearched && tierMessage === "NEXT_TIER_2" && (
-                <div className="mb-6 p-5 rounded-xl border border-amber-500/40 bg-amber-950/30">
-                  <div className="flex items-start gap-3">
-                    <span className="text-amber-400 text-xl mt-0.5">🔍</span>
-                    <div className="space-y-3">
-                      <p className="text-amber-200 font-semibold text-base">1차 탐색 결과: 해당 조건의 이름이 없습니다</p>
-                      <p className="text-white/70 text-sm leading-relaxed">
-                        입력하신 이름으로 <strong className="text-amber-300">4격 모두 대길(大吉) 수리</strong>를 갖춘 한자 조합을 탐색했으나, 현재 조건에서는 찾지 못했습니다.<br/>
-                        이는 드문 일이 아닙니다. 한글 발음이 확정되면 선택 가능한 한자의 폭이 크게 좁아지고, 거기에 자원오행과 수리사격까지 동시에 충족해야 하기 때문입니다.<br/>
-                        <span className="text-amber-300 font-medium">오히려 이 엄격한 기준이 통과한 이름의 가치를 높여줍니다.</span>
-                      </p>
-                      <div className="pt-1">
-                        <p className="text-white/60 text-xs mb-2">2단계 탐색: 소길(小吉) 수리까지 포함합니다. 자원오행 기준은 동일하게 유지됩니다.</p>
-                        <button
-                          onClick={() => { setCurrentTier(2); setTierMessage(undefined); setResults([]); runSearch(1, false, 2); }}
-                          className="px-5 py-2.5 rounded-lg font-bold text-sm transition-all"
-                          style={{ background: "linear-gradient(135deg, #b45309, #92400e)", color: "#fef3c7" }}
-                        >
-                          2단계 탐색 시작 →
-                        </button>
-                      </div>
-                    </div>
+          {/* 단계 탐색 안내 배너 - 결과 개수와 무관하게 항상 표시 (0개일 때 특히 중요) */}
+          {tierMessage === "NEXT_TIER_2" && (
+            <div className="mb-6 p-5 rounded-xl border border-amber-500/40 bg-amber-950/30">
+              <div className="flex items-start gap-3">
+                <span className="text-amber-400 text-xl mt-0.5">🔍</span>
+                <div className="space-y-3">
+                  <p className="text-amber-200 font-semibold text-base">1차 탐색 결과: 해당 조건의 이름이 없습니다</p>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    입력하신 이름으로 <strong className="text-amber-300">4격 모두 대길(大吉) 수리</strong>를 갖춘 한자 조합을 탐색했으나, 현재 조건에서는 찾지 못했습니다.<br/>
+                    이는 드문 일이 아닙니다. 한글 발음이 확정되면 선택 가능한 한자의 폭이 크게 좁아지고, 거기에 자원오행과 수리사격까지 동시에 충족해야 하기 때문입니다.<br/>
+                    <span className="text-amber-300 font-medium">오히려 이 엄격한 기준이 통과한 이름의 가치를 높여줍니다.</span>
+                  </p>
+                  <div className="pt-1">
+                    <p className="text-white/60 text-xs mb-2">2단계 탐색: 소길(小吉) 수리까지 포함합니다. 자원오행 기준은 동일하게 유지됩니다.</p>
+                    <button
+                      onClick={() => { setCurrentTier(2); setTierMessage(undefined); setResults([]); runSearch(1, false, 2); }}
+                      className="px-5 py-2.5 rounded-lg font-bold text-sm transition-all"
+                      style={{ background: "linear-gradient(135deg, #b45309, #92400e)", color: "#fef3c7" }}
+                    >
+                      2단계 탐색 시작 →
+                    </button>
                   </div>
                 </div>
-              )}
-              {hasSearched && tierMessage === "NEXT_TIER_3" && (
-                <div className="mb-6 p-5 rounded-xl border border-orange-500/40 bg-orange-950/30">
-                  <div className="flex items-start gap-3">
-                    <span className="text-orange-400 text-xl mt-0.5">🔎</span>
-                    <div className="space-y-3">
-                      <p className="text-orange-200 font-semibold text-base">2차 탐색 결과: 소길 수리 범위에서도 찾지 못했습니다</p>
-                      <p className="text-white/70 text-sm leading-relaxed">
-                        소길(小吉) 수리까지 포함해도 해당 한글 이름에 맞는 조합을 찾지 못했습니다.<br/>
-                        <strong className="text-orange-300">3단계 탐색</strong>은 소흉(小凶) 수리를 일부 허용합니다.<br/>
-                        소흉이 포함된 경우 각 수리에 대한 설명이 함께 표시되므로, 최종 선택 시 도림 선생님과 상의하신 후 결정하시는 것을 권장드립니다.
-                      </p>
-                      <div className="pt-1">
-                        <p className="text-white/60 text-xs mb-2">3단계 탐색: 소흉(小凶) 수리 일부를 허용합니다.</p>
-                        <button
-                          onClick={() => { setCurrentTier(3); setTierMessage(undefined); setResults([]); runSearch(1, false, 3); }}
-                          className="px-5 py-2.5 rounded-lg font-bold text-sm transition-all"
-                          style={{ background: "linear-gradient(135deg, #9a3412, #7c2d12)", color: "#fed7aa" }}
-                        >
-                          3단계 탐색 시작 →
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {hasSearched && tierMessage === "NO_RESULT" && (
-                <div className="mb-6 p-5 rounded-xl border border-red-500/40 bg-red-950/20">
-                  <div className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl mt-0.5">⚠️</span>
-                    <div className="space-y-2">
-                      <p className="text-red-200 font-semibold text-base">3단계까지 탐색했으나 조건에 맞는 이름이 없습니다</p>
-                      <p className="text-white/70 text-sm leading-relaxed">
-                        입력하신 한글 발음으로는 자원오행과 수리사격 조건을 모두 충족하는 한자 조합이 존재하지 않습니다.<br/>
-                        <strong className="text-white/90">다른 한글 이름을 시도해보시거나</strong>, 완전자동(1번) 또는 앞글자·뒷글자 지정 방식(2·3번)으로 전환하시면 더 많은 후보를 찾아드릴 수 있습니다.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {/* 현재 탐색 단계 뱃지 */}
-              {hasSearched && results.length > 0 && (
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold"
-                    style={{
-                      background: currentTier === 1 ? "rgba(212,160,23,0.2)" : currentTier === 2 ? "rgba(180,83,9,0.2)" : "rgba(154,52,18,0.2)",
-                      color: currentTier === 1 ? "#fbbf24" : currentTier === 2 ? "#fb923c" : "#f87171",
-                      border: `1px solid ${currentTier === 1 ? "rgba(212,160,23,0.4)" : currentTier === 2 ? "rgba(180,83,9,0.4)" : "rgba(154,52,18,0.4)"}`
-                    }}
-                  >
-                    {currentTier === 1 ? "✦ 1단계 · 대길(大吉) 수리만" : currentTier === 2 ? "✦ 2단계 · 소길(小吉) 포함" : "✦ 3단계 · 소흉(小凶) 일부 포함"}
-                  </span>
-                </div>
-              )}
-              총 <span className="text-[var(--gold)] font-extrabold">{totalCount.toLocaleString()}</span>개 중 상위 {results.length}개
-            </h3>
-            {requiredOhaeng && (
-              <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-[color-mix(in_oklch,var(--gold)_12%,transparent)] border border-[var(--gold)]/50 text-amber-900">
-                복덕오행 · {requiredOhaeng.primary}(주) · {requiredOhaeng.secondary}(보조)
-              </span>
-            )}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {results.map((c, i) => (
-              <ResultCard key={i} surnameKorean={surnameKorean} surnameHanja={surnameHanja} candidate={c} />
-            ))}
-          </div>
-          {hasMore && (
-            <div className="text-center mt-8">
-              <Button variant="outline" size="lg" className="font-bold text-base h-12 px-8" disabled={mutation.isPending} onClick={() => runSearch(page + 1, true)}>
-                {mutation.isPending ? <Spinner className="mr-2" /> : null}
-                더 보기
-              </Button>
+              </div>
             </div>
+          )}
+          {tierMessage === "NEXT_TIER_3" && (
+            <div className="mb-6 p-5 rounded-xl border border-orange-500/40 bg-orange-950/30">
+              <div className="flex items-start gap-3">
+                <span className="text-orange-400 text-xl mt-0.5">🔎</span>
+                <div className="space-y-3">
+                  <p className="text-orange-200 font-semibold text-base">2차 탐색 결과: 소길 수리 범위에서도 찾지 못했습니다</p>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    소길(小吉) 수리까지 포함해도 해당 한글 이름에 맞는 조합을 찾지 못했습니다.<br/>
+                    <strong className="text-orange-300">3단계 탐색</strong>은 소흉(小凶) 수리를 일부 허용합니다.<br/>
+                    소흉이 포함된 경우 각 수리에 대한 설명이 함께 표시되므로, 최종 선택 시 도림 선생님과 상의하신 후 결정하시는 것을 권장드립니다.
+                  </p>
+                  <div className="pt-1">
+                    <p className="text-white/60 text-xs mb-2">3단계 탐색: 소흉(小凶) 수리 일부를 허용합니다.</p>
+                    <button
+                      onClick={() => { setCurrentTier(3); setTierMessage(undefined); setResults([]); runSearch(1, false, 3); }}
+                      className="px-5 py-2.5 rounded-lg font-bold text-sm transition-all"
+                      style={{ background: "linear-gradient(135deg, #9a3412, #7c2d12)", color: "#fed7aa" }}
+                    >
+                      3단계 탐색 시작 →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {tierMessage === "NO_RESULT" && (
+            <div className="mb-6 p-5 rounded-xl border border-red-500/40 bg-red-950/20">
+              <div className="flex items-start gap-3">
+                <span className="text-red-400 text-xl mt-0.5">⚠️</span>
+                <div className="space-y-2">
+                  <p className="text-red-200 font-semibold text-base">3단계까지 탐색했으나 조건에 맞는 이름이 없습니다</p>
+                  <p className="text-white/70 text-sm leading-relaxed">
+                    입력하신 한글 발음으로는 자원오행과 수리사격 조건을 모두 충족하는 한자 조합이 존재하지 않습니다.<br/>
+                    <strong className="text-white/90">다른 한글 이름을 시도해보시거나</strong>, 완전자동(1번) 또는 앞글자·뒷글자 지정 방식(2·3번)으로 전환하시면 더 많은 후보를 찾아드릴 수 있습니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {results.length > 0 && (
+            <>
+              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                  style={{
+                    background: currentTier === 1 ? "rgba(212,160,23,0.2)" : currentTier === 2 ? "rgba(180,83,9,0.2)" : "rgba(154,52,18,0.2)",
+                    color: currentTier === 1 ? "#fbbf24" : currentTier === 2 ? "#fb923c" : "#f87171",
+                    border: `1px solid ${currentTier === 1 ? "rgba(212,160,23,0.4)" : currentTier === 2 ? "rgba(180,83,9,0.4)" : "rgba(154,52,18,0.4)"}`
+                  }}
+                >
+                  {currentTier === 1 ? "✦ 1단계 · 대길(大吉) 수리만" : currentTier === 2 ? "✦ 2단계 · 소길(小吉) 포함" : "✦ 3단계 · 소흉(小凶) 일부 포함"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
+                <h3 className="font-bold text-lg text-gray-800">
+                  총 <span className="text-[var(--gold)] font-extrabold">{totalCount.toLocaleString()}</span>개 중 상위 {results.length}개
+                </h3>
+                {requiredOhaeng && (
+                  <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-[color-mix(in_oklch,var(--gold)_12%,transparent)] border border-[var(--gold)]/50 text-amber-900">
+                    복덕오행 · {requiredOhaeng.primary}(주) · {requiredOhaeng.secondary}(보조)
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {results.map((c, i) => (
+                  <ResultCard key={i} surnameKorean={surnameKorean} surnameHanja={surnameHanja} candidate={c} />
+                ))}
+              </div>
+              {hasMore && (
+                <div className="text-center mt-8">
+                  <Button variant="outline" size="lg" className="font-bold text-base h-12 px-8" disabled={mutation.isPending} onClick={() => runSearch(page + 1, true)}>
+                    {mutation.isPending ? <Spinner className="mr-2" /> : null}
+                    더 보기
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -634,3 +636,4 @@ export function SelfNamingTab() {
     </div>
   );
 }
+
