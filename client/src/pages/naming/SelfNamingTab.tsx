@@ -193,7 +193,9 @@ function ResultCard({ surnameKorean, surnameHanja, candidate }: {
   return (
     <div className={`hanji-card p-6 relative ${isTop ? "ring-2 ring-[var(--gold)]" : ""}`}>
       {isTop && (
-        <span className="absolute -top-3 right-5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-[var(--gold)] text-white tracking-wide shadow-md">
+        <span className="absolute -top-3 right-5 text-xs font-extrabold px-3.5 py-1.5 rounded-full text-white tracking-wide shadow-lg border-2 border-white"
+          style={{ background: "#5c3d0a" }}
+        >
           최상위 매칭
         </span>
       )}
@@ -605,11 +607,10 @@ export function SelfNamingTab() {
           {results.length > 0 && (
             <>
               <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                <span className="px-4 py-2 rounded-full text-sm font-extrabold shadow-sm"
                   style={{
-                    background: currentTier === 1 ? "rgba(212,160,23,0.2)" : currentTier === 2 ? "rgba(180,83,9,0.2)" : "rgba(154,52,18,0.2)",
-                    color: currentTier === 1 ? "#fbbf24" : currentTier === 2 ? "#fb923c" : "#f87171",
-                    border: `1px solid ${currentTier === 1 ? "rgba(212,160,23,0.4)" : currentTier === 2 ? "rgba(180,83,9,0.4)" : "rgba(154,52,18,0.4)"}`
+                    background: currentTier === 1 ? "#8a5a0f" : currentTier === 2 ? "#b5502f" : "#7a2e1a",
+                    color: "#fffbeb",
                   }}
                 >
                   {currentTier === 1 ? "✦ 1단계 · 대길(大吉) 수리만" : currentTier === 2 ? "✦ 2단계 · 소길(小吉) 포함" : "✦ 3단계 · 소흉(小凶) 일부 포함"}
