@@ -621,6 +621,31 @@ export function SelfNamingTab() {
                   </Button>
                 </div>
               )}
+              {currentTier < 3 && (
+                <div className="mt-8 p-5 rounded-xl border border-amber-200 bg-amber-50 flex items-center justify-between flex-wrap gap-4">
+                  <p className="text-sm font-semibold text-amber-800 leading-relaxed">
+                    현재 <strong className="text-amber-900">{currentTier === 1 ? "1단계 · 대길(大吉) 수리만" : "2단계 · 소길(小吉) 포함"}</strong> 기준 결과입니다.<br/>
+                    범위를 넓히면 {currentTier === 1 ? "소길(小吉)" : "소흉(小凶) 일부"}까지 포함한 더 많은 후보를 볼 수 있습니다. 더 보고 안 보고는 자유롭게 선택하시면 됩니다.
+                  </p>
+                  <button
+                    disabled={mutation.isPending}
+                    onClick={() => {
+                      const next = (currentTier + 1) as 2 | 3;
+                      setCurrentTier(next);
+                      setTierMessage(undefined);
+                      setResults([]);
+                      runSearch(1, false, next);
+                    }}
+                    className="px-6 py-3 rounded-lg font-bold text-base whitespace-nowrap transition-all"
+                    style={{
+                      background: currentTier === 1 ? "linear-gradient(135deg, #b45309, #92400e)" : "linear-gradient(135deg, #9a3412, #7c2d12)",
+                      color: "#fffbeb",
+                    }}
+                  >
+                    {currentTier === 1 ? "2단계(소길 포함) 더 보기 →" : "3단계(소흉 포함) 더 보기 →"}
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
