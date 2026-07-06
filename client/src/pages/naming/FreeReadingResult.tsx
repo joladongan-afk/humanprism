@@ -32,7 +32,7 @@ interface FreeReadingResultProps {
       };
       overall: string;
       comment: string;
-      requiredOhaeng?: { primary: string; secondary: string } | null;
+      requiredOhaeng?: { primary: string; secondary: string[] } | null;
     };
   };
   inputData?: {
@@ -232,12 +232,15 @@ export function FreeReadingResult({ data, inputData, onPdfDownload, onShare }: F
           <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
             {[
               { rank: "1순위", oh: data.analysis.requiredOhaeng.primary },
-              { rank: "2순위", oh: data.analysis.requiredOhaeng.secondary },
+              ...data.analysis.requiredOhaeng.secondary.map((oh, i) => ({
+                rank: i === 0 ? "2순위" : "3순위",
+                oh,
+              })),
             ].map((item, idx) => {
               const c = OHAENG_COLOR[item.oh];
               return (
                 <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
-                  {idx === 1 && <span style={{ color: "#AFA9EC", fontSize: 18, flex: "0 0 auto" }}>→</span>}
+                  {idx > 0 && <span style={{ color: "#AFA9EC", fontSize: 18, flex: "0 0 auto" }}>→</span>}
                   <div style={{ flex: 1, background: c?.bg || "#EEEDFE", border: `1px solid ${c?.border || "#AFA9EC"}`, borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
                     <div style={{ fontSize: 13, color: c?.text || "#534AB7", marginBottom: 5, fontWeight: 600, opacity: 0.75 }}>{item.rank}</div>
                     <div style={{ fontSize: 24, fontWeight: 700, color: c?.text || "#2C2C2A" }}>
