@@ -154,6 +154,35 @@ export const depositRouter = router({
       }
       const approvedAt = new Date();
       const enterBy = new Date(approvedAt.getTime() + ENTER_WINDOW_MS);
+
+      // 셀프작명/마스터작명은 채팅 세션이 없으므로 결제만 paid로 처리하고 SMS만 발송.
+      if (s.planType === "self_naming" || s.planType === "master_naming") {
+        if (s.paymentId) {
+          await db.updatePayment(s.paymentId, { status: "paid", paidAt: approvedAt });
+        }
+        await db.updateConsultSession(input.sessionId, { status: "active", approvedAt, startedAt: approvedAt });
+
+        const cfg = PLAN_CONFIG[s.planType as keyof typeof PLAN_CONFIG];
+        const expiresStr = new Date(approvedAt.getTime() + 30 * 24 * 60 * 60 * 1000)
+          .toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" });
+        const customerMsg =
+          `[휴먼프리즘] 입금이 확인되어 ${cfg.label} 이용권이 활성화되었습니다.\n` +
+          `· 이용 기간: 결제일로부터 30일 (${expiresStr}까지)\n` +
+          `· 휴먼프리즘 사이트 > 작명 탭에서 이용하실 수 있습니다.\n` +
+          `남은 기간은 작명 탭 상단에서 확인하세요.`;
+        try {
+          let customerPhone: string | null = null;
+          if (s.paymentId) {
+            const pay = await db.getPaymentById?.(s.paymentId);
+            customerPhone = (pay?.depositorPhone as string | undefined) ?? null;
+          }
+          await sendCustomerSms(customerPhone, customerMsg);
+        } catch (e) {
+          console.warn("[deposit] 작명 라이선스 고객 SMS 실패:", e);
+        }
+        return { success: true, enterBy: null } as const;
+      }
+
       await db.updateConsultSession(input.sessionId, {
         status: "approved",
         approvedAt,
