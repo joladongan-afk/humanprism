@@ -398,5 +398,27 @@ export const namingRouter = router({
         createdAt: r.createdAt,
       };
     }),
+
+  /**
+   * 셀프작명 30일 라이선스 조회 (고객용).
+   * 결제 여부, 남은 일수, 만료일을 반환한다.
+   */
+  getLicense: protectedProcedure.query(async ({ ctx }) => {
+    const { getSelfNamingLicense } = await import("../db");
+    const license = await getSelfNamingLicense(ctx.user.id);
+    return license;
+  }),
+
+  /**
+   * 셀프작명 결제 전체 목록 조회 (관리자용).
+   */
+  listSelfNamingPayments: protectedProcedure.query(async ({ ctx }) => {
+    const { isOperatorEmail } = await import("../../shared/const");
+    if (!isOperatorEmail(ctx.user.email ?? "")) {
+      throw new Error("관리자만 접근할 수 있습니다.");
+    }
+    const { listSelfNamingPayments } = await import("../db");
+    return listSelfNamingPayments();
+  }),
 });
 
