@@ -1007,3 +1007,87 @@ export async function getUserFreeReadingCount(userId: number): Promise<number> {
   const [r] = await db.select({ c: count() }).from(namingServices).where(eq(namingServices.userId, userId));
   return Number(r?.c ?? 0);
 }
+
+// ============================================================================
+// 셀프작명 30일 라이선스
+// ============================================================================
+
+export const SELF_NAMING_LICENSE_DAYS = 30;
+const SELF_NAMING_LICENSE_MS = SELF_NAMING_LICENSE_DAYS * 24 * 60 * 60 * 1000;
+
+/**
+ * 유저의 유효한 셀프작명 라이선스를 조회한다.
+ * payments 테이블에서 self_naming 결제 중 가장 최근 paid 건의 paidAt 기준으로 30일을 계산한다.
+ * 반환값:
+ *   null            → 결제 기록 없음 (미결제)
+ *   { active: false } → 결제는 있지만 30일 만료
+ *   { active: true, paidAt, expiresAt, daysLeft } → 유효한 라이선스
+ */
+export async function getSelfNamingLicense(userId: number): Promise<{
+  active: boolean;
+  paidAt: Date;
+  expiresAt: Date;
+  daysLeft: number;
+  paymentId: number;
+} | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const rows = await db
+    .select({
+      id: payments.id,
+      paidAt: payments.paidAt,
+    })
+    .from(payments)
+    .where(
+      and(
+        eq(payments.userId, userId),
+        eq(payments.planType, "self_naming"),
+        eq(payments.status, "paid"),
+      ),
+    )
+    .orderBy(desc(payments.paidAt))
+    .limit(1);
+
+  if (rows.length === 0 || !rows[0].paidAt) return null;
+
+  const paidAt = new Date(rows[0].paidAt);
+  const expiresAt = new Date(paidAt.getTime() + SELF_NAMING_LICENSE_MS);
+  const now = new Date();
+  const msLeft = expiresAt.getTime() - now.getTime();
+  const daysLeft = Math.max(0, Math.ceil(msLeft / (24 * 60 * 60 * 1000)));
+
+  return {
+    active: now < expiresAt,
+    paidAt,
+    expiresAt,
+    daysLeft,
+    paymentId: rows[0].id,
+  };
+}
+
+/**
+ * 관리자용: self_naming 결제 전체 목록 조회 (paid + awaiting_deposit 모두 포함).
+ * 어드민 페이지 카운터 표시용.
+ */
+export async function listSelfNamingPayments(limit = 100) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: payments.id,
+      userId: payments.userId,
+      status: payments.status,
+      paidAt: payments.paidAt,
+      createdAt: payments.createdAt,
+      depositorName: payments.depositorName,
+      depositorPhone: payments.depositorPhone,
+      userName: users.name,
+      userEmail: users.email,
+    })
+    .from(payments)
+    .leftJoin(users, eq(payments.userId, users.id))
+    .where(eq(payments.planType, "self_naming"))
+    .orderBy(desc(payments.createdAt))
+    .limit(limit);
+}
