@@ -67,7 +67,7 @@ export interface AutoNameGenerationResponse {
   page: number;
   pageSize: number;
   hasMore: boolean;
-  requiredOhaeng: { primary: string; secondary: string };
+  requiredOhaeng: { primary: string; secondary: string[] };
   tier: 1 | 2 | 3;
   tierMessage?: string; // 0개일 때 다음 단계 안내 메시지
 }
@@ -80,14 +80,15 @@ function getStrokePairsFromComboTable(surnameStrokes: number): number[][] {
 
 function getHanjaByStrokesAndOhaeng(
   allowedStrokes: Set<number>,
-  targetOhaeng: string
+  targetOhaeng: string | string[]
 ): Map<number, HanjaRecord[]> {
   const db = loadHanjaDb();
   const buckets = new Map<number, HanjaRecord[]>();
+  const targetSet = Array.isArray(targetOhaeng) ? new Set(targetOhaeng) : new Set([targetOhaeng]);
 
   for (const record of db.values()) {
     if (
-      record.ohaeng === targetOhaeng &&
+      targetSet.has(record.ohaeng) &&
       allowedStrokes.has(record.strokes) &&
       !isBulmyong(record.char) &&
       !simplifiedChars.has(record.char)
@@ -125,11 +126,11 @@ function convertHanjaToKorean(hanja: string): string {
 
 function calculateMatchingScore(
   jawonOhaeng: string[],
-  requiredOhaeng: { primary: string; secondary: string },
+  requiredOhaeng: { primary: string; secondary: string[] },
   suri4Judgment: { won: string; hyeong: string; i: string; jeong: string }
 ): number {
   const hasPrimary = jawonOhaeng.includes(requiredOhaeng.primary);
-  const hasSecondary = jawonOhaeng.includes(requiredOhaeng.secondary);
+  const hasSecondary = jawonOhaeng.some((o) => requiredOhaeng.secondary.includes(o));
 
   let baseScore = 0;
   if (hasPrimary && hasSecondary) {
@@ -171,7 +172,7 @@ function processCandidatePair(
   c2: HanjaRecord,
   surnameHanja: string,
   surnameKorean: string,
-  requiredOhaeng: { primary: string; secondary: string },
+  requiredOhaeng: { primary: string; secondary: string[] },
   validCandidates: AutoNameCandidate[],
   skipUncommonFilter: boolean = false,
   allowedTier: 1 | 2 | 3 = 1
@@ -295,9 +296,9 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
 
       // 복덕오행(주+보조)에 해당하는 한자만 후보로 남긴다 (완전자동 모드와 동일한 원칙)
       const cands1Primary = allCands1.filter((r) => r.ohaeng === requiredOhaeng.primary);
-      const cands1Secondary = allCands1.filter((r) => r.ohaeng === requiredOhaeng.secondary);
+      const cands1Secondary = allCands1.filter((r) => requiredOhaeng.secondary.includes(r.ohaeng));
       const cands2Primary = allCands2.filter((r) => r.ohaeng === requiredOhaeng.primary);
-      const cands2Secondary = allCands2.filter((r) => r.ohaeng === requiredOhaeng.secondary);
+      const cands2Secondary = allCands2.filter((r) => requiredOhaeng.secondary.includes(r.ohaeng));
 
       // 경우 A: 첫 글자=주 오행, 둘째 글자=보조 오행
       for (const c1 of cands1Primary) {
