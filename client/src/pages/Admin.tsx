@@ -64,6 +64,7 @@ function AdminInner({ embedded = false }: { embedded?: boolean }) {
           <TabsList>
             <TabsTrigger value="appts">예약 관리</TabsTrigger>
             <TabsTrigger value="deposits">입금 승인</TabsTrigger>
+            <TabsTrigger value="naming">작명 현황</TabsTrigger>
             <TabsTrigger value="refunds">환불 관리</TabsTrigger>
             <TabsTrigger value="stats">매출 통계</TabsTrigger>
             <TabsTrigger value="members">회원/방문</TabsTrigger>
@@ -99,6 +100,10 @@ function AdminInner({ embedded = false }: { embedded?: boolean }) {
 
           <TabsContent value="deposits" className="mt-6">
             <DepositApprovalTab />
+          </TabsContent>
+
+          <TabsContent value="naming" className="mt-6">
+            <NamingLicenseTab />
           </TabsContent>
 
           <TabsContent value="refunds" className="mt-6">
@@ -975,5 +980,149 @@ function CustomerAnalyticsSection() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+
+// ── 셀프작명 라이선스 현황 탭 ───────────────────────────────────────────────
+function NamingLicenseTab() {
+  const paymentsQuery = trpc.naming.listSelfNamingPayments.useQuery();
+  const rows = (paymentsQuery.data ?? []) as Array<{
+    id: number;
+    userId: number;
+    status: string;
+    paidAt: string | null;
+    createdAt: string;
+    depositorName: string | null;
+    depositorPhone: string | null;
+    userName: string | null;
+    userEmail: string | null;
+  }>;
+
+  const DAYS = 30;
+  const MS = DAYS * 24 * 60 * 60 * 1000;
+
+  function calcDaysLeft(paidAt: string | null): number | null {
+    if (!paidAt) return null;
+    const expires = new Date(new Date(paidAt).getTime() + MS);
+    const left = Math.ceil((expires.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+    return Math.max(0, left);
+  }
+
+  const paidRows = rows.filter((r) => r.status === "paid");
+  const pendingRows = rows.filter((r) => r.status !== "paid");
+
+  return (
+    <div className="space-y-6">
+      {/* 입금 대기 */}
+      {pendingRows.length > 0 && (
+        <Card className="hanji-card border-2" style={{ borderColor: "#b45309" }}>
+          <CardHeader>
+            <CardTitle className="text-xl font-extrabold" style={{ color: "#5c3d0a" }}>
+              ⏳ 작명권 입금 승인 대기 ({pendingRows.length}건)
+            </CardTitle>
+            <p className="text-sm mt-1" style={{ color: "#7c5a20" }}>
+              입금 탭에서 승인 처리하세요. 승인 즉시 30일 카운팅이 시작됩니다.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {pendingRows.map((r) => (
+              <div key={r.id} className="flex items-center justify-between p-4 rounded-xl border-2" style={{ background: "#fffbeb", borderColor: "#d97706" }}>
+                <div>
+                  <div className="text-base font-extrabold" style={{ color: "#5c3d0a" }}>
+                    {r.userName || r.userEmail || `회원 #${r.userId}`}
+                  </div>
+                  <div className="text-sm mt-0.5" style={{ color: "#7c5a20" }}>
+                    입금자: {r.depositorName || "—"} · {r.depositorPhone || "연락처 미입력"}
+                  </div>
+                  <div className="text-xs mt-0.5 text-muted-foreground">
+                    신청일: {new Date(r.createdAt).toLocaleString("ko-KR")}
+                  </div>
+                </div>
+                <span className="px-3 py-1.5 rounded-full text-sm font-extrabold text-white" style={{ background: "#b45309" }}>
+                  승인 대기
+                </span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 활성 라이선스 목록 */}
+      <Card className="hanji-card">
+        <CardHeader>
+          <CardTitle className="text-xl font-extrabold" style={{ color: "#2b1d10" }}>
+            셀프작명 이용권 현황 (결제완료 {paidRows.length}건)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {paymentsQuery.isLoading && (
+            <p className="text-base text-muted-foreground py-4">불러오는 중...</p>
+          )}
+          {!paymentsQuery.isLoading && paidRows.length === 0 && (
+            <p className="text-base text-muted-foreground py-4">결제 완료된 이용권이 없습니다.</p>
+          )}
+          <div className="space-y-3">
+            {paidRows.map((r) => {
+              const daysLeft = calcDaysLeft(r.paidAt);
+              const isExpired = daysLeft !== null && daysLeft === 0;
+              const isUrgent = daysLeft !== null && daysLeft > 0 && daysLeft <= 5;
+              const isActive = daysLeft !== null && daysLeft > 0;
+              const pctLeft = daysLeft !== null ? Math.round((daysLeft / DAYS) * 100) : 0;
+              const expiresAt = r.paidAt
+                ? new Date(new Date(r.paidAt).getTime() + MS).toLocaleDateString("ko-KR")
+                : "—";
+
+              return (
+                <div
+                  key={r.id}
+                  className="p-5 rounded-2xl border-2"
+                  style={{
+                    background: isExpired ? "#fef2f2" : isUrgent ? "#fffbeb" : "#f0fdf4",
+                    borderColor: isExpired ? "#fca5a5" : isUrgent ? "#fbbf24" : "#86efac",
+                  }}
+                >
+                  <div className="flex items-start justify-between flex-wrap gap-3">
+                    <div>
+                      <div className="text-lg font-extrabold" style={{ color: "#2b1d10" }}>
+                        {r.userName || r.userEmail || `회원 #${r.userId}`}
+                      </div>
+                      <div className="text-sm mt-1" style={{ color: "#5c3d0a" }}>
+                        결제일: {r.paidAt ? new Date(r.paidAt).toLocaleDateString("ko-KR") : "—"} &nbsp;·&nbsp; 만료일: {expiresAt}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      {isExpired ? (
+                        <span className="text-2xl font-extrabold text-red-700">만료</span>
+                      ) : (
+                        <div>
+                          <span className="text-3xl font-extrabold" style={{ color: isUrgent ? "#b45309" : "#15803d" }}>
+                            {daysLeft}일
+                          </span>
+                          <span className="text-base font-bold ml-1" style={{ color: "#5c3d0a" }}>남음</span>
+                          {isUrgent && <div className="text-sm font-extrabold text-amber-700 mt-0.5">⚠ 곧 만료</div>}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {/* 진행 바 */}
+                  {isActive && (
+                    <div className="mt-4 h-3 rounded-full overflow-hidden bg-gray-100">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${pctLeft}%`,
+                          background: isUrgent ? "#d97706" : "#16a34a",
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
