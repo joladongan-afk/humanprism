@@ -270,9 +270,15 @@ export interface NangangmangRecord {
   primaryElement: string; // 1순위 복덕오행 (木火土金水)
 }
 
-// 오행 상생 (생하는 오행)
+// 오행 상생 (생하는 오행: 이 오행을 낳아주는 어머니 오행 = 기존 보조오행/인성)
 const OHAENG_SHENG: Record<string, string> = {
   "木": "水", "火": "木", "土": "火", "金": "土", "水": "金",
+};
+
+// 오행 상생 (이 오행이 낳는 자식 오행 = 신규 추가 보조오행/식상)
+// 세션19: 복덕오행 조합 확장 - 경청자 님 확정
+const OHAENG_SAENG_ZASIK: Record<string, string> = {
+  "木": "火", "火": "土", "土": "金", "金": "水", "水": "木",
 };
 
 // 메모리 캐시
@@ -319,15 +325,19 @@ export function loadNangangmangDb(): Map<string, NangangmangRecord> {
 
 /**
  * 일간+월지로 복덕오행 조회
- * @returns { primary: 1순위오행, secondary: 1순위를 생하는 오행 }
+ * 세션19: 보조오행을 확장 - 주오행을 생하는 오행(인성, 기존) + 주오행이 생하는 오행(식상, 신규) 둘 다 포함.
+ * 예: 주오행=水 → 보조오행=[金(水를 생함), 木(水가 생함)]
+ * @returns { primary: 1순위오행, secondary: 보조오행 배열 (2개) }
  */
-export function getRequiredOhaeng(ilgan: string, birthMonth: string): { primary: string; secondary: string } | null {
+export function getRequiredOhaeng(ilgan: string, birthMonth: string): { primary: string; secondary: string[] } | null {
   if (nangangmangDb.size === 0) loadNangangmangDb();
   const key = `${ilgan}_${birthMonth}`;
   const record = nangangmangDb.get(key);
   if (!record) return null;
   const primary = record.primaryElement;
-  const secondary = OHAENG_SHENG[primary] || "";
+  const mother = OHAENG_SHENG[primary] || "";
+  const child = OHAENG_SAENG_ZASIK[primary] || "";
+  const secondary = [mother, child].filter((v) => v.length > 0);
   return { primary, secondary };
 }
 
