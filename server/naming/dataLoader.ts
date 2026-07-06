@@ -244,6 +244,24 @@ export function searchHanjaBySound(sound: string, limit: number = 30): HanjaReco
 }
 
 /**
+ * 모드D 전용: 특정 한글 음절에 해당하는 한자를 DB에서 전수 탐색 (limit 없음)
+ * 음절이 확정된 모드D에서 DB 순서에 의한 limit 잘림 문제를 근본 해결하기 위해 추가.
+ */
+export function searchHanjaBySoundAll(sound: string): HanjaRecord[] {
+  if (!sound || sound.trim().length === 0) return [];
+  const query = sound.trim();
+  const results: HanjaRecord[] = [];
+  for (const record of hanjaDb.values()) {
+    const parts = record.huneum.split(" ");
+    const lastPart = parts[parts.length - 1];
+    if (lastPart === query) {
+      results.push(record);
+    }
+  }
+  return results;
+}
+
+/**
  * 난강망 120분면 데이터: 일간×월지 → 복덕오행
  */
 export interface NangangmangRecord {
