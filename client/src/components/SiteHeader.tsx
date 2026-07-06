@@ -30,7 +30,7 @@ export default function SiteHeader({ activeOverride }: { activeOverride?: string
     { href: "/saju/new", label: "만세력" },
     { href: "/plans", label: "개인 상담" },
     { href: "/compatibility", label: "궁합", protected: true },
-    { href: "/naming/new", label: "작명 (준비 중)" },
+    { href: "/naming/new", label: "작명" },
     { href: "/appointments/new", label: "대면 상담" },
     { href: "/me", label: "내 상담실", protected: true },
   ];
