@@ -224,8 +224,8 @@ function DepositApprovalTab() {
                   <strong>{(r.depositorPhone as string) || "— (미입력)"}</strong>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  회원: {(r.userName as string) || (r.userEmail as string) || "—"}{" "}
-                  ({(r.userEmail as string) || `ID: ${(r as any).userId || "—"}`})
+                  회원: {(r.userName as string) || "이름없음"}{" "}
+                  (ID: {(r as any).userId || "—"})
                 </div>
               </div>
               <div className="flex gap-2 pt-1">
