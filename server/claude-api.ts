@@ -72,7 +72,7 @@ export async function invokeClaudeAPI(
   try {
     const response = await client.messages.create({
       model: MODEL,
-      max_tokens: params.maxTokens ?? 2048,
+      max_tokens: params.maxTokens ?? 4000,
       ...(systemBlocks && { system: systemBlocks }),
       messages: params.messages.map((m) => ({
         role: m.role,
