@@ -611,7 +611,7 @@ function SiteHeader() {
     { href: "/saju/new", label: "만세력" },
     { href: "/plans", label: "개인 상담" },
     { href: "/compatibility", label: "궁합" },
-    { href: "/naming/new", label: "작명 (준비 중)" },
+    { href: "/naming/new", label: "작명" },
     { href: "/appointments/new", label: "마스터 상담" },
     { href: "/me", label: "내 상담실", protected: true },
   ];
