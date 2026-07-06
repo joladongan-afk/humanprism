@@ -21,6 +21,7 @@ import {
   isBulmyong,
   getRequiredOhaeng,
   searchHanjaBySound,
+  searchHanjaBySoundAll,
   type HanjaRecord,
 } from "./dataLoader";
 import { checkNamingHazard } from "./nameSafety";
@@ -277,8 +278,8 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     for (const nameStr of nameCandidates) {
       const syl1 = nameStr[0];
       const syl2 = nameStr[1];
-      const allCands1 = searchHanjaBySound(syl1, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
-      const allCands2 = searchHanjaBySound(syl2, 50).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
+      const allCands1 = searchHanjaBySoundAll(syl1).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
+      const allCands2 = searchHanjaBySoundAll(syl2).filter((r) => !isBulmyong(r.char) && !simplifiedChars.has(r.char));
 
       // 복덕오행(주+보조)에 해당하는 한자만 후보로 남긴다 (완전자동 모드와 동일한 원칙)
       const cands1Primary = allCands1.filter((r) => r.ohaeng === requiredOhaeng.primary);
