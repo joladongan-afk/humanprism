@@ -116,7 +116,7 @@ export const depositRouter = router({
         `· 상품: ${cfg.label} (${cfg.amount.toLocaleString()}원)\n` +
         `· 입금자명: ${input.depositorName}\n` +
         `· 연락처: ${input.depositorPhone ?? "(미입력)"}\n` +
-        `· 회원ID: ${ctx.user.id} (${ctx.user.name ?? ""})\n` +
+        `· 회원: ${ctx.user.name ?? ctx.user.nickname ?? "이름없음"} (ID: ${ctx.user.id})\n` +
         `운영실에서 입금 확인 후 승인해 주세요.`;
       // 알림 실패가 신청 자체를 막지 않도록 안전 처리
       try {
