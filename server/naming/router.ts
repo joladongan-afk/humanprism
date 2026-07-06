@@ -288,6 +288,7 @@ export const namingRouter = router({
       birthHour: z.number().min(0).max(23).optional(),
       calendarType: z.enum(["solar", "lunar"]).optional(),
       page: z.number().min(1).optional(),
+      tier: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       try {
@@ -317,6 +318,7 @@ export const namingRouter = router({
           ilgan,
           birthMonth: birthMonthBranch,
           page: input.page ?? 1,
+          tier: input.tier ?? 1,
         });
 
         return { success: true, ...result };
@@ -397,3 +399,4 @@ export const namingRouter = router({
       };
     }),
 });
+
