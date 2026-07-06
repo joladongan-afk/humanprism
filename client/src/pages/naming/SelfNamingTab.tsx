@@ -247,7 +247,14 @@ export function SelfNamingTab() {
   const isAdmin = (user as any)?.role === "admin";
   const [loginOpen, setLoginOpen] = useState(false);
   const [depositOpen, setDepositOpen] = useState(false);
-  const [paid, setPaid] = useState(false);
+
+  // 셀프작명 30일 라이선스 조회 (DB 기반)
+  const licenseQuery = trpc.naming.getLicense.useQuery(undefined, {
+    enabled: isAuthenticated,
+    refetchOnWindowFocus: false,
+  });
+  const license = licenseQuery.data;
+  const paid = isAdmin || (license?.active === true);
 
   const [surnameKorean, setSurnameKorean] = useState("");
   const [surnameHanja, setSurnameHanja] = useState("");
@@ -366,6 +373,50 @@ export function SelfNamingTab() {
             1회 이용권 50,000원
           </p>
         </div>
+
+        {/* ── 라이선스 카운터 (결제 완료 고객에게만 표시) ── */}
+        {paid && !isAdmin && license && (
+          <div className="rounded-2xl border-2 p-5 mb-2" style={{ background: "#fffbeb", borderColor: "#8a5a0f" }}>
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <div className="text-xs font-bold mb-1" style={{ color: "#8a5a0f" }}>셀프작명 이용권 · 30일 이용 기간</div>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-4xl font-extrabold" style={{ color: license.daysLeft > 7 ? "#2b5a2e" : license.daysLeft > 3 ? "#b45309" : "#b91c1c" }}>
+                    {license.daysLeft}일
+                  </span>
+                  <span className="text-base font-bold" style={{ color: "#5c3d0a" }}>남음</span>
+                </div>
+              </div>
+              <div className="text-right text-sm space-y-0.5">
+                <div style={{ color: "#5c3d0a" }}>
+                  <span className="font-semibold">결제일</span>{" "}
+                  {new Date(license.paidAt).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
+                </div>
+                <div style={{ color: license.daysLeft <= 3 ? "#b91c1c" : "#5c3d0a" }}>
+                  <span className="font-semibold">만료일</span>{" "}
+                  {new Date(license.expiresAt).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}
+                  {license.daysLeft <= 3 && (
+                    <span className="ml-2 font-extrabold text-red-700">⚠ 곧 만료</span>
+                  )}
+                </div>
+              </div>
+            </div>
+            {/* 진행 바 */}
+            <div className="mt-4 h-3 rounded-full overflow-hidden bg-amber-100">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${Math.round((license.daysLeft / 30) * 100)}%`,
+                  background: license.daysLeft > 7 ? "#16a34a" : license.daysLeft > 3 ? "#d97706" : "#dc2626",
+                }}
+              />
+            </div>
+            <div className="mt-1 flex justify-between text-xs font-semibold" style={{ color: "#8a5a0f" }}>
+              <span>이용 중</span>
+              <span>30일 중 {30 - license.daysLeft}일 경과</span>
+            </div>
+          </div>
+        )}
 
         {!paid && !isAdmin && (
           <div className="flex flex-col items-center justify-center gap-3 py-6 border-2 border-dashed border-[var(--gold)]/50 rounded-xl bg-[color-mix(in_oklch,var(--gold)_6%,transparent)]">
@@ -674,7 +725,7 @@ export function SelfNamingTab() {
         open={depositOpen}
         onOpenChange={setDepositOpen}
         planType="self_naming"
-        onDepositSuccess={() => setPaid(true)}
+        onDepositSuccess={() => licenseQuery.refetch()}
       />
     </div>
   );
