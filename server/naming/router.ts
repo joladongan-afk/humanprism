@@ -154,7 +154,7 @@ export const namingRouter = router({
           : { hasBulmyong: false, bulmyongChars: [] };
 
         // 3-1. 복덕오행 계산 (생년월일 있을 때)
-        let requiredOhaeng: { primary: string; secondary: string } | null = null;
+        let requiredOhaeng: { primary: string; secondary: string[] } | null = null;
         if (input.birthYear && input.birthMonth && input.birthDay) {
           try {
             let year = input.birthYear;
