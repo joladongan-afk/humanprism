@@ -58,17 +58,26 @@ const MODE_OPTIONS: { no: number; value: "A" | "B" | "C" | "D"; label: string; d
 ];
 
 const OHAENG_COLOR: Record<string, string> = {
-  木: "text-green-600", 火: "text-red-500",
-  土: "text-yellow-600", 金: "text-gray-500", 水: "text-blue-500",
+  木: "text-green-700", 火: "text-red-700",
+  土: "text-yellow-800", 金: "text-gray-700", 水: "text-blue-700",
 };
 const OHAENG_BG: Record<string, string> = {
-  木: "bg-green-50 border-green-200", 火: "bg-red-50 border-red-200",
-  土: "bg-yellow-50 border-yellow-200", 金: "bg-gray-50 border-gray-200", 水: "bg-blue-50 border-blue-200",
+  木: "bg-green-50 border-green-300", 火: "bg-red-50 border-red-300",
+  土: "bg-yellow-50 border-yellow-300", 金: "bg-gray-100 border-gray-300", 水: "bg-blue-50 border-blue-300",
 };
-const GILHYUNG_STYLE: Record<string, string> = {
-  大吉: "bg-[color-mix(in_oklch,var(--gold)_22%,transparent)] text-[var(--gold)] font-bold border-[var(--gold)]",
-  吉: "bg-emerald-50 text-emerald-700 border-emerald-300",
-  半吉半凶: "bg-gray-100 text-gray-500 border-gray-300",
+// 수리사격 등급별 텍스트 색상 (진한 고동/경고색 - 세션19 가독성 개선)
+const GILHYUNG_TEXT_COLOR: Record<string, string> = {
+  大吉: "#5c3d0a", // 진한 고동색(금)
+  小吉: "#2f5233", // 진한 녹갈색
+  小凶: "#8a2e1a", // 진한 경고 적갈색
+  大凶: "#7a1f1f",
+};
+// 원격/형격/이격/정격 4칸 각각 다른 색상 테마 (세션19: 위치별 구분 요청 반영)
+const POSITION_STYLE: Record<string, { bg: string; border: string }> = {
+  원격: { bg: "#FBF1DC", border: "#C9971C" }, // 금(고동/황금) 계열
+  형격: { bg: "#F7E4DF", border: "#B5502F" }, // 주사(붉은 고동) 계열
+  이격: { bg: "#E7F1EC", border: "#3F8A73" }, // 청자(초록빛) 계열
+  정격: { bg: "#EDE6DA", border: "#6B4A25" }, // 먹(짙은 고동) 계열
 };
 
 // ─── 한자 선택 입력 ─────────────────────────────────────────
@@ -197,14 +206,22 @@ function ResultCard({ surnameKorean, surnameHanja, candidate }: {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mb-4">
-        {gyeokList.map((g) => (
-          <div key={g.label} className={`text-center rounded-lg border-2 px-1.5 py-2 ${GILHYUNG_STYLE[g.judgment] || "bg-gray-50 border-gray-200"}`}>
-            <div className="text-[11px] font-semibold opacity-70">{g.label}</div>
-            <div className="text-sm font-extrabold">{g.strokes}획</div>
-            <div className="text-[11px] font-bold">{g.judgment}</div>
-          </div>
-        ))}
+      <div className="grid grid-cols-4 gap-2.5 mb-4">
+        {gyeokList.map((g) => {
+          const pos = POSITION_STYLE[g.label] || { bg: "#F5F5F4", border: "#A8A29E" };
+          const gradeColor = GILHYUNG_TEXT_COLOR[g.judgment] || "#3B2A18";
+          return (
+            <div
+              key={g.label}
+              className="text-center rounded-lg border-2 px-1.5 py-2.5"
+              style={{ background: pos.bg, borderColor: pos.border }}
+            >
+              <div className="text-xs font-bold" style={{ color: pos.border }}>{g.label}</div>
+              <div className="text-lg font-extrabold mt-0.5" style={{ color: "#2b1d10" }}>{g.strokes}획</div>
+              <div className="text-sm font-extrabold" style={{ color: gradeColor }}>{g.judgment}</div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex items-center justify-center gap-2">
@@ -247,7 +264,7 @@ export function SelfNamingTab() {
   const [totalCount, setTotalCount] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [requiredOhaeng, setRequiredOhaeng] = useState<{ primary: string; secondary: string } | null>(null);
+  const [requiredOhaeng, setRequiredOhaeng] = useState<{ primary: string; secondary: string[] } | null>(null);
   const [currentTier, setCurrentTier] = useState<1 | 2 | 3>(1);
   const [tierMessage, setTierMessage] = useState<string | undefined>(undefined);
 
@@ -603,8 +620,8 @@ export function SelfNamingTab() {
                   총 <span className="text-[var(--gold)] font-extrabold">{totalCount.toLocaleString()}</span>개 중 상위 {results.length}개
                 </h3>
                 {requiredOhaeng && (
-                  <span className="text-sm font-bold px-3.5 py-1.5 rounded-full bg-[color-mix(in_oklch,var(--gold)_12%,transparent)] border border-[var(--gold)]/50 text-amber-900">
-                    복덕오행 · {requiredOhaeng.primary}(주) · {requiredOhaeng.secondary}(보조)
+                  <span className="text-base font-bold px-4 py-2 rounded-full bg-[color-mix(in_oklch,var(--gold)_14%,white)] border-2 border-[var(--gold)]/60" style={{ color: "#5c3d0a" }}>
+                    복덕오행 · {requiredOhaeng.primary}(주) · {requiredOhaeng.secondary.join("·")}(보조)
                   </span>
                 )}
               </div>
