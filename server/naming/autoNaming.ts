@@ -41,6 +41,7 @@ export interface AutoNameGenerationRequest {
   ilgan: string;
   birthMonth: string;
   page?: number;
+  tier?: 1 | 2 | 3; // 1=대길만, 2=대길+소길, 3=대길+소길+소흉 (기본값: 1)
 }
 
 export interface AutoNameCandidate {
@@ -67,6 +68,8 @@ export interface AutoNameGenerationResponse {
   pageSize: number;
   hasMore: boolean;
   requiredOhaeng: { primary: string; secondary: string };
+  tier: 1 | 2 | 3;
+  tierMessage?: string; // 0개일 때 다음 단계 안내 메시지
 }
 
 function getStrokePairsFromComboTable(surnameStrokes: number): number[][] {
@@ -170,7 +173,8 @@ function processCandidatePair(
   surnameKorean: string,
   requiredOhaeng: { primary: string; secondary: string },
   validCandidates: AutoNameCandidate[],
-  skipUncommonFilter: boolean = false
+  skipUncommonFilter: boolean = false,
+  allowedTier: 1 | 2 | 3 = 1
 ): void {
   if (isBulmyong(c1.char) || isBulmyong(c2.char)) {
     return;
@@ -190,11 +194,19 @@ function processCandidatePair(
     jeong: judgeSuri(suri4.jeong).gilhyung,
   };
 
+  // tier별 수리사격 허용 기준
+  // 1차(대길만): 大吉 / 2차(소길 추가): 大吉+小吉 / 3차(소흉 허용): 大吉+小吉+小凶
+  const allowedGrades = (allowedTier === 1)
+    ? new Set(["大吉"])
+    : (allowedTier === 2)
+    ? new Set(["大吉", "小吉"])
+    : new Set(["大吉", "小吉", "小凶"]);
+
   if (
-    suri4Judgment.won === "凶" || suri4Judgment.won === "半吉半凶" ||
-    suri4Judgment.hyeong === "凶" || suri4Judgment.hyeong === "半吉半凶" ||
-    suri4Judgment.i === "凶" || suri4Judgment.i === "半吉半凶" ||
-    suri4Judgment.jeong === "凶" || suri4Judgment.jeong === "半吉半凶"
+    !allowedGrades.has(suri4Judgment.won) ||
+    !allowedGrades.has(suri4Judgment.hyeong) ||
+    !allowedGrades.has(suri4Judgment.i) ||
+    !allowedGrades.has(suri4Judgment.jeong)
   ) {
     return;
   }
@@ -247,6 +259,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     ilgan,
     birthMonth,
     page = 1,
+    tier = 1,
   } = input;
 
   const surnameStrokes = calculateStrokes(surnameHanja);
@@ -289,13 +302,13 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
       // 경우 A: 첫 글자=주 오행, 둘째 글자=보조 오행
       for (const c1 of cands1Primary) {
         for (const c2 of cands2Secondary) {
-          processCandidatePair(c1, c2, surnameHanja, surnameKorean, requiredOhaeng, validCandidates, true);
+          processCandidatePair(c1, c2, surnameHanja, surnameKorean, requiredOhaeng, validCandidates, true, tier);
         }
       }
       // 경우 B: 첫 글자=보조 오행, 둘째 글자=주 오행
       for (const c1 of cands1Secondary) {
         for (const c2 of cands2Primary) {
-          processCandidatePair(c1, c2, surnameHanja, surnameKorean, requiredOhaeng, validCandidates, true);
+          processCandidatePair(c1, c2, surnameHanja, surnameKorean, requiredOhaeng, validCandidates, true, tier);
         }
       }
     }
@@ -311,6 +324,18 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     const startIdxD = (page - 1) * pageSizeD;
     const endIdxD = startIdxD + pageSizeD;
 
+    const tierLabelD = tier === 1 ? "1차(대길)" : tier === 2 ? "2차(소길 포함)" : "3차(소흉 포함)";
+    let tierMessageD: string | undefined;
+    if (totalCountD === 0) {
+      if (tier === 1) {
+        tierMessageD = "NEXT_TIER_2";
+      } else if (tier === 2) {
+        tierMessageD = "NEXT_TIER_3";
+      } else {
+        tierMessageD = "NO_RESULT";
+      }
+    }
+
     return {
       candidates: validCandidates.slice(startIdxD, endIdxD),
       totalCount: totalCountD,
@@ -318,6 +343,8 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
       pageSize: pageSizeD,
       hasMore: endIdxD < totalCountD,
       requiredOhaeng,
+      tier,
+      tierMessage: tierMessageD,
     };
   }
 
@@ -358,7 +385,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
         processCandidatePair(
           specifiedRecord, c2,
           surnameHanja, surnameKorean,
-          requiredOhaeng, validCandidates
+          requiredOhaeng, validCandidates, false, tier
         );
       }
     } else {
@@ -375,7 +402,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
         processCandidatePair(
           c1, specifiedRecord,
           surnameHanja, surnameKorean,
-          requiredOhaeng, validCandidates
+          requiredOhaeng, validCandidates, false, tier
         );
       }
     }
@@ -406,7 +433,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
           processCandidatePair(
             c1, c2,
             surnameHanja, surnameKorean,
-            requiredOhaeng, validCandidates
+            requiredOhaeng, validCandidates, false, tier
           );
           if (validCandidates.length > before) takenThisPairA++;
           if (validCandidates.length >= CANDIDATE_CAP) break outer;
@@ -429,7 +456,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
           processCandidatePair(
             c1, c2,
             surnameHanja, surnameKorean,
-            requiredOhaeng, validCandidates
+            requiredOhaeng, validCandidates, false, tier
           );
           if (validCandidates.length > beforeB) takenThisPairB++;
           if (validCandidates.length >= CANDIDATE_CAP) break outer;
@@ -451,7 +478,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
             processCandidatePair(
               c1, c2,
               surnameHanja, surnameKorean,
-              requiredOhaeng, validCandidates
+              requiredOhaeng, validCandidates, false, tier
             );
           }
         }
@@ -468,7 +495,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
             processCandidatePair(
               c1, c2,
               surnameHanja, surnameKorean,
-              requiredOhaeng, validCandidates
+              requiredOhaeng, validCandidates, false, tier
             );
           }
         }
@@ -496,6 +523,17 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
   const endIdx = startIdx + pageSize;
   const paginatedCandidates = validCandidates.slice(startIdx, endIdx);
 
+  let tierMessage: string | undefined;
+  if (totalCount === 0) {
+    if (tier === 1) {
+      tierMessage = "NEXT_TIER_2";
+    } else if (tier === 2) {
+      tierMessage = "NEXT_TIER_3";
+    } else {
+      tierMessage = "NO_RESULT";
+    }
+  }
+
   return {
     candidates: paginatedCandidates,
     totalCount,
@@ -503,5 +541,7 @@ export function generateAutoNames(input: AutoNameGenerationRequest): AutoNameGen
     pageSize,
     hasMore: endIdx < totalCount,
     requiredOhaeng,
+    tier,
+    tierMessage,
   };
 }
