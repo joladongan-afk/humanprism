@@ -419,12 +419,25 @@ export function SelfNamingTab() {
         )}
 
         {!paid && !isAdmin && (
-          <div className="flex flex-col items-center justify-center gap-3 py-6 border-2 border-dashed border-[var(--gold)]/50 rounded-xl bg-[color-mix(in_oklch,var(--gold)_6%,transparent)]">
-            <Lock className="w-7 h-7 text-[var(--gold)]" />
-            <p className="text-base font-semibold text-gray-700 text-center px-4">
-              결제 후 조건을 입력하시면, 바로 이름을 만들어드립니다.
+          <div className="flex flex-col items-center justify-center gap-4 py-7 border-2 rounded-2xl" style={{ background: "#fffbeb", borderColor: "#8a5a0f" }}>
+            {/* 30일 이용 기간 강조 안내 */}
+            <div className="text-center px-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-3" style={{ background: "#8a5a0f" }}>
+                <span className="text-white font-extrabold text-base">📅 결제일로부터 30일간 무제한 이용</span>
+              </div>
+              <p className="text-base font-bold" style={{ color: "#5c3d0a" }}>
+                출생신고 기간(30일) 동안 언제든지, 횟수 제한 없이 이름을 검색할 수 있습니다.
+              </p>
+              <p className="text-sm mt-1.5" style={{ color: "#7c5a20" }}>
+                마음에 드는 이름을 찾을 때까지 조건을 바꿔가며 반복 탐색 가능합니다.
+              </p>
+            </div>
+            <div className="w-full max-w-sm h-px" style={{ background: "#d4a84b" }} />
+            <Lock className="w-7 h-7" style={{ color: "#8a5a0f" }} />
+            <p className="text-base font-semibold text-center px-4" style={{ color: "#5c3d0a" }}>
+              결제 후 바로 이용하실 수 있습니다.
             </p>
-            <Button size="lg" className="h-12 px-8 text-base font-bold" style={{ background: "#8b1a1a", color: "#fff" }} onClick={() => (isAuthenticated ? setDepositOpen(true) : setLoginOpen(true))}>
+            <Button size="lg" className="h-14 px-10 text-lg font-extrabold" style={{ background: "#8b1a1a", color: "#fff" }} onClick={() => (isAuthenticated ? setDepositOpen(true) : setLoginOpen(true))}>
               결제 후 셀프작명 시작하기
             </Button>
           </div>
