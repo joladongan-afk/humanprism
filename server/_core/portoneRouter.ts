@@ -57,6 +57,12 @@ async function fulfillPaidPlan(params: {
     return { paymentId: params.paymentId, requiresAppointment: false, compatibility: true } as const;
   }
 
+  // 셀프작명은 채팅 세션 없이 결제 즉시 30일 라이선스가 시작된다.
+  // payments.paidAt이 이미 기록되어 있으므로 별도 처리 없이 여기서 바로 반환.
+  if (params.planType === "self_naming" || params.planType === "master_naming") {
+    return { paymentId: params.paymentId, requiresAppointment: false, namingLicense: true } as const;
+  }
+
   const startedAt = new Date();
   const expiresAt = new Date(startedAt.getTime() + cfg.durationMinutes * 60 * 1000);
   const sessionId = await db.createConsultSession({
