@@ -148,7 +148,6 @@ function calculateMatchingScore(
   for (const j of judgments) {
     if (j === "大吉") suri4Weight += 3;
     else if (j === "吉") suri4Weight += 2;
-    else if (j === "半吉半凶") suri4Weight += 1;
   }
 
   const finalScore = baseScore * 0.8 + (suri4Weight / 12) * 20;
@@ -192,10 +191,10 @@ function processCandidatePair(
   };
 
   if (
-    suri4Judgment.won === "凶" ||
-    suri4Judgment.hyeong === "凶" ||
-    suri4Judgment.i === "凶" ||
-    suri4Judgment.jeong === "凶"
+    suri4Judgment.won === "凶" || suri4Judgment.won === "半吉半凶" ||
+    suri4Judgment.hyeong === "凶" || suri4Judgment.hyeong === "半吉半凶" ||
+    suri4Judgment.i === "凶" || suri4Judgment.i === "半吉半凶" ||
+    suri4Judgment.jeong === "凶" || suri4Judgment.jeong === "半吉半凶"
   ) {
     return;
   }
