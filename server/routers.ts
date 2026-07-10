@@ -797,7 +797,7 @@ export const appRouter = router({
                 cachedBlocks: layerCachedBlocks,
                 dynamicContext: layerDynamic,
                 userQuery: retryInstruction,
-                maxTokens: 2048,
+                maxTokens: 4000,
                 ragOverride: useRagSearch ? undefined : "",
               });
               if (retryContent && retryContent.trim().length > 0) {
