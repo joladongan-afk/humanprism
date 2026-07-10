@@ -741,7 +741,7 @@ export const appRouter = router({
             cachedBlocks: layerCachedBlocks,
             dynamicContext: layerDynamic,
             userQuery: input.content,
-            maxTokens: 2048,
+            maxTokens: 4000,
             ragOverride: useRagSearch ? undefined : "",
           });
         } catch (err) {
