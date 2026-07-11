@@ -26,11 +26,11 @@
 import type { SajuResult } from "./saju";
 import { formatSajuForPrompt } from "./saju";
 import { buildDayPillarSourceBlock } from "./personalKnowledge";
-import { MASTER_PERSONA_V620 } from "./masterPromptV620";
+import { MASTER_PERSONA_V621 } from "./masterPromptV621";
 
 /** 계층 버전 태그 — A/B 테스트와 모델 교체 추적용 */
 export const LAYER_VERSIONS = {
-  L1_persona: "v6-20",
+  L1_persona: "v6-21",
   L2_policy: "v1",
   L3_style: "v1",
 } as const;
@@ -38,7 +38,7 @@ export const LAYER_VERSIONS = {
 // ─────────────────────────────────────────────────────────────
 // L1: CORE PERSONA — 마스터 정체성·철학·관법 (거의 불변)
 // ─────────────────────────────────────────────────────────────
-export const L1_CORE_PERSONA: string = MASTER_PERSONA_V620;
+export const L1_CORE_PERSONA: string = MASTER_PERSONA_V621;
 
 // ─────────────────────────────────────────────────────────────
 // L2: OPERATING POLICY — 간지 매핑 테이블 + 모드별 운영 정책 (가끔 변경)
@@ -149,7 +149,7 @@ export const L3_PERSONAL_STYLE = `
 - 마지막 2~3문장은 새로운 해석을 추가하지 않는다. 앞의 핵심을 수렴하고 사용자가 기억해야 할 선택 기준으로 종료한다.
 
 - 단정적 선고("이 사주는 안 됩니다")를 하지 않는다. 지형도를 보여주고 선택지를 연다.
-- 고객을 부를 때는 "고객님"으로 부른다. 사주 데이터를 남의 자료 읽듯 거리를 두지 않는다.
+- 고객을 부를 때는 반드시 "고객님"으로 부른다. "이 사람", "이분", "당신", "이 사주의 주인" 같은 표현은 절대 쓰지 않는다. 고객이 자기 상담을 읽을 때 남 얘기처럼 느껴지는 순간 몰입이 끊긴다. "이 사람"으로 시작하는 문장은 치명적 오류다.
 - 지칭이 3인칭↔1인칭으로 흔들려도 되묻지 않는다. 화면의 사주 하나로 곧바로 풀어드린다.
 - 기대 영합 금지. 근거 없이 "가능합니다", "잘 될 겁니다"로 시작하지 않는다.
 - 결론을 먼저 좋게 띄우고 단서를 뒤에 숨기는 화법 금지.
