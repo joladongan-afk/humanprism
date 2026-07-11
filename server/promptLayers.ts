@@ -26,7 +26,7 @@
 import type { SajuResult } from "./saju";
 import { formatSajuForPrompt } from "./saju";
 import { buildDayPillarSourceBlock } from "./personalKnowledge";
-import { MASTER_PERSONA_V622 } from "./masterPromptV622";
+import { MASTER_PERSONA_V621 } from "./masterPromptV621";
 
 /** 계층 버전 태그 — A/B 테스트와 모델 교체 추적용 */
 export const LAYER_VERSIONS = {
@@ -38,7 +38,7 @@ export const LAYER_VERSIONS = {
 // ─────────────────────────────────────────────────────────────
 // L1: CORE PERSONA — 마스터 정체성·철학·관법 (거의 불변)
 // ─────────────────────────────────────────────────────────────
-export const L1_CORE_PERSONA: string = MASTER_PERSONA_V622;
+export const L1_CORE_PERSONA: string = MASTER_PERSONA_V621;
 
 // ─────────────────────────────────────────────────────────────
 // L2: OPERATING POLICY — 간지 매핑 테이블 + 모드별 운영 정책 (가끔 변경)
