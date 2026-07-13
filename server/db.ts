@@ -239,6 +239,29 @@ export async function deleteSajuProfile(id: number) {
   await db.delete(sajuProfiles).where(eq(sajuProfiles.id, id));
 }
 
+export async function updateSajuProfile(
+  id: number,
+  patch: Partial<{
+    label: string;
+    realName: string | null;
+    gender: "male" | "female";
+    calendarType: "solar" | "lunar";
+    isLeapMonth: boolean;
+    birthYear: number;
+    birthMonth: number;
+    birthDay: number;
+    birthHour: number | null;
+    birthMinute: number | null;
+    birthplace: string | null;
+    isDst: boolean;
+    sajuData: Record<string, unknown> | null;
+  }>
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(sajuProfiles).set(patch).where(eq(sajuProfiles.id, id));
+}
+
 // ============================================================================
 // Saju Comparisons (궁합)
 // ============================================================================
