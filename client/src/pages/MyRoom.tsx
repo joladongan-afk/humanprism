@@ -288,14 +288,12 @@ export default function MyRoom() {
           <Card className="hanji-card">
             <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-xl hanja-display">사주 프로필</CardTitle>
-              <select
-                value={sajuSortBy}
-                onChange={(e) => setSajuSortBy(e.target.value as "createdAt" | "label")}
-                className="text-sm border border-amber-400/50 rounded px-2 py-1 bg-background text-foreground"
-              >
-                <option value="createdAt">입력순</option>
-                <option value="label">이름순</option>
-              </select>
+              <div className="flex gap-1">
+                <Button size="sm" variant={sajuSortBy === "createdAt" ? "default" : "outline"}
+                  onClick={() => setSajuSortBy("createdAt")}>입력순</Button>
+                <Button size="sm" variant={sajuSortBy === "label" ? "default" : "outline"}
+                  onClick={() => setSajuSortBy("label")}>이름순</Button>
+              </div>
               <div className="flex items-center gap-2">
                 <Link href="/compatibility">
                   <Button size="sm" variant="outline" className="bg-card">
