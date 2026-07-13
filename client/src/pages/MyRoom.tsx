@@ -81,6 +81,13 @@ export default function MyRoom() {
   const [activeTab, setActiveTab] = useState("profiles");
   const [editSajuId, setEditSajuId] = useState<number | null>(null);
   const [editSajuLabel, setEditSajuLabel] = useState("");
+  // 정보수정 모달 상태
+  const [editProfileModal, setEditProfileModal] = useState<null | {
+    id: number; label: string; gender: "male" | "female";
+    birthYear: number; birthMonth: number; birthDay: number;
+    birthHour: number | null; birthMinute: number | null;
+    calendarType: "solar" | "lunar"; birthplace: string | null;
+  }>(null);
   const updateSajuMutation = trpc.saju.update.useMutation({
     onSuccess: () => {
       setEditSajuId(null);
@@ -357,108 +364,25 @@ export default function MyRoom() {
                       · {p.gender === "male" ? "남" : "여"}
                     </div>
                   </div>
-                  <div className="flex flex-col items-stretch gap-2 shrink-0 min-w-[90px]">
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white w-full" onClick={() => setViewProfileId(p.id)}>
+                  <div className="flex gap-2 shrink-0">
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setViewProfileId(p.id)}>
                         만세력 보기
                       </Button>
-                      {editSajuId === p.id ? (
-                        <div className="flex gap-1">
-                          <Input
-                            value={editSajuLabel}
-                            onChange={(e) => setEditSajuLabel(e.target.value)}
-                            className="h-8 text-sm px-2"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") updateSajuMutation.mutate({ id: p.id, label: editSajuLabel.trim() });
-                              if (e.key === "Escape") setEditSajuId(null);
-                            }}
-                            autoFocus
-                          />
-                          <Button size="sm" className="h-8 px-2 bg-green-600 hover:bg-green-700 text-white"
-                            onClick={() => updateSajuMutation.mutate({ id: p.id, label: editSajuLabel.trim() })}>
-                            <Check className="w-3 h-3" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="h-8 px-2"
-                            onClick={() => setEditSajuId(null)}>
-                            <X className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white w-full"
-                          onClick={() => { setEditSajuId(p.id); setEditSajuLabel(p.label ?? ""); }}>
-                          <Pencil className="w-3 h-3 mr-1" /> 이름 수정
-                        </Button>
-                      )}
-                      <Link href={`/saju/new?edit=${p.id}`}>
-                        <Button size="sm" variant="outline" className="w-full text-xs">
-                          만세력 재입력
-                        </Button>
-                      </Link>
-                    {(() => {
-                      // 이 사주에 연결된 '진행 중(시간 남은)' 세션이 있는지 미리 계산해 버튼 문구를 바꿜다.
-                      const sessions = sessionsQuery.data;
-                      const resumable = (sessions ?? []).find(
-                        (s) => s.status === 'active'
-                          && s.sajuProfileId === p.id
-                          && new Date(s.expiresAt).getTime() >= Date.now()
-                      );
-                      const loading = sessionsQuery.isLoading || sessions === undefined;
-                      return (
-                        <Button
-                          size="sm"
-                          variant="default"
-                          className="text-base"
-                          disabled={loading}
-                          onClick={() => {
-                            // 세션 목록이 아직 로딩 중이면 채워진 뒤 다시 누르도록 막는다.
-                            // (첫 클릭 시 데이터가 비어 있어 잘못 이동하던 버그 방지)
-                            if (loading) {
-                              toast.info("상담 기록을 불러오는 중입니다. 잠시만 기다려 주세요.");
-                              return;
-                            }
-                            if (resumable) {
-                              // 보시던 상담이 있으면 곳바로 그 채팅창으로 이어준다.
-                              setLocation(`/consult/${resumable.id}`);
-                            } else {
-                              // 이 사주로 보던 상담이 없으면 새 상담(결제) 흐름으로 안내한다.
-                              setLocation(`/plans?profile=${p.id}`);
-                            }
-                          }}
-                        >
-                          {loading ? "불러오는 중..." : resumable ? "이어서 상담" : "새 상담 시작"}
-                        </Button>
-                      );
-                    })()}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="text-base border-2 border-destructive text-destructive hover:bg-destructive hover:text-white"
-                      onClick={async () => {
-                        // 1단계: 일반 삭제 확인
-                        const ok = await confirm({
-                          title: "사주 삭제",
-                          description: "이 사주를 삭제하시겠습니까?",
-                          confirmText: "삭제",
-                          destructive: true,
-                        });
-                        if (!ok) return;
-                        // 2단계: 궁합 기록 확인 (force=false)
-                        const result = await deleteSajuMutation.mutateAsync({ id: p.id, force: false });
-                        if (!result.success && result.compatCount > 0) {
-                          // 궁합 기록이 있으면 추가 경고
-                          const forceOk = await confirm({
-                            title: "궁합 기록 존재",
-                            description: `이 사주로 본 궁합 기록이 ${result.compatCount}개 있습니다.\n사주를 삭제하면 궁합 기록도 함께 사라집니다.\n그래도 삭제하시겠습니까?`,
-                            confirmText: "모두 삭제",
-                            destructive: true,
-                          });
-                          if (forceOk) deleteSajuMutation.mutate({ id: p.id, force: true });
-                        }
-                      }}
-                      disabled={deleteSajuMutation.isPending}
-                    >
-                      {deleteSajuMutation.isPending ? "삭제 중..." : "삭제"}
-                    </Button>
-                    <SajuDownloadButton sajuId={p.id} label={p.label} className="border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white" />
+                      <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white"
+                        onClick={() => setEditProfileModal({
+                          id: p.id,
+                          label: p.label ?? "",
+                          gender: p.gender as "male" | "female",
+                          birthYear: p.birthYear,
+                          birthMonth: p.birthMonth,
+                          birthDay: p.birthDay,
+                          birthHour: p.birthHour ?? null,
+                          birthMinute: p.birthMinute ?? null,
+                          calendarType: p.calendarType as "solar" | "lunar",
+                          birthplace: p.birthplace ?? null,
+                        })}>
+                        <Pencil className="w-3 h-3 mr-1" /> 정보 수정
+                      </Button>
                   </div>
                 </div>
               ))}
@@ -850,6 +774,88 @@ export default function MyRoom() {
           })()}
         </DialogContent>
       </Dialog>
+
+      {/* 정보수정 모달 */}
+      {editProfileModal && (
+        <Dialog open={!!editProfileModal} onOpenChange={(open) => { if (!open) setEditProfileModal(null); }}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>사주 정보 수정</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <div>
+                <label className="text-sm font-medium block mb-1">이름 / 식별자</label>
+                <Input value={editProfileModal.label} onChange={(e) => setEditProfileModal(m => m ? { ...m, label: e.target.value } : m)} />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-sm font-medium block mb-1">성별</label>
+                  <select className="w-full border rounded px-2 py-1.5 text-sm bg-background" value={editProfileModal.gender}
+                    onChange={(e) => setEditProfileModal(m => m ? { ...m, gender: e.target.value as "male" | "female" } : m)}>
+                    <option value="male">남</option>
+                    <option value="female">여</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium block mb-1">양력/음력</label>
+                  <select className="w-full border rounded px-2 py-1.5 text-sm bg-background" value={editProfileModal.calendarType}
+                    onChange={(e) => setEditProfileModal(m => m ? { ...m, calendarType: e.target.value as "solar" | "lunar" } : m)}>
+                    <option value="solar">양력</option>
+                    <option value="lunar">음력</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="text-sm font-medium block mb-1">년</label>
+                  <Input type="number" value={editProfileModal.birthYear} onChange={(e) => setEditProfileModal(m => m ? { ...m, birthYear: parseInt(e.target.value) || m.birthYear } : m)} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium block mb-1">월</label>
+                  <Input type="number" min={1} max={12} value={editProfileModal.birthMonth} onChange={(e) => setEditProfileModal(m => m ? { ...m, birthMonth: parseInt(e.target.value) || m.birthMonth } : m)} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium block mb-1">일</label>
+                  <Input type="number" min={1} max={31} value={editProfileModal.birthDay} onChange={(e) => setEditProfileModal(m => m ? { ...m, birthDay: parseInt(e.target.value) || m.birthDay } : m)} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-sm font-medium block mb-1">시 (0~23, 빈칸=시 모름)</label>
+                  <Input type="number" min={0} max={23} placeholder="모름"
+                    value={editProfileModal.birthHour !== null ? editProfileModal.birthHour : ""}
+                    onChange={(e) => setEditProfileModal(m => m ? { ...m, birthHour: e.target.value === "" ? null : parseInt(e.target.value) } : m)} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium block mb-1">분</label>
+                  <Input type="number" min={0} max={59} placeholder="0"
+                    value={editProfileModal.birthMinute !== null ? editProfileModal.birthMinute : ""}
+                    onChange={(e) => setEditProfileModal(m => m ? { ...m, birthMinute: e.target.value === "" ? null : parseInt(e.target.value) } : m)} />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium block mb-1">출생지</label>
+                <Input placeholder="서울" value={editProfileModal.birthplace ?? ""}
+                  onChange={(e) => setEditProfileModal(m => m ? { ...m, birthplace: e.target.value || null } : m)} />
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={() => setEditProfileModal(null)}>취소</Button>
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white"
+                disabled={updateSajuMutation.isPending}
+                onClick={() => {
+                  if (!editProfileModal) return;
+                  const { id, ...patch } = editProfileModal;
+                  updateSajuMutation.mutate({ id, ...patch }, {
+                    onSuccess: () => { setEditProfileModal(null); profilesQuery.refetch(); toast.success("정보가 수정되었습니다."); }
+                  });
+                }}>
+                {updateSajuMutation.isPending ? "저장 중..." : "저장"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
