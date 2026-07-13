@@ -52,7 +52,7 @@ export default function MyRoom() {
     redirectOnUnauthenticated: true,
   });
 
-  const [sajuSortBy, setSajuSortBy] = useState<"createdAt" | "label">("createdAt");
+  const [sajuSortBy, setSajuSortBy] = useState<"createdAt" | "label">("label");
   const profilesQuery = trpc.saju.list.useQuery({ sortBy: sajuSortBy }, { enabled: isAuthenticated });
   const sessionsQuery = trpc.session.list.useQuery(undefined, { enabled: isAuthenticated });
   const paymentsQuery = trpc.payment.list.useQuery(undefined, { enabled: isAuthenticated });
