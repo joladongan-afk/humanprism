@@ -339,53 +339,98 @@ export default function MyRoom() {
               {(profilesQuery.data ?? []).length === 0 && (
                 <p className="text-lg text-muted-foreground">아직 등록된 사주가 없습니다.</p>
               )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {(profilesQuery.data ?? []).map((p) => (
                 <div
                   key={p.id}
-                  className={`flex items-center gap-3 p-3 border rounded-md ${
+                  className={`flex flex-col gap-3 p-4 border rounded-lg ${
                     isOperator && selectedProfiles.has(p.id)
                       ? "border-primary/60 bg-primary/5"
                       : "border-border"
                   }`}
                 >
-                  {isOperator && (
-                    <Checkbox
-                      checked={selectedProfiles.has(p.id)}
-                      onCheckedChange={() => toggleProfile(p.id)}
-                      className="size-5 border-2 border-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary shrink-0"
-                    />
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium">{p.label}</div>
-                    <div className="text-base text-muted-foreground">
-                      {p.birthYear}-{String(p.birthMonth).padStart(2, "0")}-
-                      {String(p.birthDay).padStart(2, "0")}{" "}
-                      {p.birthHour !== null ? `${String(p.birthHour).padStart(2, "0")}:${String(p.birthMinute ?? 0).padStart(2, "0")}` : "(시 모름)"}{" "}
-                      · {p.gender === "male" ? "남" : "여"}
+                  <div className="flex items-start gap-2">
+                    {isOperator && (
+                      <Checkbox
+                        checked={selectedProfiles.has(p.id)}
+                        onCheckedChange={() => toggleProfile(p.id)}
+                        className="size-5 border-2 border-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary shrink-0 mt-0.5"
+                      />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium">{p.label}</div>
+                      <div className="text-sm text-muted-foreground mt-0.5">
+                        {p.birthYear}-{String(p.birthMonth).padStart(2, "0")}-
+                        {String(p.birthDay).padStart(2, "0")}{" "}
+                        {p.birthHour !== null ? `${String(p.birthHour).padStart(2, "0")}:${String(p.birthMinute ?? 0).padStart(2, "0")}` : "(시 모름)"}{" "}
+                        · {p.gender === "male" ? "남" : "여"}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-2 shrink-0">
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setViewProfileId(p.id)}>
-                        만세력 보기
-                      </Button>
-                      <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white"
-                        onClick={() => setEditProfileModal({
-                          id: p.id,
-                          label: p.label ?? "",
-                          gender: p.gender as "male" | "female",
-                          birthYear: p.birthYear,
-                          birthMonth: p.birthMonth,
-                          birthDay: p.birthDay,
-                          birthHour: p.birthHour ?? null,
-                          birthMinute: p.birthMinute ?? null,
-                          calendarType: p.calendarType as "solar" | "lunar",
-                          birthplace: p.birthplace ?? null,
-                        })}>
-                        <Pencil className="w-3 h-3 mr-1" /> 정보 수정
-                      </Button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white w-full" onClick={() => setViewProfileId(p.id)}>
+                      만세력 보기
+                    </Button>
+                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white w-full"
+                      onClick={() => setEditProfileModal({
+                        id: p.id,
+                        label: p.label ?? "",
+                        gender: p.gender as "male" | "female",
+                        birthYear: p.birthYear,
+                        birthMonth: p.birthMonth,
+                        birthDay: p.birthDay,
+                        birthHour: p.birthHour ?? null,
+                        birthMinute: p.birthMinute ?? null,
+                        calendarType: p.calendarType as "solar" | "lunar",
+                        birthplace: p.birthplace ?? null,
+                      })}>
+                      <Pencil className="w-3 h-3 mr-1" /> 정보 수정
+                    </Button>
+                    <Button size="sm" variant="default" className="w-full"
+                      onClick={() => {
+                        const sessions = sessionsQuery.data;
+                        const resumable = (sessions ?? []).find(
+                          (s) => s.status === "active"
+                            && s.sajuProfileId === p.id
+                            && new Date(s.expiresAt).getTime() >= Date.now()
+                        );
+                        if (resumable) {
+                          setLocation(`/consult/${resumable.id}`);
+                        } else {
+                          setLocation(`/plans?profile=${p.id}`);
+                        }
+                      }}>
+                      새 상담 시작
+                    </Button>
+                    <Button size="sm" variant="outline"
+                      className="w-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-white"
+                      onClick={async () => {
+                        const ok = await confirm({
+                          title: "사주 삭제",
+                          description: "이 사주를 삭제하시겠습니까?",
+                          confirmText: "삭제",
+                          destructive: true,
+                        });
+                        if (!ok) return;
+                        const result = await deleteSajuMutation.mutateAsync({ id: p.id, force: false });
+                        if (!result.success && result.compatCount > 0) {
+                          const forceOk = await confirm({
+                            title: "궁합 기록 존재",
+                            description: `이 사주로 본 궁합 기록이 ${result.compatCount}개 있습니다. 함께 삭제하시겠습니까?`,
+                            confirmText: "모두 삭제",
+                            destructive: true,
+                          });
+                          if (forceOk) deleteSajuMutation.mutate({ id: p.id, force: true });
+                        }
+                      }}
+                      disabled={deleteSajuMutation.isPending}
+                    >
+                      삭제
+                    </Button>
                   </div>
                 </div>
               ))}
+              </div>
             </CardContent>
           </Card>
           </TabsContent>
