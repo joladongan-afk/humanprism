@@ -52,6 +52,7 @@ export default function MyRoom() {
     redirectOnUnauthenticated: true,
   });
 
+  const [sajuSortBy, setSajuSortBy] = useState<"createdAt" | "label">("createdAt");
   const profilesQuery = trpc.saju.list.useQuery({ sortBy: sajuSortBy }, { enabled: isAuthenticated });
   const sessionsQuery = trpc.session.list.useQuery(undefined, { enabled: isAuthenticated });
   const paymentsQuery = trpc.payment.list.useQuery(undefined, { enabled: isAuthenticated });
@@ -78,7 +79,6 @@ export default function MyRoom() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [activeTab, setActiveTab] = useState("profiles");
-  const [sajuSortBy, setSajuSortBy] = useState<"createdAt" | "label">("createdAt");
   const [editSajuId, setEditSajuId] = useState<number | null>(null);
   const [editSajuLabel, setEditSajuLabel] = useState("");
   const updateSajuMutation = trpc.saju.update.useMutation({
