@@ -222,9 +222,16 @@ export const appRouter = router({
           data: base64,
         };
       }),
-    list: protectedProcedure.query(async ({ ctx }) =>
-      db.listSajuProfiles(await db.resolveOwnedUserIds(ctx.user.id, ctx.user.role === "admin")),
-    ),
+    list: protectedProcedure
+      .input(z.object({ sortBy: z.enum(["label", "createdAt"]).optional() }).optional())
+      .query(async ({ ctx, input }) => {
+        const profiles = await db.listSajuProfiles(await db.resolveOwnedUserIds(ctx.user.id, ctx.user.role === "admin"));
+        const sortBy = input?.sortBy ?? "createdAt";
+        if (sortBy === "label") {
+          return [...profiles].sort((a, b) => (a.label ?? "").localeCompare(b.label ?? "", "ko"));
+        }
+        return profiles; // createdAt 기본값 (DB에서 이미 desc 정렬)
+      }),
     get: protectedProcedure
       .input(z.object({ id: z.number().int() }))
       .query(async ({ ctx, input }) => {
@@ -233,6 +240,51 @@ export const appRouter = router({
           throw new TRPCError({ code: "NOT_FOUND", message: "사주 프로필을 찾을 수 없습니다." });
         }
         return p;
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number().int(),
+        label: z.string().max(64).optional(),
+        realName: z.string().max(64).nullable().optional(),
+        gender: z.enum(["male", "female"]).optional(),
+        calendarType: z.enum(["solar", "lunar"]).optional(),
+        isLeapMonth: z.boolean().optional(),
+        birthYear: z.number().int().optional(),
+        birthMonth: z.number().int().optional(),
+        birthDay: z.number().int().optional(),
+        birthHour: z.number().int().nullable().optional(),
+        birthMinute: z.number().int().nullable().optional(),
+        birthplace: z.string().max(128).nullable().optional(),
+        isDst: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const p = await db.getSajuProfileById(input.id);
+        if (!p || !(await canAccessRow(ctx, p.userId))) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "사주 프로필을 찾을 수 없습니다." });
+        }
+        const { id, ...patch } = input;
+        // 생년월일시가 변경된 경우 만세력 재계산
+        const needsRecalc = patch.birthYear !== undefined || patch.birthMonth !== undefined ||
+          patch.birthDay !== undefined || patch.birthHour !== undefined ||
+          patch.birthMinute !== undefined || patch.calendarType !== undefined ||
+          patch.isLeapMonth !== undefined || patch.isDst !== undefined;
+        let sajuData: Record<string, unknown> | null = null;
+        if (needsRecalc) {
+          const merged = { ...p, ...patch };
+          const solarInput = toSolarSajuInput({
+            year: merged.birthYear,
+            month: merged.birthMonth,
+            day: merged.birthDay,
+            hour: merged.birthHour ?? undefined,
+            minute: merged.birthMinute ?? undefined,
+            gender: merged.gender,
+            calendarType: merged.calendarType,
+            isLeapMonth: merged.isLeapMonth,
+          });
+          sajuData = calculateSaju(solarInput) as unknown as Record<string, unknown>;
+        }
+        await db.updateSajuProfile(id, { ...patch, ...(sajuData ? { sajuData } : {}) });
+        return { success: true } as const;
       }),
     delete: protectedProcedure
       .input(z.object({ id: z.number().int(), force: z.boolean().optional() }))
