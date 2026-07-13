@@ -52,7 +52,7 @@ export default function MyRoom() {
     redirectOnUnauthenticated: true,
   });
 
-  const profilesQuery = trpc.saju.list.useQuery(undefined, { enabled: isAuthenticated });
+  const profilesQuery = trpc.saju.list.useQuery({ sortBy: sajuSortBy }, { enabled: isAuthenticated });
   const sessionsQuery = trpc.session.list.useQuery(undefined, { enabled: isAuthenticated });
   const paymentsQuery = trpc.payment.list.useQuery(undefined, { enabled: isAuthenticated });
   const apptsQuery = trpc.appointment.listMine.useQuery(undefined, { enabled: isAuthenticated });
@@ -78,6 +78,19 @@ export default function MyRoom() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [activeTab, setActiveTab] = useState("profiles");
+  const [sajuSortBy, setSajuSortBy] = useState<"createdAt" | "label">("createdAt");
+  const [editSajuId, setEditSajuId] = useState<number | null>(null);
+  const [editSajuLabel, setEditSajuLabel] = useState("");
+  const updateSajuMutation = trpc.saju.update.useMutation({
+    onSuccess: () => {
+      setEditSajuId(null);
+      profilesQuery.refetch();
+      toast.success("이름이 수정되었습니다.");
+    },
+    onError: (e: any) => {
+      toast.error(e?.message || "수정에 실패했습니다.");
+    },
+  });
   const renameSessionMutation = trpc.consult.renameSession.useMutation({
     onSuccess: () => {
       setEditingId(null);
@@ -266,8 +279,16 @@ export default function MyRoom() {
           {/* 탭 1: 사주 프로필 */}
           <TabsContent value="profiles" className="mt-6">
           <Card className="hanji-card">
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-xl hanja-display">사주 프로필</CardTitle>
+              <select
+                value={sajuSortBy}
+                onChange={(e) => setSajuSortBy(e.target.value as "createdAt" | "label")}
+                className="text-sm border border-amber-400/50 rounded px-2 py-1 bg-background text-foreground"
+              >
+                <option value="createdAt">입력순</option>
+                <option value="label">이름순</option>
+              </select>
               <div className="flex items-center gap-2">
                 <Link href="/compatibility">
                   <Button size="sm" variant="outline" className="bg-card">
@@ -340,9 +361,36 @@ export default function MyRoom() {
                       <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white w-full" onClick={() => setViewProfileId(p.id)}>
                         만세력 보기
                       </Button>
+                      {editSajuId === p.id ? (
+                        <div className="flex gap-1">
+                          <Input
+                            value={editSajuLabel}
+                            onChange={(e) => setEditSajuLabel(e.target.value)}
+                            className="h-8 text-sm px-2"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") updateSajuMutation.mutate({ id: p.id, label: editSajuLabel.trim() });
+                              if (e.key === "Escape") setEditSajuId(null);
+                            }}
+                            autoFocus
+                          />
+                          <Button size="sm" className="h-8 px-2 bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => updateSajuMutation.mutate({ id: p.id, label: editSajuLabel.trim() })}>
+                            <Check className="w-3 h-3" />
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-8 px-2"
+                            onClick={() => setEditSajuId(null)}>
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white w-full"
+                          onClick={() => { setEditSajuId(p.id); setEditSajuLabel(p.label ?? ""); }}>
+                          <Pencil className="w-3 h-3 mr-1" /> 이름 수정
+                        </Button>
+                      )}
                       <Link href={`/saju/new?edit=${p.id}`}>
-                        <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white w-full">
-                          만세력 수정
+                        <Button size="sm" variant="outline" className="w-full text-xs">
+                          만세력 재입력
                         </Button>
                       </Link>
                     {(() => {
