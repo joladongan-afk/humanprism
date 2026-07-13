@@ -53,6 +53,7 @@ export default function MyRoom() {
   });
 
   const [sajuSortBy, setSajuSortBy] = useState<"createdAt" | "label">("label");
+  const [sessionSortBy, setSessionSortBy] = useState<"startedAt" | "label">("startedAt");
   const profilesQuery = trpc.saju.list.useQuery({ sortBy: sajuSortBy }, { enabled: isAuthenticated });
   const sessionsQuery = trpc.session.list.useQuery(undefined, { enabled: isAuthenticated });
   const paymentsQuery = trpc.payment.list.useQuery(undefined, { enabled: isAuthenticated });
@@ -491,8 +492,14 @@ export default function MyRoom() {
 
           {/* 상담 세션 */}
           <Card className="hanji-card">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-xl hanja-display">상담 세션</CardTitle>
+              <div className="flex gap-1">
+                <Button size="sm" variant={sessionSortBy === "startedAt" ? "default" : "outline"}
+                  onClick={() => setSessionSortBy("startedAt")}>날짜순</Button>
+                <Button size="sm" variant={sessionSortBy === "label" ? "default" : "outline"}
+                  onClick={() => setSessionSortBy("label")}>이름순</Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {/* 운영자 전용: 상담 기록 전체 선택 + 일괄 삭제 */}
@@ -524,7 +531,12 @@ export default function MyRoom() {
               {(sessionsQuery.data ?? []).length === 0 && (
                 <p className="text-lg text-muted-foreground">진행된 상담이 없습니다.</p>
               )}
-              {(sessionsQuery.data ?? []).map((s) => {
+              {([...(sessionsQuery.data ?? [])].sort((a, b) => {
+                if (sessionSortBy === "label") {
+                  return (a.profileLabel ?? a.title ?? "").localeCompare(b.profileLabel ?? b.title ?? "", "ko");
+                }
+                return new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime();
+              })).map((s) => {
                 const expired = new Date(s.expiresAt).getTime() < Date.now();
                 const { label: statusKr, canEnter, isAwaiting, buttonLabel: enterLabel } =
                   getSessionStatusView(s.status, expired);
