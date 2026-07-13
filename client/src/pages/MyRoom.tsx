@@ -53,7 +53,7 @@ export default function MyRoom() {
   });
 
   const [sajuSortBy, setSajuSortBy] = useState<"createdAt" | "label">("label");
-  const [sessionSortBy, setSessionSortBy] = useState<"startedAt" | "label">("startedAt");
+  const [sessionSortBy, setSessionSortBy] = useState<"newest" | "oldest" | "label">("newest");
   const profilesQuery = trpc.saju.list.useQuery({ sortBy: sajuSortBy }, { enabled: isAuthenticated });
   const sessionsQuery = trpc.session.list.useQuery(undefined, { enabled: isAuthenticated });
   const paymentsQuery = trpc.payment.list.useQuery(undefined, { enabled: isAuthenticated });
@@ -495,8 +495,10 @@ export default function MyRoom() {
             <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-xl hanja-display">상담 세션</CardTitle>
               <div className="flex gap-1">
-                <Button size="sm" variant={sessionSortBy === "startedAt" ? "default" : "outline"}
-                  onClick={() => setSessionSortBy("startedAt")}>날짜순</Button>
+                <Button size="sm" variant={sessionSortBy === "newest" ? "default" : "outline"}
+                  onClick={() => setSessionSortBy("newest")}>최신순</Button>
+                <Button size="sm" variant={sessionSortBy === "oldest" ? "default" : "outline"}
+                  onClick={() => setSessionSortBy("oldest")}>오래된순</Button>
                 <Button size="sm" variant={sessionSortBy === "label" ? "default" : "outline"}
                   onClick={() => setSessionSortBy("label")}>이름순</Button>
               </div>
@@ -534,6 +536,9 @@ export default function MyRoom() {
               {([...(sessionsQuery.data ?? [])].sort((a, b) => {
                 if (sessionSortBy === "label") {
                   return (a.profileLabel ?? a.title ?? "").localeCompare(b.profileLabel ?? b.title ?? "", "ko");
+                }
+                if (sessionSortBy === "oldest") {
+                  return new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime();
                 }
                 return new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime();
               })).map((s) => {
@@ -604,8 +609,16 @@ export default function MyRoom() {
                           </button>
                         </div>
                       )}
-                      <div className="text-base text-muted-foreground">
-                        {PLAN_LABEL[s.planType]} · 시작 {formatKst(s.startedAt)}
+                      <div className="text-sm text-muted-foreground">
+                        {s.profileBirthYear && (
+                          <span>
+                            출생 {s.profileBirthYear}-{String(s.profileBirthMonth).padStart(2,"0")}-{String(s.profileBirthDay).padStart(2,"0")}
+                            {s.profileBirthHour !== null ? ` ${String(s.profileBirthHour).padStart(2,"0")}:${String(s.profileBirthMinute ?? 0).padStart(2,"0")}` : ""}
+                            {s.profileGender ? ` · ${s.profileGender === "male" ? "남" : "여"}` : ""}
+                            {" · "}
+                          </span>
+                        )}
+                        {PLAN_LABEL[s.planType]} · {formatKst(s.startedAt)}
                       </div>
                       <div className="mt-2 flex items-center gap-2">
                         <Switch
