@@ -442,6 +442,12 @@ export async function listConsultSessionsByUser(userId: number | number[]) {
       ...getTableColumns(consultSessions),
       profileLabel: sajuProfiles.label,
       profileBLabel: profilesB.label,
+      profileBirthYear: sajuProfiles.birthYear,
+      profileBirthMonth: sajuProfiles.birthMonth,
+      profileBirthDay: sajuProfiles.birthDay,
+      profileBirthHour: sajuProfiles.birthHour,
+      profileBirthMinute: sajuProfiles.birthMinute,
+      profileGender: sajuProfiles.gender,
     })
     .from(consultSessions)
     .leftJoin(sajuProfiles, eq(consultSessions.sajuProfileId, sajuProfiles.id))
