@@ -58,6 +58,8 @@ export default function Compatibility() {
   const [targetSlot, setTargetSlot] = useState<"A" | "B" | null>(null);
   const [searchA, setSearchA] = useState("");
   const [searchB, setSearchB] = useState("");
+  const [openA, setOpenA] = useState(false);
+  const [openB, setOpenB] = useState(false);
   // 무통장 입금 신청 다이얼로그 상태
   const [depositOpen, setDepositOpen] = useState(false);
   const [result, setResult] = useState<{
@@ -235,31 +237,49 @@ export default function Compatibility() {
                       {profileAId && <span className="text-green-500 text-lg">✓</span>}
                     </label>
                     <div className="flex gap-2">
-                      <div className="flex-1 space-y-1">
-                        <input
-                          type="text"
-                          placeholder="이름 검색..."
-                          value={searchA}
-                          onChange={(e) => setSearchA(e.target.value)}
-                          className="w-full px-2 py-1.5 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
-                        />
-                        <div className="max-h-44 overflow-y-auto border border-border rounded-md bg-card">
-                          {profiles
-                            .filter((p) => !searchA || (p.label ?? "").toLowerCase().includes(searchA.toLowerCase()))
-                            .map((p) => (
-                              <button
-                                key={p.id}
-                                type="button"
-                                onClick={() => setProfileAId(String(p.id))}
-                                className={`w-full text-left px-3 py-1.5 text-sm hover:bg-amber-50 transition-colors ${profileAId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""}`}
-                              >
-                                {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2,"0")}.{String(p.birthDay).padStart(2,"0")} · {p.gender === "male" ? "남" : "여"})
-                              </button>
-                            ))}
-                          {profiles.filter((p) => !searchA || (p.label ?? "").toLowerCase().includes(searchA.toLowerCase())).length === 0 && (
-                            <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                      <div className="flex-1 relative">
+                        <div
+                          className="flex items-center border-2 border-amber-500 rounded-md bg-background px-2 py-1.5 cursor-text"
+                          onClick={() => setOpenA(true)}
+                        >
+                          {!openA && profileAId ? (
+                            <span className="flex-1 text-sm text-foreground truncate">
+                              {profiles.find((p) => String(p.id) === profileAId)?.label ?? "선택됨"}
+                            </span>
+                          ) : (
+                            <input
+                              type="text"
+                              placeholder="이름 검색..."
+                              value={searchA}
+                              autoFocus={openA}
+                              onChange={(e) => setSearchA(e.target.value)}
+                              onFocus={() => setOpenA(true)}
+                              className="flex-1 text-sm bg-transparent focus:outline-none"
+                            />
                           )}
+                          <span className="ml-1 text-amber-600 font-bold text-base select-none" onClick={(e) => { e.stopPropagation(); setOpenA(v => !v); }}>
+                            {openA ? "▲" : "▼"}
+                          </span>
                         </div>
+                        {openA && (
+                          <div className="absolute z-50 w-full mt-1 max-h-52 overflow-y-auto border-2 border-amber-400 rounded-md bg-card shadow-lg">
+                            {profiles
+                              .filter((p) => !searchA || (p.label ?? "").toLowerCase().includes(searchA.toLowerCase()))
+                              .map((p) => (
+                                <button
+                                  key={p.id}
+                                  type="button"
+                                  onClick={() => { setProfileAId(String(p.id)); setSearchA(""); setOpenA(false); }}
+                                  className={`w-full text-left px-3 py-2 text-sm hover:bg-amber-50 transition-colors ${profileAId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""}`}
+                                >
+                                  {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2,"0")}.{String(p.birthDay).padStart(2,"0")} · {p.gender === "male" ? "남" : "여"})
+                                </button>
+                              ))}
+                            {profiles.filter((p) => !searchA || (p.label ?? "").toLowerCase().includes(searchA.toLowerCase())).length === 0 && (
+                              <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <Link href={`/saju/new?return=/compatibility&slot=A`}>
                         <Button
@@ -279,31 +299,49 @@ export default function Compatibility() {
                       {profileBId && <span className="text-green-500 text-lg">✓</span>}
                     </label>
                     <div className="flex gap-2">
-                      <div className="flex-1 space-y-1">
-                        <input
-                          type="text"
-                          placeholder="이름 검색..."
-                          value={searchB}
-                          onChange={(e) => setSearchB(e.target.value)}
-                          className="w-full px-2 py-1.5 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
-                        />
-                        <div className="max-h-44 overflow-y-auto border border-border rounded-md bg-card">
-                          {profiles
-                            .filter((p) => !searchB || (p.label ?? "").toLowerCase().includes(searchB.toLowerCase()))
-                            .map((p) => (
-                              <button
-                                key={p.id}
-                                type="button"
-                                onClick={() => setProfileBId(String(p.id))}
-                                className={`w-full text-left px-3 py-1.5 text-sm hover:bg-amber-50 transition-colors ${profileBId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""}`}
-                              >
-                                {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2,"0")}.{String(p.birthDay).padStart(2,"0")} · {p.gender === "male" ? "남" : "여"})
-                              </button>
-                            ))}
-                          {profiles.filter((p) => !searchB || (p.label ?? "").toLowerCase().includes(searchB.toLowerCase())).length === 0 && (
-                            <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                      <div className="flex-1 relative">
+                        <div
+                          className="flex items-center border-2 border-amber-500 rounded-md bg-background px-2 py-1.5 cursor-text"
+                          onClick={() => setOpenB(true)}
+                        >
+                          {!openB && profileBId ? (
+                            <span className="flex-1 text-sm text-foreground truncate">
+                              {profiles.find((p) => String(p.id) === profileBId)?.label ?? "선택됨"}
+                            </span>
+                          ) : (
+                            <input
+                              type="text"
+                              placeholder="이름 검색..."
+                              value={searchB}
+                              autoFocus={openB}
+                              onChange={(e) => setSearchB(e.target.value)}
+                              onFocus={() => setOpenB(true)}
+                              className="flex-1 text-sm bg-transparent focus:outline-none"
+                            />
                           )}
+                          <span className="ml-1 text-amber-600 font-bold text-base select-none" onClick={(e) => { e.stopPropagation(); setOpenB(v => !v); }}>
+                            {openB ? "▲" : "▼"}
+                          </span>
                         </div>
+                        {openB && (
+                          <div className="absolute z-50 w-full mt-1 max-h-52 overflow-y-auto border-2 border-amber-400 rounded-md bg-card shadow-lg">
+                            {profiles
+                              .filter((p) => !searchB || (p.label ?? "").toLowerCase().includes(searchB.toLowerCase()))
+                              .map((p) => (
+                                <button
+                                  key={p.id}
+                                  type="button"
+                                  onClick={() => { setProfileBId(String(p.id)); setSearchB(""); setOpenB(false); }}
+                                  className={`w-full text-left px-3 py-2 text-sm hover:bg-amber-50 transition-colors ${profileBId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""}`}
+                                >
+                                  {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2,"0")}.{String(p.birthDay).padStart(2,"0")} · {p.gender === "male" ? "남" : "여"})
+                                </button>
+                              ))}
+                            {profiles.filter((p) => !searchB || (p.label ?? "").toLowerCase().includes(searchB.toLowerCase())).length === 0 && (
+                              <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <Link href={`/saju/new?return=/compatibility&slot=B`}>
                         <Button
@@ -518,5 +556,6 @@ export default function Compatibility() {
     </div>
   );
 }
+
 
 
