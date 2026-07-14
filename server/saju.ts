@@ -1081,6 +1081,8 @@ export function calculateSaju(input: SajuInput): SajuResult {
 export function formatSajuForPrompt(r: SajuResult): string {
   const lines: string[] = [];
   const isMale = r.input.gender === "male";
+  // 일간(일주 천간) — 대운·세운 육친 계산에 사용
+  const dayStemForGod = r.pillars.day?.stem ?? "";
   lines.push(`【★내담자 성별: ${isMale ? "남자(남명)" : "여자(여명)"} — 코드 확정값, 절대 반대로 읽지 말 것】`);
   lines.push(`- 이 명은 ${isMale ? "남명이다. 자식=관성, 배우자(처)=재성" : "여명이다. 자식=식상, 배우자(남편)=관성"}으로 본다. 성별을 반대로 둘러 ${isMale ? "'여명'" : "'남명'"} 운운하면 명백한 오류다.`);
   lines.push("【사주팔자】");
@@ -1288,3 +1290,4 @@ export function formatSajuForPrompt(r: SajuResult): string {
   lines.push("- 활용: 운을 볼 때 위 '세운 간지'와 '당시 대운'을 원국 글자와 나란히 놓고, 합·충·12운성 등의 상호작용을 살펴 흐름을 읽는다. 단, 어느 해의 간지든 위 표에 적힌 글자만 쓰고 임의로 다른 간지를 지어내지 않는다.");
   return lines.join("\n");
 }
+
