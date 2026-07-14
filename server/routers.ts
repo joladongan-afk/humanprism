@@ -1,4 +1,5 @@
 import { COOKIE_NAME, RECORD_RETENTION_MS, USAGE_WINDOW_MS } from "@shared/const";
+import { abTestRouter } from "./ab-test-router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -1166,5 +1167,6 @@ export const appRouter = router({
   cs: csRouter,
   naming: namingRouter,
   publicStats: publicProcedure.query(() => db.getPublicStats()),
+  abTest: abTestRouter,
 });
 export type AppRouter = typeof appRouter;
