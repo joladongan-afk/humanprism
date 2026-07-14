@@ -511,9 +511,8 @@ export default function Plans() {
                     type="text"
                     placeholder="이름으로 검색..."
                     value={profileSearch}
-                    autoFocus={openProfile}
+                    autoFocus={false}
                     onChange={(e) => setProfileSearch(e.target.value)}
-                    onFocus={() => setOpenProfile(true)}
                     className="flex-1 text-sm bg-transparent focus:outline-none"
                   />
                 )}
@@ -577,6 +576,7 @@ export default function Plans() {
     </div>
   );
 }
+
 
 
 
