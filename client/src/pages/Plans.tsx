@@ -498,7 +498,7 @@ export default function Plans() {
               <SelectTrigger>
                 <SelectValue placeholder="프로필 선택" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="item-aligned" className="max-h-60 overflow-y-auto">
                 {(profilesQuery.data ?? []).map((p) => (
                   <SelectItem key={p.id} value={String(p.id)}>
                     {p.label || `${p.birthYear}년 ${p.birthMonth}월 ${p.birthDay}일`}
@@ -538,3 +538,4 @@ export default function Plans() {
     </div>
   );
 }
+
