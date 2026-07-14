@@ -251,9 +251,8 @@ export default function Compatibility() {
                               type="text"
                               placeholder="이름 검색..."
                               value={searchA}
-                              autoFocus={openA}
+                              autoFocus={false}
                               onChange={(e) => setSearchA(e.target.value)}
-                              onFocus={() => setOpenA(true)}
                               className="flex-1 text-sm bg-transparent focus:outline-none"
                             />
                           )}
@@ -313,9 +312,8 @@ export default function Compatibility() {
                               type="text"
                               placeholder="이름 검색..."
                               value={searchB}
-                              autoFocus={openB}
+                              autoFocus={false}
                               onChange={(e) => setSearchB(e.target.value)}
-                              onFocus={() => setOpenB(true)}
                               className="flex-1 text-sm bg-transparent focus:outline-none"
                             />
                           )}
@@ -556,6 +554,7 @@ export default function Compatibility() {
     </div>
   );
 }
+
 
 
 
