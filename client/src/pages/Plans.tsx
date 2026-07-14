@@ -499,7 +499,7 @@ export default function Plans() {
             {/* 프로필 검색 + 선택 드롭다운 */}
             <div className="relative">
               <div
-                className="flex items-center border-2 border-amber-500 rounded-md bg-background px-3 py-2 cursor-text"
+                className="flex items-center border-2 border-amber-500 rounded-md bg-background px-3 py-2 cursor-pointer"
                 onClick={() => setOpenProfile(true)}
               >
                 {!openProfile && profileId ? (
@@ -517,7 +517,7 @@ export default function Plans() {
                     className="flex-1 text-sm bg-transparent focus:outline-none"
                   />
                 )}
-                <span className="ml-2 text-amber-600 font-bold text-base select-none" onClick={(e) => { e.stopPropagation(); setOpenProfile(v => !v); }}>
+                <span className="ml-2 text-amber-600 font-bold text-base select-none cursor-pointer" onClick={(e) => { e.stopPropagation(); setOpenProfile(v => !v); }}>
                   {openProfile ? "▲" : "▼"}
                 </span>
               </div>
@@ -577,6 +577,7 @@ export default function Plans() {
     </div>
   );
 }
+
 
 
 
