@@ -56,6 +56,8 @@ export default function Compatibility() {
   const [relationType, setRelationType] = useState<string>("couple");
   const [question, setQuestion] = useState<string>("");
   const [targetSlot, setTargetSlot] = useState<"A" | "B" | null>(null);
+  const [searchA, setSearchA] = useState("");
+  const [searchB, setSearchB] = useState("");
   // 무통장 입금 신청 다이얼로그 상태
   const [depositOpen, setDepositOpen] = useState(false);
   const [result, setResult] = useState<{
@@ -516,4 +518,5 @@ export default function Compatibility() {
     </div>
   );
 }
+
 
