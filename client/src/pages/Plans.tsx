@@ -122,6 +122,7 @@ export default function Plans() {
   });
   const [profileId, setProfileId] = useState<string>("");
   const [eventCode, setEventCode] = useState<string>("");
+  const [profileSearch, setProfileSearch] = useState<string>("");
   const [loginOpen, setLoginOpen] = useState(false);
   // 무통장 입금 신청 다이얼로그 상태
   const [depositOpen, setDepositOpen] = useState(false);
@@ -494,18 +495,42 @@ export default function Plans() {
                 </p>
               </div>
             )}
-            <Select value={profileId} onValueChange={setProfileId}>
-              <SelectTrigger>
-                <SelectValue placeholder="프로필 선택" />
-              </SelectTrigger>
-              <SelectContent position="item-aligned" className="max-h-60 overflow-y-auto">
-                {(profilesQuery.data ?? []).map((p) => (
-                  <SelectItem key={p.id} value={String(p.id)}>
-                    {p.label || `${p.birthYear}년 ${p.birthMonth}월 ${p.birthDay}일`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* 프로필 검색 + 선택 */}
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="이름으로 검색..."
+                value={profileSearch}
+                onChange={(e) => setProfileSearch(e.target.value)}
+                className="w-full px-3 py-2 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
+              />
+              <div className="max-h-52 overflow-y-auto border border-border rounded-md bg-background">
+                {(profilesQuery.data ?? [])
+                  .filter((p) => !profileSearch || (p.label ?? "").toLowerCase().includes(profileSearch.toLowerCase()))
+                  .map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setProfileId(String(p.id))}
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-amber-50 transition-colors ${
+                        profileId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""
+                      }`}
+                    >
+                      {p.label || `${p.birthYear}년 ${p.birthMonth}월 ${p.birthDay}일`}
+                    </button>
+                  ))}
+                {(profilesQuery.data ?? []).filter((p) =>
+                  !profileSearch || (p.label ?? "").toLowerCase().includes(profileSearch.toLowerCase())
+                ).length === 0 && (
+                  <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                )}
+              </div>
+              {profileId && (
+                <div className="text-sm text-amber-700 font-medium px-1">
+                  ✓ {profilesQuery.data?.find((p) => String(p.id) === profileId)?.label ?? "선택됨"}
+                </div>
+              )}
+            </div>
             <Link href={selected === "free" ? "/saju/new?plan=free" : "/saju/new"}>
               <Button variant="outline" className="w-full" onClick={() => setSelected(null)}>
                 {selected === "free" ? "새로 사주 입력하기" : "새 프로필 추가"}
@@ -538,4 +563,5 @@ export default function Plans() {
     </div>
   );
 }
+
 
