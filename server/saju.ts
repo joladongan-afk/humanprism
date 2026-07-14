@@ -1213,7 +1213,14 @@ export function formatSajuForPrompt(r: SajuResult): string {
   for (let i = 0; i < r.daeun.pillars.length; i++) {
     const sAge = r.daeun.daeunNumber + i * 10;
     const mark = i === curDaeunIdx ? "  ← ★현재 대운(지금 이 구간)" : "";
-    lines.push(`  · ${sAge}세~${sAge + 9}세: ${r.daeun.pillars[i]}${mark}`);
+    const dp = r.daeun.pillars[i]; // 예: "庚午"
+    const dpStem = dp[0], dpBranch = dp[1];
+    const dpStemGod = getTenGod(dayStemForGod, dpStem);
+    const dpBranchGod = getBranchTenGod(dayStemForGod, dpBranch);
+    // 본기 천간을 추가로 표기 (지지 본기 확인용)
+    const dpBranchMainStem = HIDDEN_STEMS[dpBranch]?.[0] ?? "";
+    const dpBranchMainGod = dpBranchMainStem ? getTenGod(dayStemForGod, dpBranchMainStem) : dpBranchGod;
+    lines.push(`  · ${sAge}세~${sAge + 9}세: ${dp}(천간 ${dpStem}=${dpStemGod} / 지지 ${dpBranch} 본기 ${dpBranchMainStem}=${dpBranchMainGod})${mark}`);
   }
   lines.push("");
   const moment = getCurrentMoment(nowKst);
@@ -1231,7 +1238,13 @@ export function formatSajuForPrompt(r: SajuResult): string {
   lines.push(`- 내담자 나이: 만 ${age}세(세는나이 ${countAge}세)`);
   if (curDaeunIdx >= 0) {
     const sAge = r.daeun.daeunNumber + curDaeunIdx * 10;
-    lines.push(`- ★ 현재 대운: ${r.daeun.pillars[curDaeunIdx]} (${sAge}세~${sAge + 9}세 구간). 이 외의 다른 간지를 "현재 대운"라고 말하면 안 된다.`);
+    const cdp = r.daeun.pillars[curDaeunIdx];
+    const cdpStem = cdp[0], cdpBranch = cdp[1];
+    const cdpStemGod = getTenGod(dayStemForGod, cdpStem);
+    const cdpBranchMainStem = HIDDEN_STEMS[cdpBranch]?.[0] ?? "";
+    const cdpBranchMainGod = cdpBranchMainStem ? getTenGod(dayStemForGod, cdpBranchMainStem) : getBranchTenGod(dayStemForGod, cdpBranch);
+    lines.push(`- ★ 현재 대운: ${cdp}(천간 ${cdpStem}=${cdpStemGod} / 지지 ${cdpBranch} 본기 ${cdpBranchMainStem}=${cdpBranchMainGod}) (${sAge}세~${sAge + 9}세 구간). 이 외의 다른 간지를 "현재 대운"라고 말하면 안 된다.`);
+    lines.push(`  — 위 육친값은 코드 확정값이다. 재계산하지 말 것.`);
   } else {
     lines.push(`- ★ 현재 대운: 아직 첫 대운(${r.daeun.daeunNumber}세) 시작 전 구간 — 원국(월주) 기준으로 볼 것.`);
   }
@@ -1265,7 +1278,11 @@ export function formatSajuForPrompt(r: SajuResult): string {
     else if (y === -2) tag = "  ← 재작년";
     // 출생 이전 연도(태어나기 전)는 건너뛴다
     if (ageThatYear < 1) continue;
-    lines.push(`  · ${sajuYr}년: 세운 ${sw} / 세는나이 ${ageThatYear}세 / 당시 대운 ${daeunStr}${tag}`);
+    const swStem = sw[0], swBranch = sw[1];
+    const swStemGod = getTenGod(dayStemForGod, swStem);
+    const swBranchMainStem = HIDDEN_STEMS[swBranch]?.[0] ?? "";
+    const swBranchMainGod = swBranchMainStem ? getTenGod(dayStemForGod, swBranchMainStem) : getBranchTenGod(dayStemForGod, swBranch);
+    lines.push(`  · ${sajuYr}년: 세운 ${sw}(천간 ${swStem}=${swStemGod} / 지지 ${swBranch} 본기 ${swBranchMainStem}=${swBranchMainGod}) / 세는나이 ${ageThatYear}세 / 당시 대운 ${daeunStr}${tag}`);
   }
   lines.push("- 연도 표기는 사주연도(입춘세수) 기준이다. 입춘 전 몇 주 구간이라면 달력 연도와 한 칸 다를 수 있으니, 시점이 애매하면 고객에게 현재 날짜를 확인한다.");
   lines.push("- 활용: 운을 볼 때 위 '세운 간지'와 '당시 대운'을 원국 글자와 나란히 놓고, 합·충·12운성 등의 상호작용을 살펴 흐름을 읽는다. 단, 어느 해의 간지든 위 표에 적힌 글자만 쓰고 임의로 다른 간지를 지어내지 않는다.");
