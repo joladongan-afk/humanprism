@@ -135,6 +135,10 @@ export default function MyRoom() {
 
   // 만세력 보기 모달
   const [viewProfileId, setViewProfileId] = useState<number | null>(null);
+  // 검색 필터
+  const [profileSearch, setProfileSearch] = useState("");
+  const [sessionSearch, setSessionSearch] = useState("");
+  const [apptSearch, setApptSearch] = useState("");
 
   // 운영자 판정 및 사주 프로필 다중 선택 상태
   // 운영자 판정: 백엔드가 부여한 role(가장 신뢰도 높음) 또는 운영자 이메일 둘 중 하나라도 해당하면 표시.
@@ -295,6 +299,15 @@ export default function MyRoom() {
                 <Button size="sm" variant={sajuSortBy === "label" ? "default" : "outline"}
                   onClick={() => setSajuSortBy("label")}>이름순</Button>
               </div>
+              <div className="w-full mt-2">
+                <input
+                  type="text"
+                  placeholder="이름으로 검색..."
+                  value={profileSearch}
+                  onChange={(e) => setProfileSearch(e.target.value)}
+                  className="w-full px-3 py-1.5 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
               <div className="flex items-center gap-2">
                 <Link href="/compatibility">
                   <Button size="sm" variant="outline" className="bg-card">
@@ -339,7 +352,9 @@ export default function MyRoom() {
                 <p className="text-lg text-muted-foreground">아직 등록된 사주가 없습니다.</p>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {(profilesQuery.data ?? []).map((p) => (
+              {(profilesQuery.data ?? []).filter((p) =>
+                !profileSearch || (p.label ?? "").toLowerCase().includes(profileSearch.toLowerCase())
+              ).map((p) => (
                 <div
                   key={p.id}
                   className={`flex flex-col gap-3 p-4 border rounded-lg ${
@@ -502,6 +517,15 @@ export default function MyRoom() {
                 <Button size="sm" variant={sessionSortBy === "label" ? "default" : "outline"}
                   onClick={() => setSessionSortBy("label")}>이름순</Button>
               </div>
+              <div className="w-full mt-2">
+                <input
+                  type="text"
+                  placeholder="이름으로 검색..."
+                  value={sessionSearch}
+                  onChange={(e) => setSessionSearch(e.target.value)}
+                  className="w-full px-3 py-1.5 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {/* 운영자 전용: 상담 기록 전체 선택 + 일괄 삭제 */}
@@ -533,7 +557,9 @@ export default function MyRoom() {
               {(sessionsQuery.data ?? []).length === 0 && (
                 <p className="text-lg text-muted-foreground">진행된 상담이 없습니다.</p>
               )}
-              {([...(sessionsQuery.data ?? [])].sort((a, b) => {
+              {([...(sessionsQuery.data ?? [])].filter((s) =>
+                !sessionSearch || (s.profileLabel ?? s.title ?? "").toLowerCase().includes(sessionSearch.toLowerCase())
+              ).sort((a, b) => {
                 if (sessionSortBy === "label") {
                   return (a.profileLabel ?? a.title ?? "").localeCompare(b.profileLabel ?? b.title ?? "", "ko");
                 }
@@ -704,12 +730,23 @@ export default function MyRoom() {
           <Card className="hanji-card">
             <CardHeader>
               <CardTitle className="text-xl hanja-display">마스터와 직접 상담 예약</CardTitle>
+              <div className="w-full mt-2">
+                <input
+                  type="text"
+                  placeholder="이름으로 검색..."
+                  value={apptSearch}
+                  onChange={(e) => setApptSearch(e.target.value)}
+                  className="w-full px-3 py-1.5 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {(apptsQuery.data ?? []).length === 0 && (
                 <p className="text-lg text-muted-foreground">예약 내역이 없습니다.</p>
               )}
-              {(apptsQuery.data ?? []).map((a) => (
+              {(apptsQuery.data ?? []).filter((a) =>
+                !apptSearch || (a.notes ?? "").toLowerCase().includes(apptSearch.toLowerCase())
+              ).map((a) => (
                 <div key={a.id} className="p-4 border-2 border-amber-300/60 rounded-lg bg-amber-50/30 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div>
@@ -799,18 +836,32 @@ export default function MyRoom() {
                     {(["hour", "day", "month", "year"] as const).map((k) => {
                       const p = pillars[k];
                       return (
-                        <div key={k} className="ganji-cell text-center rounded-lg border border-amber-600/40 bg-amber-950/30 p-3">
-                          <div className="text-xs text-muted-foreground mb-1">{LABELS[k]}</div>
+                        <div key={k} className="ganji-cell text-center rounded-lg border-2 border-border bg-card shadow-sm p-3">
+                          <div className="text-xs font-semibold text-muted-foreground mb-2">{LABELS[k]}</div>
                           {p ? (
                             <>
-                              <div className="text-xl font-bold text-amber-400">{p.stem}</div>
-                              <div className="text-xl font-bold text-amber-300">{p.branch}</div>
-                              {p.shinsal && <div className="text-[0.65rem] mt-1 text-amber-600/80">{p.shinsal}</div>}
+                              <div className={`text-2xl font-bold mb-1 ${
+                                p.stemElement === "목" ? "text-emerald-500" :
+                                p.stemElement === "화" ? "text-red-500" :
+                                p.stemElement === "토" ? "text-yellow-600" :
+                                p.stemElement === "금" ? "text-slate-400" :
+                                p.stemElement === "수" ? "text-blue-500" :
+                                "text-foreground"
+                              }`}>{p.stem}</div>
+                              <div className={`text-2xl font-bold ${
+                                p.branchElement === "목" ? "text-emerald-500" :
+                                p.branchElement === "화" ? "text-red-500" :
+                                p.branchElement === "토" ? "text-yellow-600" :
+                                p.branchElement === "금" ? "text-slate-400" :
+                                p.branchElement === "수" ? "text-blue-500" :
+                                "text-foreground"
+                              }`}>{p.branch}</div>
+                              {p.shinsal && <div className="text-[0.65rem] mt-1.5 text-muted-foreground bg-muted/50 rounded px-1">{p.shinsal}</div>}
                             </>
                           ) : (
                             <>
-                              <div className="text-xl text-muted-foreground">?</div>
-                              <div className="text-xl text-muted-foreground">?</div>
+                              <div className="text-2xl text-muted-foreground">?</div>
+                              <div className="text-2xl text-muted-foreground">?</div>
                               <div className="text-[0.65rem] mt-1 text-muted-foreground">시 모름</div>
                             </>
                           )}
@@ -829,9 +880,13 @@ export default function MyRoom() {
                     </p>
                     <div className="grid grid-cols-5 gap-1.5">
                       {(daeun.pillars as string[]).slice(0, 10).map((p: string, i: number) => (
-                        <div key={i} className="text-center p-2 rounded border border-border bg-card">
+                        <div key={i} className={`text-center p-2 rounded border-2 ${
+                          daeun.currentIndex === i
+                            ? "border-amber-500 bg-amber-500/10"
+                            : "border-border bg-card"
+                        }`}>
                           <div className="text-[0.7rem] text-muted-foreground">{daeun.daeunNumber + i * 10}세</div>
-                          <div className="text-base font-bold hanja-display">{p}</div>
+                          <div className={`text-base font-bold hanja-display ${daeun.currentIndex === i ? "text-amber-500" : ""}`}>{p}</div>
                         </div>
                       ))}
                     </div>
@@ -927,3 +982,4 @@ export default function MyRoom() {
     </div>
   );
 }
+
