@@ -233,19 +233,32 @@ export default function Compatibility() {
                       {profileAId && <span className="text-green-500 text-lg">✓</span>}
                     </label>
                     <div className="flex gap-2">
-                      <Select value={profileAId} onValueChange={setProfileAId}>
-                        <SelectTrigger className="bg-card flex-1">
-                          <SelectValue placeholder="사주 선택" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {profiles.map((p) => (
-                            <SelectItem key={p.id} value={String(p.id)}>
-                              {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2, "0")}.
-                              {String(p.birthDay).padStart(2, "0")} · {p.gender === "male" ? "남" : "여"})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex-1 space-y-1">
+                        <input
+                          type="text"
+                          placeholder="이름 검색..."
+                          value={searchA}
+                          onChange={(e) => setSearchA(e.target.value)}
+                          className="w-full px-2 py-1.5 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
+                        />
+                        <div className="max-h-44 overflow-y-auto border border-border rounded-md bg-card">
+                          {profiles
+                            .filter((p) => !searchA || (p.label ?? "").toLowerCase().includes(searchA.toLowerCase()))
+                            .map((p) => (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => setProfileAId(String(p.id))}
+                                className={`w-full text-left px-3 py-1.5 text-sm hover:bg-amber-50 transition-colors ${profileAId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""}`}
+                              >
+                                {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2,"0")}.{String(p.birthDay).padStart(2,"0")} · {p.gender === "male" ? "남" : "여"})
+                              </button>
+                            ))}
+                          {profiles.filter((p) => !searchA || (p.label ?? "").toLowerCase().includes(searchA.toLowerCase())).length === 0 && (
+                            <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                          )}
+                        </div>
+                      </div>
                       <Link href={`/saju/new?return=/compatibility&slot=A`}>
                         <Button
                           size="sm"
@@ -264,19 +277,32 @@ export default function Compatibility() {
                       {profileBId && <span className="text-green-500 text-lg">✓</span>}
                     </label>
                     <div className="flex gap-2">
-                      <Select value={profileBId} onValueChange={setProfileBId}>
-                        <SelectTrigger className="bg-card flex-1">
-                          <SelectValue placeholder="사주 선택" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {profiles.map((p) => (
-                            <SelectItem key={p.id} value={String(p.id)}>
-                              {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2, "0")}.
-                              {String(p.birthDay).padStart(2, "0")} · {p.gender === "male" ? "남" : "여"})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex-1 space-y-1">
+                        <input
+                          type="text"
+                          placeholder="이름 검색..."
+                          value={searchB}
+                          onChange={(e) => setSearchB(e.target.value)}
+                          className="w-full px-2 py-1.5 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
+                        />
+                        <div className="max-h-44 overflow-y-auto border border-border rounded-md bg-card">
+                          {profiles
+                            .filter((p) => !searchB || (p.label ?? "").toLowerCase().includes(searchB.toLowerCase()))
+                            .map((p) => (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => setProfileBId(String(p.id))}
+                                className={`w-full text-left px-3 py-1.5 text-sm hover:bg-amber-50 transition-colors ${profileBId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""}`}
+                              >
+                                {p.label} ({p.birthYear}.{String(p.birthMonth).padStart(2,"0")}.{String(p.birthDay).padStart(2,"0")} · {p.gender === "male" ? "남" : "여"})
+                              </button>
+                            ))}
+                          {profiles.filter((p) => !searchB || (p.label ?? "").toLowerCase().includes(searchB.toLowerCase())).length === 0 && (
+                            <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                          )}
+                        </div>
+                      </div>
                       <Link href={`/saju/new?return=/compatibility&slot=B`}>
                         <Button
                           size="sm"
@@ -490,3 +516,4 @@ export default function Compatibility() {
     </div>
   );
 }
+
