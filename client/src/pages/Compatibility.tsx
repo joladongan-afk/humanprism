@@ -239,7 +239,7 @@ export default function Compatibility() {
                     <div className="flex gap-2">
                       <div className="flex-1 relative">
                         <div
-                          className="flex items-center border-2 border-amber-500 rounded-md bg-background px-2 py-1.5 cursor-text"
+                          className="flex items-center border-2 border-amber-500 rounded-md bg-background px-2 py-1.5 cursor-pointer"
                           onClick={() => setOpenA(true)}
                         >
                           {!openA && profileAId ? (
@@ -257,7 +257,7 @@ export default function Compatibility() {
                               className="flex-1 text-sm bg-transparent focus:outline-none"
                             />
                           )}
-                          <span className="ml-1 text-amber-600 font-bold text-base select-none" onClick={(e) => { e.stopPropagation(); setOpenA(v => !v); }}>
+                          <span className="ml-1 text-amber-600 font-bold text-base select-none cursor-pointer" onClick={(e) => { e.stopPropagation(); setOpenA(v => !v); }}>
                             {openA ? "▲" : "▼"}
                           </span>
                         </div>
@@ -301,7 +301,7 @@ export default function Compatibility() {
                     <div className="flex gap-2">
                       <div className="flex-1 relative">
                         <div
-                          className="flex items-center border-2 border-amber-500 rounded-md bg-background px-2 py-1.5 cursor-text"
+                          className="flex items-center border-2 border-amber-500 rounded-md bg-background px-2 py-1.5 cursor-pointer"
                           onClick={() => setOpenB(true)}
                         >
                           {!openB && profileBId ? (
@@ -319,7 +319,7 @@ export default function Compatibility() {
                               className="flex-1 text-sm bg-transparent focus:outline-none"
                             />
                           )}
-                          <span className="ml-1 text-amber-600 font-bold text-base select-none" onClick={(e) => { e.stopPropagation(); setOpenB(v => !v); }}>
+                          <span className="ml-1 text-amber-600 font-bold text-base select-none cursor-pointer" onClick={(e) => { e.stopPropagation(); setOpenB(v => !v); }}>
                             {openB ? "▲" : "▼"}
                           </span>
                         </div>
@@ -556,6 +556,7 @@ export default function Compatibility() {
     </div>
   );
 }
+
 
 
 
