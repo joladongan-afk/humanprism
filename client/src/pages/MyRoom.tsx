@@ -299,7 +299,7 @@ export default function MyRoom() {
                   placeholder="이름 검색"
                   value={profileSearch}
                   onChange={(e) => setProfileSearch(e.target.value)}
-                  className="w-32 px-2 py-1 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+                  className="w-32 px-2 py-1 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
                 />
                 <Button size="sm" variant={sajuSortBy === "createdAt" ? "default" : "outline"}
                   onClick={() => setSajuSortBy("createdAt")}>입력순</Button>
@@ -513,7 +513,7 @@ export default function MyRoom() {
                   placeholder="이름 검색"
                   value={sessionSearch}
                   onChange={(e) => setSessionSearch(e.target.value)}
-                  className="w-32 px-2 py-1 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+                  className="w-32 px-2 py-1 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
                 />
                 <Button size="sm" variant={sessionSortBy === "newest" ? "default" : "outline"}
                   onClick={() => setSessionSortBy("newest")}>최신순</Button>
@@ -731,7 +731,7 @@ export default function MyRoom() {
                 placeholder="이름 검색"
                 value={apptSearch}
                 onChange={(e) => setApptSearch(e.target.value)}
-                className="w-32 px-2 py-1 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+                className="w-32 px-2 py-1 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
               />
             </CardHeader>
             <CardContent className="space-y-3">
@@ -817,6 +817,20 @@ export default function MyRoom() {
             const pillars = data.pillars;
             const daeun = data.daeun;
             const LABELS: Record<string, string> = { year: "年", month: "月", day: "日", hour: "時" };
+            // 간지 이름으로 직접 오행 매핑 (기존 sajuData에 stemElement 없는 경우 대비)
+            const STEM_EL: Record<string, string> = {
+              甲:"목",乙:"목",丙:"화",丁:"화",戊:"토",己:"토",庚:"금",辛:"금",壬:"수",癸:"수"
+            };
+            const BRANCH_EL: Record<string, string> = {
+              子:"수",丑:"토",寅:"목",卯:"목",辰:"토",巳:"화",午:"화",未:"토",申:"금",酉:"금",戌:"토",亥:"수"
+            };
+            const elColor = (el: string) =>
+              el === "목" ? "text-emerald-500" :
+              el === "화" ? "text-red-500" :
+              el === "토" ? "text-yellow-600" :
+              el === "금" ? "text-slate-400" :
+              el === "수" ? "text-blue-500" : "text-foreground";
+            const dayPillar = pillars["day"];
             return (
               <div className="space-y-6 pt-2">
                 {/* 사주팔자 */}
@@ -830,26 +844,16 @@ export default function MyRoom() {
                     {(["hour", "day", "month", "year"] as const).map((k) => {
                       const p = pillars[k];
                       return (
-                        <div key={k} className="ganji-cell text-center rounded-lg border-2 border-border bg-card shadow-sm p-3">
-                          <div className="text-xs font-semibold text-muted-foreground mb-2">{LABELS[k]}</div>
+                        <div key={k} className={`ganji-cell text-center rounded-lg border-2 p-3 shadow-sm ${
+                          k === "day"
+                            ? "border-amber-500 bg-amber-500/10"
+                            : "border-border bg-card"
+                        }`}>
+                          <div className={`text-xs font-semibold mb-2 ${k === "day" ? "text-amber-600" : "text-muted-foreground"}`}>{LABELS[k]}</div>
                           {p ? (
                             <>
-                              <div className={`text-2xl font-bold mb-1 ${
-                                p.stemElement === "목" ? "text-emerald-500" :
-                                p.stemElement === "화" ? "text-red-500" :
-                                p.stemElement === "토" ? "text-yellow-600" :
-                                p.stemElement === "금" ? "text-slate-400" :
-                                p.stemElement === "수" ? "text-blue-500" :
-                                "text-foreground"
-                              }`}>{p.stem}</div>
-                              <div className={`text-2xl font-bold ${
-                                p.branchElement === "목" ? "text-emerald-500" :
-                                p.branchElement === "화" ? "text-red-500" :
-                                p.branchElement === "토" ? "text-yellow-600" :
-                                p.branchElement === "금" ? "text-slate-400" :
-                                p.branchElement === "수" ? "text-blue-500" :
-                                "text-foreground"
-                              }`}>{p.branch}</div>
+                              <div className={`font-bold mb-1 ${k === "day" ? "text-3xl" : "text-2xl"} ${elColor(p.stemElement ?? STEM_EL[p.stem] ?? "")}`}>{p.stem}</div>
+                              <div className={`font-bold ${k === "day" ? "text-3xl" : "text-2xl"} ${elColor(p.branchElement ?? BRANCH_EL[p.branch] ?? "")}`}>{p.branch}</div>
                               {p.shinsal && <div className="text-[0.65rem] mt-1.5 text-muted-foreground bg-muted/50 rounded px-1">{p.shinsal}</div>}
                             </>
                           ) : (
@@ -976,5 +980,6 @@ export default function MyRoom() {
     </div>
   );
 }
+
 
 
