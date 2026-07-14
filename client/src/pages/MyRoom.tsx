@@ -293,20 +293,18 @@ export default function MyRoom() {
           <Card className="hanji-card">
             <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-xl hanja-display">사주 프로필</CardTitle>
-              <div className="flex gap-1">
+              <div className="flex items-center gap-2 ml-auto">
+                <input
+                  type="text"
+                  placeholder="이름 검색"
+                  value={profileSearch}
+                  onChange={(e) => setProfileSearch(e.target.value)}
+                  className="w-32 px-2 py-1 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+                />
                 <Button size="sm" variant={sajuSortBy === "createdAt" ? "default" : "outline"}
                   onClick={() => setSajuSortBy("createdAt")}>입력순</Button>
                 <Button size="sm" variant={sajuSortBy === "label" ? "default" : "outline"}
                   onClick={() => setSajuSortBy("label")}>이름순</Button>
-              </div>
-              <div className="w-full mt-2">
-                <input
-                  type="text"
-                  placeholder="이름으로 검색..."
-                  value={profileSearch}
-                  onChange={(e) => setProfileSearch(e.target.value)}
-                  className="w-full px-3 py-1.5 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
               </div>
               <div className="flex items-center gap-2">
                 <Link href="/compatibility">
@@ -509,22 +507,20 @@ export default function MyRoom() {
           <Card className="hanji-card">
             <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-xl hanja-display">상담 세션</CardTitle>
-              <div className="flex gap-1">
+              <div className="flex items-center gap-2 ml-auto">
+                <input
+                  type="text"
+                  placeholder="이름 검색"
+                  value={sessionSearch}
+                  onChange={(e) => setSessionSearch(e.target.value)}
+                  className="w-32 px-2 py-1 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+                />
                 <Button size="sm" variant={sessionSortBy === "newest" ? "default" : "outline"}
                   onClick={() => setSessionSortBy("newest")}>최신순</Button>
                 <Button size="sm" variant={sessionSortBy === "oldest" ? "default" : "outline"}
                   onClick={() => setSessionSortBy("oldest")}>오래된순</Button>
                 <Button size="sm" variant={sessionSortBy === "label" ? "default" : "outline"}
                   onClick={() => setSessionSortBy("label")}>이름순</Button>
-              </div>
-              <div className="w-full mt-2">
-                <input
-                  type="text"
-                  placeholder="이름으로 검색..."
-                  value={sessionSearch}
-                  onChange={(e) => setSessionSearch(e.target.value)}
-                  className="w-full px-3 py-1.5 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -728,17 +724,15 @@ export default function MyRoom() {
           {/* 탭 3: 마스터와 상담 (예약 기록) */}
           <TabsContent value="appointments" className="mt-6">
           <Card className="hanji-card">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between gap-2">
               <CardTitle className="text-xl hanja-display">마스터와 직접 상담 예약</CardTitle>
-              <div className="w-full mt-2">
-                <input
-                  type="text"
-                  placeholder="이름으로 검색..."
-                  value={apptSearch}
-                  onChange={(e) => setApptSearch(e.target.value)}
-                  className="w-full px-3 py-1.5 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="이름 검색"
+                value={apptSearch}
+                onChange={(e) => setApptSearch(e.target.value)}
+                className="w-32 px-2 py-1 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
             </CardHeader>
             <CardContent className="space-y-3">
               {(apptsQuery.data ?? []).length === 0 && (
@@ -982,4 +976,5 @@ export default function MyRoom() {
     </div>
   );
 }
+
 
