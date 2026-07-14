@@ -123,6 +123,7 @@ export default function Plans() {
   const [profileId, setProfileId] = useState<string>("");
   const [eventCode, setEventCode] = useState<string>("");
   const [profileSearch, setProfileSearch] = useState<string>("");
+  const [openProfile, setOpenProfile] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   // 무통장 입금 신청 다이얼로그 상태
   const [depositOpen, setDepositOpen] = useState(false);
@@ -495,39 +496,52 @@ export default function Plans() {
                 </p>
               </div>
             )}
-            {/* 프로필 검색 + 선택 */}
-            <div className="space-y-2">
-              <input
-                type="text"
-                placeholder="이름으로 검색..."
-                value={profileSearch}
-                onChange={(e) => setProfileSearch(e.target.value)}
-                className="w-full px-3 py-2 text-sm border-2 border-amber-500 rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-amber-400/60"
-              />
-              <div className="max-h-52 overflow-y-auto border border-border rounded-md bg-background">
-                {(profilesQuery.data ?? [])
-                  .filter((p) => !profileSearch || (p.label ?? "").toLowerCase().includes(profileSearch.toLowerCase()))
-                  .map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setProfileId(String(p.id))}
-                      className={`w-full text-left px-3 py-2 text-sm hover:bg-amber-50 transition-colors ${
-                        profileId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""
-                      }`}
-                    >
-                      {p.label || `${p.birthYear}년 ${p.birthMonth}월 ${p.birthDay}일`}
-                    </button>
-                  ))}
-                {(profilesQuery.data ?? []).filter((p) =>
-                  !profileSearch || (p.label ?? "").toLowerCase().includes(profileSearch.toLowerCase())
-                ).length === 0 && (
-                  <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+            {/* 프로필 검색 + 선택 드롭다운 */}
+            <div className="relative">
+              <div
+                className="flex items-center border-2 border-amber-500 rounded-md bg-background px-3 py-2 cursor-text"
+                onClick={() => setOpenProfile(true)}
+              >
+                {!openProfile && profileId ? (
+                  <span className="flex-1 text-sm text-foreground truncate">
+                    {profilesQuery.data?.find((p) => String(p.id) === profileId)?.label ?? "선택됨"}
+                  </span>
+                ) : (
+                  <input
+                    type="text"
+                    placeholder="이름으로 검색..."
+                    value={profileSearch}
+                    autoFocus={openProfile}
+                    onChange={(e) => setProfileSearch(e.target.value)}
+                    onFocus={() => setOpenProfile(true)}
+                    className="flex-1 text-sm bg-transparent focus:outline-none"
+                  />
                 )}
+                <span className="ml-2 text-amber-600 font-bold text-base select-none" onClick={(e) => { e.stopPropagation(); setOpenProfile(v => !v); }}>
+                  {openProfile ? "▲" : "▼"}
+                </span>
               </div>
-              {profileId && (
-                <div className="text-sm text-amber-700 font-medium px-1">
-                  ✓ {profilesQuery.data?.find((p) => String(p.id) === profileId)?.label ?? "선택됨"}
+              {openProfile && (
+                <div className="absolute z-50 w-full mt-1 max-h-52 overflow-y-auto border-2 border-amber-400 rounded-md bg-card shadow-lg">
+                  {(profilesQuery.data ?? [])
+                    .filter((p) => !profileSearch || (p.label ?? "").toLowerCase().includes(profileSearch.toLowerCase()))
+                    .map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => { setProfileId(String(p.id)); setProfileSearch(""); setOpenProfile(false); }}
+                        className={`w-full text-left px-3 py-2 text-sm hover:bg-amber-50 transition-colors ${
+                          profileId === String(p.id) ? "bg-amber-100 font-semibold text-amber-900" : ""
+                        }`}
+                      >
+                        {p.label || `${p.birthYear}년 ${p.birthMonth}월 ${p.birthDay}일`}
+                      </button>
+                    ))}
+                  {(profilesQuery.data ?? []).filter((p) =>
+                    !profileSearch || (p.label ?? "").toLowerCase().includes(profileSearch.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-2 text-sm text-muted-foreground">검색 결과 없음</div>
+                  )}
                 </div>
               )}
             </div>
@@ -563,5 +577,6 @@ export default function Plans() {
     </div>
   );
 }
+
 
 
