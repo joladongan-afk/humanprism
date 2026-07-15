@@ -227,10 +227,7 @@ export default function SajuNew() {
       toast.error("실명을 입력해 주세요.");
       return false;
     }
-    if (!memberId.trim()) {
-      toast.error("회원 아이디를 입력해 주세요.");
-      return false;
-    }
+
     return true;
   }
 
@@ -383,7 +380,7 @@ export default function SajuNew() {
           </div>
           <CardHeader className="border-b-2 border-amber-600/20 pb-4">
             <CardTitle className="text-2xl font-bold text-amber-900">기본 정보</CardTitle>
-            <p className="text-sm text-emerald-700 mt-1">📁 실명·아이디·성별은 프로필에 저장됩니다</p>
+            <p className="text-sm text-emerald-700 mt-1">📁 실명·성별·생년월일시는 필수입니다. 아이디는 선택사항입니다.</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
@@ -400,7 +397,7 @@ export default function SajuNew() {
               </div>
               <div>
                 <Label className="mb-3 block text-base font-semibold text-gray-700">
-                  회원 아이디 <span className="text-red-500">*</span>
+                  회원 아이디 <span className="text-gray-400 text-sm font-normal">(선택)</span>
                 </Label>
                 <Input
                   value={memberId}
@@ -417,7 +414,7 @@ export default function SajuNew() {
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="본인 / 배우자 / 자녀" className="border-2 border-amber-400/50 focus:border-amber-600 focus:ring-amber-500/20 text-lg" />
               </div>
               <div>
-                <Label className="mb-3 block text-base font-semibold text-gray-700">성별</Label>
+                <Label className="mb-3 block text-base font-semibold text-gray-700">성별 <span className="text-red-500">*</span></Label>
                 <Select value={gender} onValueChange={(v) => setGender(v as "male" | "female")}>
                   <SelectTrigger>
                     <SelectValue />
@@ -432,7 +429,7 @@ export default function SajuNew() {
 
             <div className="rounded-md border-2 border-amber-400/50 p-4 space-y-4 bg-amber-50/30">
               <div>
-                <Label className="text-lg font-semibold text-gray-700">양력 / 음력 선택</Label>
+                <Label className="text-lg font-semibold text-gray-700">양력 / 음력 선택 <span className="text-red-500">*</span></Label>
                 <p className="text-base text-muted-foreground mt-1 mb-3">
                   주민등록번호·양력 생일을 아시면 <strong>양력</strong>을, 음력(음력생일)만 아시면
                   <strong>음력</strong>을 고르세요. 사주 계산은 만세력 기준으로 자동 환산됩니다.
@@ -812,3 +809,4 @@ export default function SajuNew() {
     </div>
   );
 }
+
