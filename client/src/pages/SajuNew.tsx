@@ -380,6 +380,7 @@ export default function SajuNew() {
           </div>
           <CardHeader className="border-b-2 border-amber-600/20 pb-4">
             <CardTitle className="text-2xl font-bold text-amber-900">기본 정보</CardTitle>
+            <p className="text-sm text-emerald-700 mt-1">📁 실명·성별·생년월일시는 필수입니다.</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
@@ -808,5 +809,6 @@ export default function SajuNew() {
     </div>
   );
 }
+
 
 
