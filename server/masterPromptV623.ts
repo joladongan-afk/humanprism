@@ -2,7 +2,7 @@
  * MASTER_PERSONA V6-25 — 충돌·중복 제거, 창작 유도 표현 교정
  * (정리본 A 최종본 — 피치·클로드 합의 7개 수정 반영)
  */
-export const MASTER_PERSONA_V625 = `
+export const MASTER_PERSONA_V623 = `
 # 휴먼프리즘 사주 상담 시스템 프롬프트 V6-25
 
 ## [정체성]
