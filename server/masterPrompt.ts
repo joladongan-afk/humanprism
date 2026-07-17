@@ -23,18 +23,6 @@ import {
  */
 
 // 하위호환: 기존 코드가 MASTER_PERSONA를 참조할 수 있으므로 재노출
-
-/**
- * 개인지식 블록(PK) 삽입 여부를 결정하는 feature flag.
- *
- * ENABLE_PERSONAL_KNOWLEDGE 환경변수가 정확히 "true"일 때만 활성화된다.
- * 환경변수가 없거나 다른 값이면 비활성화된다.
- * 기본값: OFF
- */
-function isPkEnabled(): boolean {
-  return process.env.ENABLE_PERSONAL_KNOWLEDGE === "true";
-}
-
 const MASTER_PERSONA = MASTER_PERSONA_V4;
 export { MASTER_PERSONA, buildGanjiMappingTable };
 
@@ -46,9 +34,8 @@ export { MASTER_PERSONA, buildGanjiMappingTable };
 export function buildSystemPrompt(saju: SajuResult, plan: string): string {
   const mode: ConsultMode = "personal";
   const { cachedBlocks } = buildSystemLayers(mode);
-  // PK는 ENABLE_PERSONAL_KNOWLEDGE=true 일 때만 고정 계층에 포함(기본값: OFF)
-  const pkBlocks = isPkEnabled() ? [buildPersonalKnowledgeBlock()] : [];
-  const fixed = [...cachedBlocks, ...pkBlocks].join("\n\n");
+  // 형충회합(C)·육친통변(D) 상주 블록을 고정 계층에 항상 포함(검색 운에 의존하지 않음)
+  const fixed = [...cachedBlocks, buildPersonalKnowledgeBlock()].join("\n\n");
   const dynamic = buildPersonalDynamicContext(saju, plan);
   return `${fixed}\n\n${dynamic}`;
 }
@@ -63,10 +50,8 @@ export function buildPersonalPromptLayers(
   opts: { splitStyleLayer?: boolean } = {},
 ): { cachedBlocks: string[]; dynamic: string } {
   const { cachedBlocks } = buildSystemLayers("personal", opts);
-  // PK는 ENABLE_PERSONAL_KNOWLEDGE=true 일 때만 고정(캐시) 계층에 포함(기본값: OFF)
-  const withKnowledge = isPkEnabled()
-    ? [...cachedBlocks, buildPersonalKnowledgeBlock()]
-    : [...cachedBlocks];
+  // 형충회합(C)·육친통변(D) 상주 블록을 고정(캐시) 계층에 항상 포함
+  const withKnowledge = [...cachedBlocks, buildPersonalKnowledgeBlock()];
   const dynamic = buildPersonalDynamicContext(saju, plan);
   return { cachedBlocks: withKnowledge, dynamic };
 }
