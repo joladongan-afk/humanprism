@@ -225,9 +225,12 @@ export function buildPersonalDynamicContext(saju: SajuResult, plan: string): str
   // ★현재 대운 구간과 올해 세운을 코드 확정값으로 못박아 주입한다.
   // 또한 조후·기세·12운성·육친·지장간이 모두 포함된 풍부한 데이터를 제공한다.
   const sajuBlock = formatSajuForPrompt(saju);
-  // 이 사주의 일주 60갑자 물상 1개만 골라 주입(60개 전부 상주시키지 않아 토큰 절약)
+  // 일주 RAG는 ENABLE_DAY_PILLAR_RAG=true 일 때만 삽입(기본값: OFF)
   const dayGanji = `${saju.pillars.day.stem}${saju.pillars.day.branch}`;
-  const dayPillarBlock = buildDayPillarSourceBlock(dayGanji);
+  const dayPillarBlock =
+    process.env.ENABLE_DAY_PILLAR_RAG === "true"
+      ? buildDayPillarSourceBlock(dayGanji)
+      : "";
   const dayPillarPart = dayPillarBlock ? `\n\n${dayPillarBlock}` : "";
 
   return `## 당신의 사주 정보
