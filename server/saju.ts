@@ -1121,6 +1121,8 @@ export function formatSajuForPrompt(r: SajuResult): string {
   lines.push("");
 
   // ===== 육친 드러남 층위 — 개수가 아닌 정성적 무게 =====
+  // 세션33 격리 실험: ENABLE_TEN_GOD_REVEAL_LAYER=true 일 때만 이 블록 실행(기본값: OFF)
+  if (process.env.ENABLE_TEN_GOD_REVEAL_LAYER === "true") {
   const pillarsArr = [r.pillars.year, r.pillars.month, r.pillars.day, r.pillars.hour].filter(
     (p): p is SajuPillar => !!p,
   );
@@ -1162,6 +1164,7 @@ export function formatSajuForPrompt(r: SajuResult): string {
     lines.push(`- ${L.category}: ${tier}`);
   }
   lines.push("");
+  }
 
   // ===== 형충(刑沖) 사실값 =====
   const branchSeq = [
