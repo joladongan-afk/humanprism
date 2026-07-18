@@ -1,0 +1,17 @@
+우수 프롬프트 1 — 파일 해시 목록
+확정: 2026년 7월 18일 토요일 14:04
+기준: 4번(V6-24-7) / 역사 SHA 191c7550f4a30e635ec29142def1f04144795666 / 운영재현 SHA 2e05185e8f456cde42d060ebca0da004c1d139cd
+
+--- SHA256 (파일 내용) ---
+4c7f442fc6d234c57048891620caeeed406412058874c8c42f2e8eb2b4169b5f  masterPromptV623.ts
+ea598ca2135b2b912e3e9f6e607696072983feb5a71268bf46331b38bc8215da  README.md
+012a79796d14776e358ac5cccceffacb88f7d62455d706dcda06f524cefb3856  runtime-context.md
+9a4fc9f912e244520b5fe5982bc5cc3c915f94cad9c8c31e5376672d5d2a50d9  test-B0006-2026-07-18-1331.md
+
+--- Git blob 해시 (git hash-object) ---
+8e52cbca7564ca02f1a31bd95180d5355b6e7941  masterPromptV623.ts
+2d66a2d4337d95f1d77f63768f4ec90688dc8443  README.md
+d46e21cf196efb1a06b216e1aafc5b489205ad5f  runtime-context.md
+e7bdd16d70ba662d0292178e0bfb832ef143ae99  test-B0006-2026-07-18-1331.md
+
+--- 참고: masterPromptV623.ts는 역사 SHA(191c755)·운영재현 SHA(2e05185)의 동일 파일과 blob 해시 일치 확인됨: 8e52cbca7564ca02f1a31bd95180d5355b6e7941 ---
