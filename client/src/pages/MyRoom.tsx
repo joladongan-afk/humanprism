@@ -30,9 +30,9 @@ function formatKst(d: Date | string | null | undefined) {
 
 const PLAN_LABEL: Record<string, string> = {
   free: "원픽 무료 · 3회",
-  taste: "알뜰 · 20회",
+  taste: "알뜰 · 10회",
   event: "이벤트 · 10회",
-  deep: "심층 · 30회",
+  deep: "심층 · 15회",
   master_chat: "마스터 채팅 · 60분",
   master_offline: "마스터 대면 · 80분",
 };

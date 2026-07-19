@@ -425,9 +425,9 @@ function Consult() {
 
   const planLabel: Record<string, string> = {
     free: "원픽 무료 상담 · 3회",
-    taste: "알뜰 상담 · 20회",
+    taste: "알뜰 상담 · 10회",
     event: "이벤트 상담 · 10회",
-    deep: "심층 상담 · 30회",
+    deep: "심층 상담 · 15회",
     master_chat: "마스터 채팅 상담 · 60분",
     master_offline: "마스터 대면 상담 · 80분",
     compatibility_chat: "궁합 채팅 상담 · 10회",

@@ -25,8 +25,8 @@ import { USAGE_WINDOW_MS } from "@shared/const";
 
 // 질문 횟수제: turns=구매 질문 횟수. routers.ts PLAN_CONFIG와 동일하게 유지.
 const PLAN_CONFIG = {
-  taste: { amount: 9900, durationMinutes: 1440, turns: 20, label: "맛보기 상담" },
-  deep: { amount: 14900, durationMinutes: 1440, turns: 30, label: "메인 상담" },
+  taste: { amount: 9900, durationMinutes: 1440, turns: 10, label: "맛보기 상담" },
+  deep: { amount: 14900, durationMinutes: 1440, turns: 15, label: "메인 상담" },
   compatibility_chat: { amount: 7900, durationMinutes: 1440, turns: 10, label: "궁합 채팅 상담" },
   master_kakao_15: { amount: 30000, durationMinutes: 15, turns: 0, label: "마스터 카카오 채팅 15분" },
   master_kakao_30: { amount: 50000, durationMinutes: 30, turns: 0, label: "마스터 카카오 채팅 30분" },

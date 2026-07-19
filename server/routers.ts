@@ -30,9 +30,9 @@ import { namingRouter } from "./naming/router";
 //  - durationMinutes = 레거시/시간제 만료 기준. 횟수제 세션에서도 안전장치로 넉넉히 유지.
 const PLAN_CONFIG = {
   free: { amount: 0, durationMinutes: 1440, turns: 3, label: "원픽 무료 상담" },
-  taste: { amount: 9900, durationMinutes: 1440, turns: 20, label: "맛보기 상담" },
+  taste: { amount: 9900, durationMinutes: 1440, turns: 10, label: "맛보기 상담" },
   event: { amount: 0, durationMinutes: 1440, turns: 10, label: "이벤트 상담" },
-  deep: { amount: 14900, durationMinutes: 1440, turns: 30, label: "메인 상담" },
+  deep: { amount: 14900, durationMinutes: 1440, turns: 15, label: "메인 상담" },
   master_chat: { amount: 100000, durationMinutes: 60, turns: null, label: "마스터 채팅 상담" },
   master_offline: { amount: 200000, durationMinutes: 80, turns: null, label: "마스터 대면 상담" },
   compatibility_chat: { amount: 7900, durationMinutes: 1440, turns: 10, label: "궁합 채팅 상담" },

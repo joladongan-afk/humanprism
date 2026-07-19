@@ -20,8 +20,8 @@ import { toast } from "sonner";
 export type DepositPlanType = "taste" | "deep" | "compatibility_chat" | "master_kakao_15" | "master_kakao_30" | "master_kakao_60" | "self_naming" | "master_naming" | "master_offline";
 
 const PLAN_LABEL: Record<DepositPlanType, { label: string; amount: number; duration: string }> = {
-  taste: { label: "알뜰 상담", amount: 9900, duration: "질문 20회" },
-  deep: { label: "심층 상담", amount: 14900, duration: "질문 30회" },
+  taste: { label: "알뜰 상담", amount: 9900, duration: "질문 10회" },
+  deep: { label: "심층 상담", amount: 14900, duration: "질문 15회" },
   compatibility_chat: { label: "궁합 채팅 상담", amount: 7900, duration: "질문 10회" },
   master_kakao_15: { label: "카카오 채팅 상담 15분 (1인 상담)", amount: 30000, duration: "15분" },
   master_kakao_30: { label: "카카오 채팅 상담 30분 (1인 심층 상담)", amount: 50000, duration: "30분" },

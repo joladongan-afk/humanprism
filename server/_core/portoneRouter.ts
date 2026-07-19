@@ -15,9 +15,9 @@ import * as db from "../db";
 // 질문 횟수제: turns=구매 질문 횟수(null=시간제). routers.ts PLAN_CONFIG와 동일하게 유지.
 const PLAN_CONFIG = {
   free: { amount: 0, durationMinutes: 1440, turns: 3, label: "원픽 무료 상담" },
-  taste: { amount: 9900, durationMinutes: 1440, turns: 20, label: "맛보기 상담" },
+  taste: { amount: 9900, durationMinutes: 1440, turns: 10, label: "맛보기 상담" },
   event: { amount: 0, durationMinutes: 1440, turns: 10, label: "이벤트 상담" },
-  deep: { amount: 14900, durationMinutes: 1440, turns: 30, label: "메인 상담" },
+  deep: { amount: 14900, durationMinutes: 1440, turns: 15, label: "메인 상담" },
   master_chat: { amount: 100000, durationMinutes: 60, turns: null, label: "마스터 채팅 상담" },
   master_offline: { amount: 200000, durationMinutes: 80, turns: null, label: "마스터 대면 상담" },
   compatibility: { amount: 7900, durationMinutes: 0, turns: null, label: "궁합 분석" },
