@@ -5,15 +5,17 @@
 
 --- SHA256 (파일 내용) ---
 4c7f442fc6d234c57048891620caeeed406412058874c8c42f2e8eb2b4169b5f  masterPromptV623.ts
-62f1e6a346e170daaf67cc4196a74f8e5f6ddfc95e46bb0df99abc61e8fac631  README.md
+b20ca9a7ca0c11865e6b10cea363fdae4351d67b9e8952f8ce67ba806dee5281  README.md
 877e8284db3c83ca152531e3ac7a75e316d76a363d1d7da8518e3acf8cb25ff8  runtime-context.md
 9149cbd42aece3e60f9e96e4473ba469018746128b89cb64b987fd0b0de6f2d4  test-B0006-2026-07-18-1331.md
+0b5015a88299802f6c82f3b9cbdd93de4e0a42a1827eaa40608fe117557141b7  RECOVERY.md
 
 --- Git blob 해시 (git hash-object) ---
 8e52cbca7564ca02f1a31bd95180d5355b6e7941  masterPromptV623.ts
-eba7930aa7797f120fe72d7c5473c8563796406a  README.md
+ab95c74bed6dc4663506c33cc6f0e5b353adf919  README.md
 408c330f3b7589060e959f1b582a31e7f08d6ab8  runtime-context.md
 35bf0c44bc4a51c294ba5909c98c1e3c2dfa25c3  test-B0006-2026-07-18-1331.md
+0f8faf7a934edd88f2c26d761ed5ae41430231ba  RECOVERY.md
 
---- 참고: masterPromptV623.ts는 역사 SHA(191c755)·운영재현 SHA(2e05185)의 동일 파일과 blob 해시 일치 확인됨: 8e52cbca7564ca02f1a31bd95180d5355b6e7941 ---
---- 참고: test-B0006-2026-07-18-1331.md는 2026-07-18 14:xx 시점 마스터·피치 대화에서 확보된 답변 전문으로 갱신됨 (요약본 아님, 원문 그대로) ---
+--- 참고: masterPromptV623.ts blob 8e52cbca7564ca02f1a31bd95180d5355b6e7941 = 역사 SHA(191c755) = 운영재현 SHA(2e05185) 동일 ---
+--- Git 태그: humanprism-saju-excellent-prompt-01 → 2f35106 (체크포인트 완성 커밋, RECOVERY.md는 태그 이후 추가) ---
