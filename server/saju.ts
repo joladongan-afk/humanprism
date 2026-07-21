@@ -1083,9 +1083,9 @@ export function formatSajuForPrompt(r: SajuResult): string {
   const isMale = r.input.gender === "male";
   // 일간(일주 천간) — 대운·세운 육친 계산에 사용
   const dayStemForGod = r.pillars.day?.stem ?? "";
-  lines.push(`【★내담자 성별: ${isMale ? "남자(남명)" : "여자(여명)"} — 코드 확정값, 절대 반대로 읽지 말 것】`);
-  lines.push(`- 이 명은 ${isMale ? "남명이다. 자식=관성, 배우자(처)=재성" : "여명이다. 자식=식상, 배우자(남편)=관성"}으로 본다. 성별을 반대로 둘러 ${isMale ? "'여명'" : "'남명'"} 운운하면 명백한 오류다.`);
-  lines.push("【사주팔자】");
+  lines.push("[PROFILE]");
+  lines.push(`sex_code: ${isMale ? "male" : "female"}`);
+  lines.push("[NATAL_CHART]");
   const cols = ["year", "month", "day", "hour"] as const;
   const labels: Record<string, string> = { year: "연주", month: "월주", day: "일주", hour: "시주" };
   // 가로 표기로 정리 (LLM 가독성)
@@ -1101,66 +1101,20 @@ export function formatSajuForPrompt(r: SajuResult): string {
       .join("·");
     // 지지 자체 육친(바탕 정보) — 지지 정기로 '드러난' 육친임을 명시(지장간 잠복과 혼동 금지)
     const branchGodStr = p.branchTenGod
-      ? `, ★지지정기로 드러난 육친:${p.branchTenGod}(=${p.branch}지가 바탕에 깔고 있는 기운, 지장간 잠복이 아님)`
+      ? `, branch_ten_god:${p.branchTenGod}`
       : "";
     lines.push(
-      `- ${labels[c]}: ${p.stem}${p.branch} (${p.stemKr}${p.branchKr}, 천간오행:${p.stemElement}/지지오행:${p.branchElement}, 천간육친:${p.tenGod}${branchGodStr}, 12운성:${p.twelveStage}(기세 ${p.stageVitality}), 참고용 지장간:${hiddenWithGod}, 12신살:${p.shinsal})`,
+      `- ${labels[c]}: ${p.stem}${p.branch} (${p.stemKr}${p.branchKr}, 천간오행:${p.stemElement}/지지오행:${p.branchElement}, 천간육친:${p.tenGod}${branchGodStr}, 12운성:${p.twelveStage}(기세 ${p.stageVitality}), 참고용 지장간:${hiddenWithGod})`,
     );
   }
-  lines.push(`- 일간(나 자신): ${r.pillars.day.stem}(${r.pillars.day.stemKr}, ${r.pillars.day.stemElement}) — 사주 전체를 체감하는 기준점(개수에 포함하지 말 것)`);
+  lines.push(`day_stem: ${r.pillars.day.stem}(${r.pillars.day.stemElement})`);
   lines.push("");
 
-  // ===== 조후(월령) — 가장 먼저 볼 재료 =====
+  // ===== 조후(월령) =====
   const dayEl = r.pillars.day.stemElement;
   const monthBr = r.pillars.month.branch;
   const ms = getMonthlyStatus(dayEl, monthBr);
-  lines.push("【조후 — 월령(계절)과 일간의 관계: 가장 먼저 볼 것】");
-  lines.push(`- 일간 ${r.pillars.day.stem}(${dayEl})이 월지 ${monthBr}(${ms.season})을 만남 → ${ms.status} (${ms.note})`);
-  lines.push("- 해석 지침: 개수를 세지 말고, 먼저 일간이 계절 속에서 강한지/약한지를 보고, 그 일간이 무엇을 반기고 무엇이 부담인지(난강망적 조후)를 먼저 판단한다.");
-  lines.push("- ★이 계절의 일간에게 먹고사는 물 같은 절실한 기운은 한 점·약하게·구석(시지 등)에 있어도 귀물이다. 양·위치만 보고 '적다·덕이 박하다'로 끝내지 말고, 그럴 때는 그 기운·육친의 귀함·고마움을 반드시 짚는다.");
-  lines.push("");
-
-  // ===== 육친 드러남 층위 — 개수가 아닌 정성적 무게 =====
-  const pillarsArr = [r.pillars.year, r.pillars.month, r.pillars.day, r.pillars.hour].filter(
-    (p): p is SajuPillar => !!p,
-  );
-  const layers = analyzeRevealLayers(pillarsArr);
-  // 각 카테고리가 '어느 자리에서' 드러났는지 구체 위치를 수집(천간 투출·지지 정기) — AI 오판 방지
-  const posLabel: Record<string, string> = { year: "연", month: "월", day: "일", hour: "시" };
-  const cat = (g: string) => getTenGodCategory(g);
-  const stemSites: Record<string, string[]> = {};
-  const branchSites: Record<string, string[]> = {};
-  for (const c of cols) {
-    const p = r.pillars[c];
-    if (!p) continue;
-    if (p.tenGod && p.tenGod !== "일간(아신)") {
-      const k = cat(p.tenGod);
-      if (k) (stemSites[k] ??= []).push(`${posLabel[c]}간 ${p.stem}(${p.tenGod})`);
-    }
-    if (p.branchTenGod) {
-      const k = cat(p.branchTenGod);
-      if (k) (branchSites[k] ??= []).push(`${posLabel[c]}지 ${p.branch}(${p.branchTenGod})`);
-    }
-  }
-  lines.push("【육친 드러남 층위 — 개수를 세지 말 것. 드러난 자리로 무게를 다르게 판단】");
-  lines.push("- 원칙: 같은 육친이라도 천간에 투출했으면 또렷이 쓰는 무기(무겁다), 지지 정기로 드러나면 바탕에 깔림(중간), 지장간에만 숨었으면 평소엔 잠재·복병(가볍다). 지장간에만 있는 육친을 '많다'고 말하지 말 것 — '잠겨 있다 / 형충이 와야 깨어난다'로 읽는다.");
-  lines.push("- ★중요: 아래에서 '지지 정기'로 표기된 육친은 지지가 바탕에 깔고 있는 「드러난」 기운이다. 절대 '지장간에만 숨어있다'고 말하면 안 된다. 관성·재성 등이 지지 정기로 드러나 있으면 그것은 명확한 현실의 기운이다.");
-  for (const L of layers) {
-    let tier: string;
-    if (L.inStem) {
-      const where = (stemSites[L.category] ?? []).join(", ");
-      const bwhere = (branchSites[L.category] ?? []).join(", ");
-      tier = `천간 투출(드러남·무겁다) — 명시적으로 쓰는 기운 [천간: ${where}${bwhere ? `; 지지 정기에도 드러남: ${bwhere}` : ""}]`;
-    } else if (L.inBranch) {
-      const bwhere = (branchSites[L.category] ?? []).join(", ");
-      tier = `지지 정기로 드러남(바탕에 깔림·중간, 지장간 잠복 아님) [${bwhere}]`;
-    } else if (L.hiddenOnly) {
-      tier = "지장간에만 잠복(형충 없으면 평소 가볍·복병)";
-    } else {
-      tier = "없음(원국에 드러나지 않음)";
-    }
-    lines.push(`- ${L.category}: ${tier}`);
-  }
+  lines.push(`month_branch: ${monthBr}(${ms.season}) | season_status: ${ms.status}`);
   lines.push("");
 
   // ===== 형충(刑沖) 사실값 =====
@@ -1171,14 +1125,13 @@ export function formatSajuForPrompt(r: SajuResult): string {
     r.pillars.hour?.branch ?? null,
   ];
   const relations = findBranchRelations(branchSeq);
-  lines.push("【형·충 — 지지가 흔들리는 지점(사실값). 좋다/나쁘다 단정 금지, 양면으로 읽을 것】");
+  lines.push("[CALCULATED_RELATIONS]");
   if (relations.length === 0) {
-    lines.push("- 원국 지지의 형·충 없음(운에서 들어올 때 비로소 흔들림). 안정적이나 변화·전환의 계기는 운에서 온다.");
+    lines.push("- 원국 지지의 형·충 없음.");
   } else {
     for (const rel of relations) {
       lines.push(`- ${rel.note}`);
     }
-    lines.push("- 해석 지침: 충은 '뒤바꾸는·변화에 능한' 기질(재주 많음 ↔ 진득함 부족, 양면 함께). 형은 '비틀어 보는·왜곡된' 결 — 형 맞은 육친을 정석이 아닌 방식으로 쓴다(예: 관이 형 → 권력·생사여탈·별정직 계열). 개고(진술축미)는 잠겼던 지장간이 터져나와 발현되거나 깨지는 틈 — 그 양면을 함께 읽는다.");
   }
   lines.push("");
   // ===== 현재 나이·현재 대운·현재 세운(코드 확정값) =====
@@ -1256,7 +1209,7 @@ export function formatSajuForPrompt(r: SajuResult): string {
   // 그 해의 세는나이·해당 대운 구간과 함께 표로 미리 깔아준다. LLM은 이 표의 값만 사용한다.
   // ★ 기준은 '사주연도'(입춘 보정)이다. 올해 간지(baseGanjiIdx)에서 상대 회전으로 전개한다.
   lines.push("");
-  lines.push("【세운 사슬 — 코드 확정값(과거 30년 ~ 미래 30년, 사주연도·입춘세수 기준). 연도·간지·라벨(올해/내년/작년 등)은 반드시 이 표의 값을 그대로 인용하고, 머릿속으로 다시 계산하지 말 것】");
+  lines.push("[ANNUAL_LUCK — 코드 확정값(과거 30년 ~ 미래 30년, 사주연도·입춘세수 기준)]");
   for (let y = -30; y <= 30; y++) {
     // 사주연도 번호와 간지를 함께 차근으로 전개 (둘 다 올해 기준점에서 ±y)
     const sajuYr = baseSajuYearNo + y;
@@ -1286,8 +1239,6 @@ export function formatSajuForPrompt(r: SajuResult): string {
     const swBranchMainGod = swBranchMainStem ? getTenGod(dayStemForGod, swBranchMainStem) : getBranchTenGod(dayStemForGod, swBranch);
     lines.push(`  · ${sajuYr}년: 세운 ${sw}(천간 ${swStem}=${swStemGod} / 지지 ${swBranch} 본기 ${swBranchMainStem}=${swBranchMainGod}) / 세는나이 ${ageThatYear}세 / 당시 대운 ${daeunStr}${tag}`);
   }
-  lines.push("- 연도 표기는 사주연도(입춘세수) 기준이다. 입춘 전 몇 주 구간이라면 달력 연도와 한 칸 다를 수 있으니, 시점이 애매하면 고객에게 현재 날짜를 확인한다.");
-  lines.push("- 활용: 운을 볼 때 위 '세운 간지'와 '당시 대운'을 원국 글자와 나란히 놓고, 합·충·12운성 등의 상호작용을 살펴 흐름을 읽는다. 단, 어느 해의 간지든 위 표에 적힌 글자만 쓰고 임의로 다른 간지를 지어내지 않는다.");
   return lines.join("\n");
 }
 

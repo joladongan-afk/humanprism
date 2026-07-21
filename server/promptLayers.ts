@@ -25,7 +25,6 @@
 
 import type { SajuResult } from "./saju";
 import { formatSajuForPrompt } from "./saju";
-import { buildDayPillarSourceBlock } from "./personalKnowledge";
 import { MASTER_PERSONA_V623 } from "./masterPromptV623";
 
 /** 계층 버전 태그 — A/B 테스트와 모델 교체 추적용 */
@@ -228,16 +227,13 @@ export function buildPersonalDynamicContext(saju: SajuResult, plan: string): str
   // ★현재 대운 구간과 올해 세운을 코드 확정값으로 못박아 주입한다.
   // 또한 조후·기세·12운성·육친·지장간이 모두 포함된 풍부한 데이터를 제공한다.
   const sajuBlock = formatSajuForPrompt(saju);
-  // 이 사주의 일주 60갑자 물상 1개만 골라 주입(60개 전부 상주시키지 않아 토큰 절약)
-  const dayGanji = `${saju.pillars.day.stem}${saju.pillars.day.branch}`;
-  const dayPillarBlock = buildDayPillarSourceBlock(dayGanji);
-  const dayPillarPart = dayPillarBlock ? `\n\n${dayPillarBlock}` : "";
 
   return `## 당신의 사주 정보
 
-${sajuBlock}${dayPillarPart}
+${sajuBlock}
 
 ## 상담 플랜
 - 플랜: ${plan}
-- 이 상담은 위 플랜에 맞는 깊이와 시간으로 진행됩니다.`;
+- 현재 질문에 직접 답한다. 추가 질문 없이 한 번의 답변으로 완결한다.
+- 계산 데이터의 배열 순서대로 해설하지 않는다.`;
 }
