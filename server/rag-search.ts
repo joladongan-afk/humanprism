@@ -271,7 +271,8 @@ function calculateSimilarity(query: string, chunk: RagChunk): number {
 export function searchRagChunks(
   query: string,
   topK: number = 3,
-  threshold: number = 0.02
+  threshold: number = 0.02,
+  excludeIds: string[] = []
 ): RagChunk[] {
   const chunks = loadRagChunks();
 
@@ -283,6 +284,7 @@ export function searchRagChunks(
   return scored
     .filter((item) => item.score >= threshold)
     .sort((a, b) => b.score - a.score)
+    .filter((item) => !excludeIds.includes(item.chunk.id))
     .slice(0, topK)
     .map((item) => item.chunk);
 }
