@@ -566,16 +566,21 @@ export const appRouter = router({
           ? `${labelA}와(과) ${labelB}의 궁합을 봐 주세요. 특히 이 부분이 궁금합니다: ${input.question.trim()}`
           : `${labelA}와(과) ${labelB}의 궁합을 깊이 있게 분석해 주세요.`;
         let result = "";
+        const compatibilityMaxTokens = 3000;
         try {
-          result = await invokeClaudeWithRagLayers(
+          const ragResult = await invokeClaudeWithRagLayers(
             [{ role: "user", content: userMsg }],
             {
               cachedBlocks,
               dynamicContext: dynamic,
               userQuery: input.question?.trim() || "궁합",
-              maxTokens: 3000,
+              maxTokens: compatibilityMaxTokens,
               ragOverride: "", // RAG는 이미 dynamic에 포함됨(중복 방지)
             }
+          );
+          result = ragResult.content;
+          console.log(
+            `[stopReason] type=compatibility.analyze maxTokens=${compatibilityMaxTokens} stopReason=${ragResult.stopReason} truncated=${ragResult.stopReason === "max_tokens"} length=${result.length}`
           );
         } catch (err) {
           console.error("[compatibility.analyze] Claude API error:", err);
@@ -788,14 +793,19 @@ export const appRouter = router({
           content: m.content,
         }));
         let assistantContent = "";
+        const consultMaxTokens = 4000;
         try {
-          assistantContent = await invokeClaudeWithRagLayers(claudeMessages, {
+          const ragResult = await invokeClaudeWithRagLayers(claudeMessages, {
             cachedBlocks: layerCachedBlocks,
             dynamicContext: layerDynamic,
             userQuery: input.content,
-            maxTokens: 4000,
+            maxTokens: consultMaxTokens,
             ragOverride: useRagSearch ? undefined : "",
           });
+          assistantContent = ragResult.content;
+          console.log(
+            `[stopReason] type=consult.sendMessage maxTokens=${consultMaxTokens} stopReason=${ragResult.stopReason} truncated=${ragResult.stopReason === "max_tokens"} length=${assistantContent.length}`
+          );
         } catch (err) {
           console.error("[consult.sendMessage] Claude API error:", err);
           throw new TRPCError({
@@ -845,13 +855,17 @@ export const appRouter = router({
                 { role: "assistant" as const, content: assistantContent },
                 { role: "user" as const, content: retryInstruction },
               ];
-              const retryContent = await invokeClaudeWithRagLayers(retryMessages, {
+              const retryRagResult = await invokeClaudeWithRagLayers(retryMessages, {
                 cachedBlocks: layerCachedBlocks,
                 dynamicContext: layerDynamic,
                 userQuery: retryInstruction,
-                maxTokens: 4000,
+                maxTokens: consultMaxTokens,
                 ragOverride: useRagSearch ? undefined : "",
               });
+              const retryContent = retryRagResult.content;
+              console.log(
+                `[stopReason] type=consult.sendMessage.retry maxTokens=${consultMaxTokens} stopReason=${retryRagResult.stopReason} truncated=${retryRagResult.stopReason === "max_tokens"} length=${retryContent.length}`
+              );
               if (retryContent && retryContent.trim().length > 0) {
                 assistantContent = retryContent;
               }

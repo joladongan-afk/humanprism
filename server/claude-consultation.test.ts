@@ -51,7 +51,7 @@ describe("Claude API Consultation Performance", () => {
     startTime = Date.now();
 
     try {
-      const response = await invokeClaudeWithRag(messages, userQuery, 1024);
+      const { content: response } = await invokeClaudeWithRag(messages, userQuery, 1024);
       endTime = Date.now();
 
       const duration = endTime - startTime;
@@ -98,7 +98,7 @@ describe("Claude API Consultation Performance", () => {
     startTime = Date.now();
 
     try {
-      const response = await invokeClaudeWithRag(messages, userQuery, 1024);
+      const { content: response } = await invokeClaudeWithRag(messages, userQuery, 1024);
       endTime = Date.now();
 
       const duration = endTime - startTime;
@@ -136,7 +136,7 @@ describe("Claude API Consultation Performance", () => {
     startTime = Date.now();
 
     try {
-      const response = await invokeClaudeWithRag(messages, userQuery, 1024);
+      const { content: response } = await invokeClaudeWithRag(messages, userQuery, 1024);
       endTime = Date.now();
 
       const duration = endTime - startTime;

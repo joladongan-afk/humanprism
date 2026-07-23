@@ -99,7 +99,7 @@ describe("횟수제 이용 기한(첫 입장 후 72시간)", () => {
     (db.listConsultMessages as any).mockResolvedValue([]);
     (db.updateConsultSession as any).mockResolvedValue(undefined);
     (db.consumeTurn as any).mockResolvedValue({ ok: true, remaining: 19 });
-    (invokeClaudeWithRagLayers as any).mockResolvedValue("마스터의 답변입니다.");
+    (invokeClaudeWithRagLayers as any).mockResolvedValue({ content: "마스터의 답변입니다.", stopReason: "end_turn" });
   });
 
   it("첫 질문(firstEnteredAt=null)은 기한 만료가 아니며 firstEnteredAt을 기록한다", async () => {

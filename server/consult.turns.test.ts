@@ -97,7 +97,7 @@ describe("질문 횟수제 sendMessage", () => {
     (db.appendConsultMessage as any).mockResolvedValue(undefined);
     (db.listConsultMessages as any).mockResolvedValue([]);
     (db.updateConsultSession as any).mockResolvedValue(undefined);
-    (invokeClaudeWithRagLayers as any).mockResolvedValue("마스터의 답변입니다.");
+    (invokeClaudeWithRagLayers as any).mockResolvedValue({ content: "마스터의 답변입니다.", stopReason: "end_turn" });
   });
 
   it("남은 질문이 있으면 AI 응답 후 질문이 차감되고 remaining을 반환한다", async () => {

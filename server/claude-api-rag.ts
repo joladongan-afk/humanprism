@@ -16,6 +16,17 @@ import { MASTER_PERSONA_V4 } from "./masterPromptV4";
 export const MASTER_SYSTEM_PROMPT = MASTER_PERSONA_V4;
 
 /**
+ * invokeClaudeWithRag / invokeClaudeWithRagLayers의 반환 타입.
+ * 기존에는 content 문자열만 반환하여 Anthropic 응답의 stop_reason이
+ * 호출부까지 전달되지 못했다(P19-041). 절단 여부를 관측하기 위해
+ * stopReason을 함께 반환한다.
+ */
+export type ClaudeRagResult = {
+  content: string;
+  stopReason: string;
+};
+
+/**
  * RAG 검색 결과를 포함한 확장된 시스템 프롬프트 생성(하위호환).
  */
 export function buildRagSystemPrompt(userQuery: string, topK: number = 3): string {
@@ -39,7 +50,7 @@ export async function invokeClaudeWithRag(
   userQuery: string,
   maxTokens: number = 2048,
   baseSystemPrompt?: string,
-): Promise<string> {
+): Promise<ClaudeRagResult> {
   const cachedSystemPrompt = baseSystemPrompt || buildRagSystemPrompt(userQuery, 3);
 
   let dynamicSystemPrompt = "";
@@ -56,7 +67,7 @@ export async function invokeClaudeWithRag(
     cachedSystemPrompt,
     dynamicSystemPrompt,
   });
-  return result.content;
+  return { content: result.content, stopReason: result.stopReason };
 }
 
 /**
@@ -80,7 +91,7 @@ export async function invokeClaudeWithRagLayers(
     ragOverride?: string;
     ragTopK?: number;
   },
-): Promise<string> {
+): Promise<ClaudeRagResult> {
   const { cachedBlocks, dynamicContext, userQuery, maxTokens = 2048, ragOverride, ragTopK = 3 } = opts;
 
   // RAG 결합: 명시 지정이 있으면 그것을, 없으면 쿼리로 검색.
@@ -101,7 +112,7 @@ export async function invokeClaudeWithRagLayers(
     cachedSystemPrompt,
     dynamicSystemPrompt,
   });
-  return result.content;
+  return { content: result.content, stopReason: result.stopReason };
 }
 
 /**
