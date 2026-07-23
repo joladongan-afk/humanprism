@@ -12,6 +12,7 @@ import { invokeClaudeAPI } from "./claude-api";
 import { searchRagChunks, formatRagContext } from "./rag-search";
 import { analyzeRevealLayers } from "./saju";
 import type { SajuResult, SajuPillar } from "./saju";
+import { buildCareerReadingBlock } from "./careerReading";
 
 type SiksangStatus = "present" | "absent" | "unknown";
 function getSiksangStatus(sajuData: SajuResult | undefined | null): SiksangStatus {
@@ -144,6 +145,14 @@ export async function invokeClaudeWithRagLayers(
       (ragText ? ragText + "\n\n" : "") +
       `[직업 질문 필수 절차]
 답변 초반에는 계산값과 자리·때가 지지하는 범위에서 과거 사회 진입 방식·노동 형태·정착 구간을 1~2문장으로 자연스럽게 복원한 뒤 현재와 미래의 현실 경로를 제시한다. 근거가 약하면 하나의 사실로 단정하지 말고 가능한 사건군을 조건부로 제시한다. 이 절차를 항목식 점검표로 노출하지 않는다.`;
+
+    // 중간 판독값 블록 추가 (entryType + laborMeans)
+    if (sajuData) {
+      const readingBlock = buildCareerReadingBlock(sajuData);
+      if (readingBlock) {
+        ragText += "\n\n" + readingBlock;
+      }
+    }
   }
 
   const dynamicSystemPrompt = [dynamicContext, ragText].filter((s) => s && s.trim()).join("\n\n");
