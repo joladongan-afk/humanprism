@@ -1,0 +1,18 @@
+우수 프롬프트 2 — 파일 해시 목록
+확정 일시: 2026년 7월 23일
+기준 커밋: 477bb07dc194166f43a90bd5983a57b909f258ec (eta0.3)
+버전명: η-0.3
+
+--- SHA256 (파일 내용) ---
+95b200cb0ba0facfdbb0ee72392344c7e2fbc1bd0ab9c56e6a054fa9e5eda541  masterPromptV623.ts
+
+--- Git blob 해시 (git hash-object) ---
+e41f7b4c84eb1bf801dea9f0c59026617a3f4610  masterPromptV623.ts
+
+--- L1 순수 문자 수 ---
+11,078자 (MASTER_PERSONA_V623 백틱 내부)
+
+--- 참고 ---
+우프1 git blob: 8e52cbca7564ca02f1a31bd95180d5355b6e7941
+우프2는 우프1을 덮어쓰지 않음
+Git 태그: humanprism-saju-excellent-prompt-02
