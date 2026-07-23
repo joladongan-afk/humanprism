@@ -10,6 +10,23 @@
 
 import { invokeClaudeAPI } from "./claude-api";
 import { searchRagChunks, formatRagContext } from "./rag-search";
+import { analyzeRevealLayers } from "./saju";
+import type { SajuResult, SajuPillar } from "./saju";
+
+type SiksangStatus = "present" | "absent" | "unknown";
+function getSiksangStatus(sajuData: SajuResult | undefined | null): SiksangStatus {
+  if (!sajuData) return "unknown";
+  try {
+    const pillarsArr = Object.values(sajuData.pillars).filter(Boolean) as SajuPillar[];
+    if (pillarsArr.length === 0) return "unknown";
+    const layers = analyzeRevealLayers(pillarsArr);
+    const siksang = layers.find((l) => l.category === "식상");
+    if (!siksang) return "unknown";
+    return siksang.inStem || siksang.inBranch || siksang.hiddenOnly ? "present" : "absent";
+  } catch {
+    return "unknown";
+  }
+}
 
 // MASTER_SYSTEM_PROMPT v4 — masterPrompt.ts의 MASTER_PERSONA와 동기화
 import { MASTER_PERSONA_V4 } from "./masterPromptV4";
@@ -90,14 +107,24 @@ export async function invokeClaudeWithRagLayers(
     maxTokens?: number;
     ragOverride?: string;
     ragTopK?: number;
+    sajuData?: SajuResult;
   },
 ): Promise<ClaudeRagResult> {
-  const { cachedBlocks, dynamicContext, userQuery, maxTokens = 2048, ragOverride, ragTopK = 3 } = opts;
+  const { cachedBlocks, dynamicContext, userQuery, maxTokens = 2048, ragOverride, ragTopK = 3, sajuData } = opts;
 
   // RAG 결합: 명시 지정이 있으면 그것을, 없으면 쿼리로 검색.
   let ragText = ragOverride ?? "";
   if (!ragOverride) {
-    const ragChunks = searchRagChunks(userQuery, ragTopK);
+    // ragOverride===undefined(개인상담 RAG ON)일 때만 조건 필터 적용.
+    // ragOverride===""(기존 버그 경로)는 필터 없이 기존 동작 유지.
+    const excludeIds: string[] =
+      ragOverride === undefined
+        ? (() => {
+            const s = getSiksangStatus(sajuData);
+            return s === "present" || s === "unknown" ? ["E4-06"] : [];
+          })()
+        : [];
+    const ragChunks = searchRagChunks(userQuery, ragTopK, 0.02, excludeIds);
     if (ragChunks.length > 0) ragText = formatRagContext(ragChunks);
   }
 
