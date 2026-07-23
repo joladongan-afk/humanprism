@@ -801,6 +801,7 @@ export const appRouter = router({
             userQuery: input.content,
             maxTokens: consultMaxTokens,
             ragOverride: useRagSearch ? undefined : "",
+            sajuData: sajuData ?? undefined,
           });
           assistantContent = ragResult.content;
           console.log(
@@ -861,6 +862,7 @@ export const appRouter = router({
                 userQuery: retryInstruction,
                 maxTokens: consultMaxTokens,
                 ragOverride: useRagSearch ? undefined : "",
+                sajuData: sajuData ?? undefined,
               });
               const retryContent = retryRagResult.content;
               console.log(
