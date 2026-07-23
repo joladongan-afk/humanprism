@@ -128,6 +128,24 @@ export async function invokeClaudeWithRagLayers(
     if (ragChunks.length > 0) ragText = formatRagContext(ragChunks);
   }
 
+  // 직업 직접 질문 판별: 최소 패턴만 매칭 (총평·결혼·건강·재물 질문과 혼용 금지)
+  const CAREER_DIRECT_PATTERNS = [
+    "난 어떤 일을 하면 좋을까",
+    "무슨 일을 하면 좋을까",
+    "어떤 직업이 맞을까",
+    "내 직업운",
+    "진로가 궁금해",
+  ];
+  const isCareerDirectQuery = CAREER_DIRECT_PATTERNS.some((p) =>
+    userQuery.includes(p)
+  );
+  if (isCareerDirectQuery) {
+    ragText =
+      (ragText ? ragText + "\n\n" : "") +
+      `[직업 질문 필수 절차]
+답변 초반에는 계산값과 자리·때가 지지하는 범위에서 과거 사회 진입 방식·노동 형태·정착 구간을 1~2문장으로 자연스럽게 복원한 뒤 현재와 미래의 현실 경로를 제시한다. 근거가 약하면 하나의 사실로 단정하지 말고 가능한 사건군을 조건부로 제시한다. 이 절차를 항목식 점검표로 노출하지 않는다.`;
+  }
+
   const dynamicSystemPrompt = [dynamicContext, ragText].filter((s) => s && s.trim()).join("\n\n");
 
   // 고정 블록이 여러 개면 합쳐서 단일 캐시 블록으로 전달(현재 claude-api는 단일 캐시 블록 사용).
