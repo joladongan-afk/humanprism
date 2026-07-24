@@ -13,6 +13,7 @@ import { searchRagChunks, formatRagContext } from "./rag-search";
 import { analyzeRevealLayers } from "./saju";
 import type { SajuResult, SajuPillar } from "./saju";
 import { buildCareerReadingBlock } from "./careerReading";
+import { buildWealthReadingBlock } from "./wealthReading";
 
 type SiksangStatus = "present" | "absent" | "unknown";
 function getSiksangStatus(sajuData: SajuResult | undefined | null): SiksangStatus {
@@ -137,9 +138,24 @@ export async function invokeClaudeWithRagLayers(
     "내 직업운",
     "진로가 궁금해",
   ];
+  // 재물 직접 질문 패턴 (직업 패턴과 배타적 — 동시 삽입 불가)
+  const WEALTH_DIRECT_PATTERNS = [
+    "재물복",
+    "재물운",
+    "돈복",
+    "재물을 봐",
+    "재물 봐줘",
+    "돈 봐줘",
+    "돈이 얼마나",
+    "부자가 될",
+    "재산을 얼마나",
+  ];
   const isCareerDirectQuery = CAREER_DIRECT_PATTERNS.some((p) =>
     userQuery.includes(p)
   );
+  const isWealthDirectQuery = !isCareerDirectQuery &&
+    WEALTH_DIRECT_PATTERNS.some((p) => userQuery.includes(p));
+
   if (isCareerDirectQuery) {
     ragText =
       (ragText ? ragText + "\n\n" : "") +
@@ -151,6 +167,14 @@ export async function invokeClaudeWithRagLayers(
       const readingBlock = buildCareerReadingBlock(sajuData);
       if (readingBlock) {
         ragText += "\n\n" + readingBlock;
+      }
+    }
+  } else if (isWealthDirectQuery) {
+    // 재물 중간 판독값 블록 추가 (직업 블록과 배타적)
+    if (sajuData) {
+      const wealthBlock = buildWealthReadingBlock(sajuData);
+      if (wealthBlock) {
+        ragText = (ragText ? ragText + "\n\n" : "") + wealthBlock;
       }
     }
   }
