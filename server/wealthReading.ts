@@ -308,7 +308,7 @@ export function buildWealthReadingBlock(saju: SajuResult | undefined | null): st
     }
     if (cdSeg) lines.push(`현재 대운 ${cdSeg.pillar}(${cdSeg.ageRange[0]}~${cdSeg.ageRange[1]}세): ${cdSeg.state}`);
     if (ndSeg) lines.push(`다음 대운 ${ndSeg.pillar}(${ndSeg.ageRange[0]}~${ndSeg.ageRange[1]}세): ${ndSeg.state}`);
-    lines.push("주의: 위 판독값은 계산 근거 요약이다. 여섯 축을 소제목으로 그대로 노출하지 말 것.");
+    lines.push("주의: 위 판독값은 계산 근거 요약이다. 여섯 축을 소제목으로 그대로 노출하지 말 것. ??로 표시된 항목은 긍정·부정 어느 방향으로도 추정하거나 일반론으로 보완하지 말 것.");
 
     const full = lines.join("\n");
     if (full.length <= 600) return full;
@@ -318,7 +318,7 @@ export function buildWealthReadingBlock(saju: SajuResult | undefined | null): st
       ...axes.map(([label, a]) => `${label}(${mk(a.conf)}): ${a.summary}`),
       ...(cdSeg ? [`현재 대운 ${cdSeg.pillar}: ${cdSeg.state}`] : []),
       ...(ndSeg ? [`다음 대운 ${ndSeg.pillar}: ${ndSeg.state}`] : []),
-      "주의: 여섯 축을 소제목으로 그대로 노출하지 말 것."
+      "주의: 여섯 축을 소제목으로 그대로 노출하지 말 것. ??로 표시된 항목은 추정·보완하지 말 것."
     ].join("\n");
     return short;
   } catch { return ""; }
