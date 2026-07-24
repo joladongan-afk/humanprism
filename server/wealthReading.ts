@@ -132,25 +132,50 @@ function acquisition(f: WF): AR {
   else cev.push("월령 실령 — 일간 기운이 계절에서 지지받지 못함");
   if (f.j.relNotes.length > 0) cev.push(`재성 형충: ${f.j.relNotes.join(",")} — 수입 불안정 가능`);
 
-  return ar(ev, cev, "생활 기반 수입 통로와 재물 확장 통로를 구분해 판독했습니다",
+  const hasExpansion = !sameChannel && expansion.length > 0;
+  const acqSummary = hasExpansion
+    ? "생활 기반 수입 통로와 재물 확장 통로가 구분됩니다"
+    : "생활 기반 수입 통로가 확인됩니다. 재물 확장 통로는 현재 계산값으로 판정 불가입니다";
+  return ar(ev, cev, acqSummary,
     ev.length >= 2 ? "중간" : "낮음", "대운에서 관성·재성·식상 진입 시 통로 전환 또는 확장 가능");
 }
 
 function accumulation(f: WF): AR {
   const ev: string[] = [], cev: string[] = [];
-  if (f.j.inStem && f.j.hasRoot) ev.push("재성 천간투출+통근 — 번 돈을 자산으로 정착시키는 구조");
-  else if (f.j.inStem) { ev.push("재성 천간투출이나 통근 없음 — 수입은 있어도 자산 정착 불안정 가능"); cev.push("뿌리 없는 천간 재성 — 운 변화에 유동적"); }
-  else if (f.j.inBranch) ev.push("재성 지지정기 — 내재된 저축 성향");
-  else if (f.j.hiddenOnly) ev.push("재성 지장간만 — 특정 운에서 축적력 활성화");
-  else ev.push("원국 재성 부재 — 자연스러운 자산 정착 구조가 원국에 없음");
-  if (f.b.inStem && !f.j.absent) cev.push("비겁 천간투출+재성 동시 — 수입 분산 가능성 검토 필요");
-  if (f.j.relNotes.length > 0) cev.push(`재성 형충: ${f.j.relNotes.join(",")} — 자산 정착 불안정 신호`);
-  const pos = f.j.inStem && f.j.hasRoot;
-  return ar(ev, cev,
-    pos ? "번 돈을 자산으로 전환하는 구조적 조건이 갖춰져 있습니다"
-    : f.j.absent ? "자연스러운 자산 축적 흐름이 원국 구조에서 약하며 대운 보완이 필요합니다"
-    : "축적 능력이 일부 있으나 운의 흐름에 따라 달라집니다",
-    pos ? "중간" : "낮음", "재성 대운 진입+통근 조건 갖춰질 때 축적력 강화 가능");
+  // 재성 부재/암장 단독으로 부정 결론 금지 — 독립 복수 근거 없으면 판정 불가
+  if (f.j.inStem && f.j.hasRoot) {
+    ev.push("재성 천간투출+통근 — 번 돈을 자산으로 정착시키는 구조");
+    if (f.b.inStem) cev.push("비겁 천간투출 동시 — 수입 분산 가능성 검토 필요");
+    if (f.j.relNotes.length > 0) cev.push(`재성 형충: ${f.j.relNotes.join(",")} — 자산 정착 불안정 신호`);
+    return ar(ev, cev, "번 돈을 자산으로 전환하는 구조적 조건이 갖춰져 있습니다", "중간",
+      "재성 형충·비겁 대운 시 점검 필요");
+  }
+  if (f.j.inStem && !f.j.hasRoot) {
+    ev.push("재성 천간투출 — 수입 창출 의지 있음");
+    cev.push("재성 통근 없음 — 자산 정착이 운 흐름에 유동적");
+    return ar(ev, cev, "수입 통로는 있으나 자산 정착 안정성은 운에 따라 달라집니다", "낮음",
+      "재성 대운+통근 조건 충족 시 축적력 강화");
+  }
+  if (f.j.inBranch) {
+    ev.push("재성 지지정기 — 내재된 저축 성향");
+    if (f.b.inStem) cev.push("비겁 강세 — 수입 분산 가능성");
+    return ar(ev, cev, "저축 성향은 있으나 운 흐름에 따라 달라집니다", "낮음",
+      "재성 천간 투출 대운 시 축적력 강화");
+  }
+  // 재성 부재(absent) 또는 지장간만(hiddenOnly): 독립 근거 없으면 판정 불가
+  // 형충·비겁 등 추가 근거가 있을 때만 언급, 부정 결론 단정 금지
+  if (f.j.relNotes.length > 0 || (f.b.inStem && f.b.stemCount >= 2)) {
+    // 복수 독립 근거 있을 때만 조건부 서술
+    const notes: string[] = [];
+    if (f.j.relNotes.length > 0) notes.push(`재성 관련 형충(${f.j.relNotes.join(",")})`);
+    if (f.b.inStem && f.b.stemCount >= 2) notes.push("비겁 복수 투출");
+    cev.push(...notes);
+    return ar(["근거 확인됨"], cev,
+      "현재 계산값 기준 축적 안정성에 주의할 신호가 있습니다", "낮음",
+      "대운 재성 진입 시 축적 조건 변화 가능");
+  }
+  // 근거 부족 → 판정 불가
+  return ar([], [], "", "판정 불가");
 }
 
 function expansion(f: WF): AR {
@@ -158,25 +183,41 @@ function expansion(f: WF): AR {
   if (f.linkConf === "충분" && f.b.inStem) ev.push("식상→재성 연결+비겁 실행력 — 규모 확장 기반");
   else if (f.linkConf === "충분") ev.push("식상→재성 연결 충분 — 사업·활동 확장 통로");
   if (f.g.inStem && f.j.inStem) ev.push("관성+재성 천간 동시 투출 — 조직 확장 통한 수입 성장 가능");
-  if (f.b.inStem && f.s.inStem) { ev.push("비겁+식상 강세 — 독립·실행 기반 확장 가능성"); if (f.j.absent) cev.push("재성 부재 — 확장 규모를 자산으로 굳히는 구조 약함"); }
-  if (f.j.relNotes.length > 0) cev.push(`재성 형충 — 확장 국면 변동성`);
+  if (f.b.inStem && f.s.inStem && f.linkConf !== "판정 불가") {
+    ev.push("비겁+식상 강세 — 독립·실행 기반 확장 가능성");
+  }
+  if (f.j.relNotes.length > 0 && ev.length > 0) cev.push(`재성 형충 — 확장 국면 변동성`);
+  // 근거 없으면 판정 불가 (확장 통로 없음 → 확장력 약함 자동 결론 금지)
+  if (ev.length === 0) return ar([], [], "", "판정 불가");
   return ar(ev, cev, "수입과 자산 규모를 키울 수 있는 구조적 신호가 확인됩니다",
     ev.length >= 2 ? "중간" : "낮음", "식상·재성 대운 겹칠 때 실질 확장 기회 가능");
 }
 
 function preservation(f: WF): AR {
   const ev: string[] = [], cev: string[] = [];
-  if (f.j.inStem && f.j.hasRoot) ev.push("재성 천간투출+통근 — 형성한 자산을 지키는 구조적 기반");
-  if (f.j.inBranch && !f.b.inStem) ev.push("재성 지지정기+비겁 약함 — 자산 보존 환경 안정");
-  if (f.b.inStem && f.j.inStem && f.j.hasRoot) cev.push("비겁 강세이나 재성 뿌리 있음 — 분산 위협 존재하지만 제한적");
-  else if (f.b.inStem && (f.j.absent || f.j.hiddenOnly)) cev.push("비겁 강세+재성 약함/부재 — 형성한 자산이 분산되기 쉬운 구조 신호");
-  if (f.j.relNotes.length > 0) cev.push(`재성 형충: ${f.j.relNotes.join(",")} — 자산 보존 불안정 신호`);
-  if (ev.length === 0 && f.j.absent && f.b.inStem) ev.push("원국 무재+비겁 강세 — 보존력은 의지와 통제력에 의존");
-  if (ev.length === 0 && cev.length === 0) return ar([], [], "", "판정 불가");
-  return ar(ev.length > 0 ? ev : [""], cev,
-    ev.length > cev.length ? "형성한 자산을 지키는 구조적 조건이 어느 정도 갖춰져 있습니다"
-    : "자산 보존에 주의가 필요한 구조적 신호가 있습니다",
-    cev.length === 0 ? "중간" : "낮음", "재성 대운+비겁 약화 시기에 보존력 강화, 반대 시기 점검 필요");
+  if (f.j.inStem && f.j.hasRoot) {
+    ev.push("재성 천간투출+통근 — 형성한 자산을 지키는 구조적 기반");
+    if (f.b.inStem) cev.push("비겁 강세이나 재성 뿌리 있음 — 분산 위협 존재하지만 제한적");
+    if (f.j.relNotes.length > 0) cev.push(`재성 형충: ${f.j.relNotes.join(",")} — 보존 불안정 신호`);
+    return ar(ev, cev, "형성한 자산을 지키는 구조적 조건이 갖춰져 있습니다",
+      cev.length === 0 ? "중간" : "낮음", "비겁 대운·재성 형충 시기 점검 필요");
+  }
+  if (f.j.inBranch && !f.b.inStem) {
+    ev.push("재성 지지정기+비겁 약함 — 자산 보존 환경 안정");
+    if (f.j.relNotes.length > 0) cev.push(`재성 형충: ${f.j.relNotes.join(",")} — 보존 불안정 신호`);
+    return ar(ev, cev, "자산 보존 환경이 비교적 안정적입니다", "낮음",
+      "재성 형충 대운 시 점검 필요");
+  }
+  // 재성 부재/암장 + 비겁 단독으로 "보존력 약함" 결론 금지
+  // 형충 등 복수 독립 근거 있을 때만 조건부 서술
+  if (f.j.relNotes.length > 0 && f.b.inStem) {
+    cev.push(`재성 형충(${f.j.relNotes.join(",")}) + 비겁 강세 — 자산 보존에 복수 불안정 신호`);
+    return ar(["복수 신호 확인"], cev,
+      "자산 보존에 주의가 필요한 신호가 복수로 확인됩니다", "낮음",
+      "재성 대운 진입 시 보존력 조건 변화 가능");
+  }
+  // 단일 근거만 있으면 판정 불가
+  return ar([], [], "", "판정 불가");
 }
 
 // ── 대운 상태 판정 ──
